@@ -1,6 +1,7 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,19 +11,23 @@
     <style>
         .stat-card {
             border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease;
         }
+
         .stat-card:hover {
             transform: translateY(-3px);
         }
+
         .order-card {
             border-left: 4px solid #007bff;
             transition: all 0.3s ease;
         }
+
         .order-card:hover {
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
+
         .quantity-btn {
             width: 30px;
             height: 30px;
@@ -30,12 +35,14 @@
             align-items: center;
             justify-content: center;
         }
+
         .completed {
             border-left-color: #28a745;
             opacity: 0.7;
         }
     </style>
 </head>
+
 <body class="bg-light">
     <!-- Header -->
     <nav class="navbar navbar-dark bg-dark p-3">
@@ -45,20 +52,22 @@
         </div>
     </nav>
 
+    <!-- CSRF Token -->
+    <input type="hidden" id="csrfToken" value="{{ csrf_token }}">
+
     <div class="container-fluid mt-4">
         <!-- Stats Row -->
-         
         <div class="row mb-4">
             <div class="col-md-3 mb-3">
                 <div class="stat-card p-2 bg-success text-white">
                     <h6 class="mb-1">Total Income</h6>
-                    <h4 class="mb-0">₹25,800</h4>
+                    <h4 class="mb-0">₹{{ tid }}</h4>
                 </div>
             </div>
             <div class="col-md-3 mb-3">
                 <div class="stat-card p-2 bg-info text-white">
                     <h6 class="mb-1">Yesterday Income</h6>
-                    <h4 class="mb-0">₹8,600</h4>
+                    <h4 class="mb-0">₹{{ tiy }}</h4>
                 </div>
             </div>
             <div class="col-md-3 mb-3">
@@ -67,14 +76,12 @@
                     <h4 class="mb-0">₹12,400</h4>
                 </div>
             </div>
-
             <div class="col-md-3 text-end">
                 <button class="btn btn-primary btn-sm" onclick="location.reload()">
                     <i class="fas fa-sync"></i>
                 </button>
             </div>
         </div>
-        
 
         <!-- Active Orders -->
         <div class="row">
@@ -83,21 +90,23 @@
                 <div class="row">
                     {% for order in orders %}
                     <div class="col-md-6 mb-3">
-                        <div class="order-card card p-3 mb-3">
+                        <div class="order-card card p-3 mb-3 {% if order.completed %} completed {% endif %}">
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <h5>{{ order.table.name }}</h5>
                                 <div>
                                     <button class="btn btn-danger btn-sm me-2" onclick="deleteOrder({{ order.id }})">
                                         <i class="fas fa-trash"></i>
                                     </button>
-                                    <button class="btn btn-success btn-sm" data-bs-toggle="modal" 
-                                            data-bs-target="#completeModal" 
-                                            onclick="prepareCompleteModal({{ order.id }})">
+                                    {% if not order.completed %}
+                                    <button class="btn btn-success btn-sm" data-bs-toggle="modal"
+                                        data-bs-target="#completeModal"
+                                        onclick="prepareCompleteModal({{ order.id }}, {{ order.total }})">
                                         <i class="fas fa-check"></i>
                                     </button>
+                                    {% endif %}
                                 </div>
                             </div>
-                            
+
                             <div class="order-items">
                                 {% for item in order.orderitems_set.all %}
                                 <div class="d-flex justify-content-between align-items-center mb-2">
@@ -106,24 +115,25 @@
                                         <small class="text-muted">₹{{ item.item.price }}</small>
                                     </div>
                                     <div class="d-flex align-items-center">
-                                        <button class="btn btn-warning quantity-btn" 
-                                                onclick="updateQuantity({{ item.id }}, -1)">
+                                        <button class="btn btn-warning quantity-btn"
+                                            onclick="updateQuantity({{ item.id }}, -1)">
                                             -
                                         </button>
                                         <span class="mx-2">{{ item.quantity }}</span>
-                                        <button class="btn btn-warning quantity-btn" 
-                                                onclick="updateQuantity({{ item.id }}, 1)">
+                                        <button class="btn btn-warning quantity-btn"
+                                            onclick="updateQuantity({{ item.id }}, 1)">
                                             +
                                         </button>
                                     </div>
                                 </div>
                                 {% endfor %}
                             </div>
-                            
-                            <div class="d-flex justify-content-between pt-2 border-top">
+
+                            <div class="d-flex justify-content-between pt-2 border-top" id="orderTotal{{ order.id }}">
                                 <strong>Total:</strong>
                                 <strong><span>₹{{ order.total }}</span></strong>
                             </div>
+
                         </div>
                     </div>
                     {% endfor %}
@@ -145,72 +155,169 @@
                         <label>Total Amount:</label>
                         <h4 id="modalTotal">₹0.00</h4>
                     </div>
-                    
                     <div class="mb-3">
                         <label>Discount (%)</label>
-                        <input type="number" id="discountInput" class="form-control" 
-                               min="0" max="100" value="0">
+                        <input type="number" id="discountInput" class="form-control" min="0" max="100" value="0">
                     </div>
-                    
                     <div class="mb-3">
                         <label>Final Amount:</label>
                         <h4 id="finalAmount">₹0.00</h4>
                     </div>
-                    
                     <div class="mb-3">
                         <label>Customer Phone (optional)</label>
-                        <input type="tel" class="form-control" 
-                               pattern="[0-9]{10}" placeholder="Enter 10-digit phone number">
+                        <input type="tel" id="modalPhone" class="form-control" pattern="[0-9]{10}"
+                            placeholder="Enter 10-digit phone number">
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" onclick="calculateFinalAmount()">
-                        Calculate
-                    </button>
-                    <button type="button" class="btn btn-success" onclick="completeOrder()">
-                        Complete Order
-                    </button>
+                    <button type="button" class="btn btn-primary" onclick="calculateFinalAmount()">Calculate</button>
+                    <button type="button" class="btn btn-success" onclick="completeOrder()">Complete Order</button>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         let currentOrderId = null;
+        let currentOrderTotal = 0;
 
-        function prepareCompleteModal(orderId) {
+        // Prepare the complete order modal with the order's details.
+        function prepareCompleteModal(orderId, orderTotal) {
             currentOrderId = orderId;
-            // Fetch order details and update modalTotal
-            document.getElementById('modalTotal').textContent = '₹500.00'; // Replace with actual data
+            currentOrderTotal = parseFloat(orderTotal);
+            document.getElementById('modalTotal').textContent = `₹${currentOrderTotal.toFixed(2)}`;
+            // Reset discount and recalc final amount.
+            document.getElementById('discountInput').value = 0;
             calculateFinalAmount();
         }
 
+        // Calculate the final amount based on discount.
         function calculateFinalAmount() {
-            const total = parseFloat(document.getElementById('modalTotal').textContent.replace('₹', ''));
+            const total = currentOrderTotal;
             const discount = parseFloat(document.getElementById('discountInput').value) || 0;
             const finalAmount = total - (total * (discount / 100));
             document.getElementById('finalAmount').textContent = `₹${finalAmount.toFixed(2)}`;
         }
 
-        function completeOrder() {
-            // Add logic to complete the order
-            alert('Order completed!');
-            $('#completeModal').modal('hide');
-        }
+        // Complete the order: send AJAX POST to update order details and mark table unoccupied.
+        async function completeOrder() {
+            const discount = parseFloat(document.getElementById('discountInput').value) || 0;
+            const finalTotal = parseFloat(document.getElementById('finalAmount').textContent.replace('₹', ''));
+            const phone = document.getElementById('modalPhone').value.trim();
 
-        function deleteOrder(orderId) {
-            if (confirm('Are you sure you want to delete this order?')) {
-                // Add delete logic
-                alert('Order deleted!');
+            try {
+                const response = await fetch('/complete_order/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': document.getElementById('csrfToken').value
+                    },
+                    body: JSON.stringify({
+                        order_id: currentOrderId,
+                        discount: discount,
+                        final_total: finalTotal,
+                        phone: phone
+                    })
+                });
+                const data = await response.json();
+                alert(data.message);
+                if (data.success) {
+                    location.reload();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while completing the order.');
             }
         }
 
-        function updateQuantity(itemId, change) {
-            // Add AJAX call to update quantity
-            alert(`Updating item ${itemId} by ${change}`);
+        // Delete order function (stub).
+        async function deleteOrder(orderId) {
+            if (confirm('Are you sure you want to delete this order?')) {
+                try {
+                    const response = await fetch('/delete_order/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': document.getElementById('csrfToken').value
+                        },
+                        body: JSON.stringify({ order_id: orderId })
+                    });
+                    const data = await response.json();
+                    alert(data.message);
+                    if (data.success) {
+                        location.reload();
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('An error occurred while deleting the order.');
+                }
+            }
         }
+
+        // Update the quantity of an order item via AJAX.
+        async function updateQuantity(orderItemId, change) {
+    try {
+        // Validate inputs
+        if (!orderItemId || !change || change === 0) {
+            alert('Invalid input for quantity update.');
+            return;
+        }
+
+        const response = await fetch('/update_quantity/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.getElementById('csrfToken').value
+            },
+            body: JSON.stringify({ order_item_id: orderItemId, change: change })
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('Server response:', data); // Debug: Check what the server returns
+
+        if (!data.success) {
+            alert(data.message);
+            return;
+        }
+
+        // Update the quantity display
+        const qtyElem = document.getElementById(`quantity${orderItemId}`);
+        if (qtyElem) {
+            if (data.new_quantity === 0) {
+                // Remove the item from the UI if quantity becomes 0
+                const itemRow = qtyElem.closest('.order-item-row');
+                if (itemRow) itemRow.remove();
+            } else {
+                qtyElem.textContent = data.new_quantity; // Update the displayed number
+            }
+        } else {
+            console.error(`Quantity element not found: quantity${orderItemId}`);
+        }
+
+        // Update the order total
+        const orderTotalElem = document.querySelector(`#orderTotal${data.order_id} span`);
+        if (orderTotalElem) {
+            orderTotalElem.textContent = "₹" + data.order_total.toFixed(2);
+        } else {
+            console.error(`Order total element not found: #orderTotal${data.order_id} span`);
+        }
+
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred while updating quantity.');
+    }
+}
+
+
+
     </script>
 </body>
+
 </html>

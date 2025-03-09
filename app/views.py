@@ -2,6 +2,10 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from .models import *
 import json 
+from django.db.models import Sum
+from django.utils import timezone
+from datetime import timedelta
+from django.views.decorators.http import require_POST
 
 def home(request):
     tables = Table.objects.all()
@@ -56,10 +60,105 @@ def submit_order(request):
 
     return JsonResponse({"success": False, "message": "Invalid request"}, status=400)
 
-
+today = timezone.now().date()
+yesterday = today - timedelta(days=1)
 
 def owner(request):
     tables = Table.objects.all()
-    orders = Order.objects.filter(table__occupied=False)
+    orders = Order.objects.filter(completed=False)
+    total_income_today = Order.objects.filter(completed=True, created_at__date=today).aggregate(total=Sum('total'))['total'] or 0
+    total_income_yesterday = Order.objects.filter(completed=True,created_at__date=yesterday).aggregate(total=Sum('total'))['total'] or 0
+    return render(request, 'admin.html', {'tables':tables, 'orders':orders , 'tid':total_income_today, 'tiy':total_income_yesterday})    
 
-    return render(request, 'admin.html', {'tables':tables, 'orders':orders})    
+
+@require_POST
+def complete_order(request):
+    try:
+        data = json.loads(request.body)
+        order_id = data.get("order_id")
+        discount = float(data.get("discount", 0))
+        final_total = float(data.get("final_total"))
+        phone = data.get("phone", "").strip()
+
+        if not order_id or final_total is None:
+            return JsonResponse({"success": False, "message": "Missing required fields."})
+
+        # Retrieve the active order; ensure it's not already completed
+        order = Order.objects.get(id=order_id, completed=False)
+
+        # Update order details
+        order.discount = discount  # discount percentage
+        order.total = final_total   # final total after discount
+        order.phone_number = phone
+        order.completed = True
+        order.save()
+
+        # Mark the table as unoccupied now that the order is complete
+        table = order.table
+        table.occupied = False
+        table.save()
+
+        return JsonResponse({"success": True, "message": "Order completed successfully!"})
+    except Order.DoesNotExist:
+        return JsonResponse({"success": False, "message": "Active order not found."})
+    except Exception as e:
+        return JsonResponse({"success": False, "message": str(e)})
+    
+@require_POST
+def delete_order(request):
+    try:
+        data = json.loads(request.body)
+        order_id = data.get("order_id")
+        if not order_id:
+            return JsonResponse({"success": False, "message": "Missing order ID."})
+        
+        order = Order.objects.get(id=order_id)
+        table = order.table
+        order.delete()
+        
+        # If there are no active orders for this table, mark it as unoccupied.
+        if not Order.objects.filter(table=table, completed=False).exists():
+            table.occupied = False
+            table.save()
+            
+        return JsonResponse({"success": True, "message": "Order deleted successfully."})
+    except Order.DoesNotExist:
+        return JsonResponse({"success": False, "message": "Order not found."})
+    except Exception as e:
+        return JsonResponse({"success": False, "message": str(e)})
+
+@require_POST
+def update_quantity(request):
+    try:
+        data = json.loads(request.body)
+        order_item_id = data.get("order_item_id")
+        change = int(data.get("change", 0))
+        if not order_item_id or change == 0:  # Corrected here
+            return JsonResponse({"success": False, "message": "Invalid parameters."})
+        
+        order_item = OrderItems.objects.get(id=order_item_id)
+        order = order_item.order
+        new_quantity = order_item.quantity + change
+        
+        if new_quantity < 1:
+            order_item.delete()
+            new_quantity = 0
+        else:
+            order_item.quantity = new_quantity
+            order_item.save()
+        
+        # Recalculate the order total
+        total = sum(item.item.price * item.quantity for item in order.orderitems_set.all())
+        order.total = total
+        order.save()
+        
+        return JsonResponse({
+            "success": True,
+            "new_quantity": new_quantity,
+            "order_total": float(total),
+            "order_id": order.id,
+        })
+    except OrderItems.DoesNotExist:
+        return JsonResponse({"success": False, "message": "Order item not found."})
+    except Exception as e:
+        return JsonResponse({"success": False, "message": str(e)})
