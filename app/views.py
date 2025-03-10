@@ -276,7 +276,7 @@ def button(request):
     return render(request, 'buttons.html')
 
 def table(request):
-    tables = Table.objects.all()
+    tables = Table.objects.all().order_by('name')
     return render(request, 'table.html', {'tables':tables})
 
 def category(request):
@@ -284,7 +284,7 @@ def category(request):
     return render(request, 'category.html', {'categories':categories})
 
 def item(request):
-    items = MenuItem.objects.all()
+    items = MenuItem.objects.all().order_by('category')
     categories = MenuCategory.objects.all()
     return render(request, 'items.html', {'menu_items':items, 'categories':categories})
 
