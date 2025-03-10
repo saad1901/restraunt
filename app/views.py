@@ -10,7 +10,7 @@ from django.views.decorators.http import require_POST
 from .forms import CategoryForm, MenuItemForm, TableForm
 
 def home(request):
-    tables = Table.objects.all()
+    tables = Table.objects.all().order_by('name')
     categories = MenuCategory.objects.all()
     items = MenuItem.objects.all()
     return render(request, 'waiter.html',{'tables':tables , 'categories':categories, 'items':items})
