@@ -167,9 +167,10 @@ def update_quantity(request):
         return JsonResponse({"success": False, "message": str(e)})
 
 def settings(request):
+    tables = Table.objects.all()
     categories = MenuCategory.objects.all()
     menu_items = MenuItem.objects.all()
-    return render(request, 'settings.html', {'categories': categories,
+    return render(request, 'settings.html', {'categories': categories, 'tables':tables,
                                              'menu_items':menu_items})
 
 
@@ -242,12 +243,15 @@ def delete_menu_item(request, item_id):
     
 
 def add_table(request):
+    print(1)
     if request.method == "POST":
-        name = request.POST.get("name")
+        print(2)
+        name = request.POST.get("table_number")
         if name:
+            print(name)
             Table.objects.create(name=name, occupied=False)  # Always False when adding a new table
             messages.success(request, "Table added successfully!")
-        return redirect('restaurant_settings')
+        return redirect('settings')
 
 def edit_table(request, table_id):
     table = get_object_or_404(Table, id=table_id)

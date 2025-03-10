@@ -278,7 +278,7 @@
                         </div>
                         <div class="col-md-4">
                             <div class="dashboard-card p-3 bg-white">
-                                <h6 class="text-muted text-uppercase mb-1">Total Orders Today</h6>
+                                <h6 class="text-muted text-uppercase mb-1">Orders Today</h6>
                                 <h4 class="text-warning">{{ tot }}</h4>
                             </div>
                         </div>
@@ -290,6 +290,9 @@
         <!-- Refresh Button -->
         <div class="row mb-4">
             <div class="col-12 text-end">
+                <a href="{% url 'waiterhome' %}" class="btn btn-success btn-sm">
+                    <i class="fas fa-plus me-2"></i>Book Order
+                </a>
                 <button class="btn btn-primary btn-sm" onclick="location.reload()">
                     <i class="fas fa-sync me-2"></i>Refresh
                 </button>

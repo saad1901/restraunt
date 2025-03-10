@@ -104,7 +104,7 @@
         <h5 class="modal-title">Add New Table</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
-      <form method="post" action="#">
+      <form method="post" action="{% url 'add_table' %}">
         {% csrf_token %}
         <div class="modal-body">
           <div class="mb-3">
@@ -129,7 +129,7 @@
         <h5 class="modal-title">Edit Table</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
-      <form method="post" action="#">
+      <form method="post" action="{% url 'edit_table' 1 %}">
         {% csrf_token %}
         <input type="hidden" name="table_id" id="edit_table_id">
         <div class="modal-body">
