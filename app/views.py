@@ -1,4 +1,5 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
 from django.http import JsonResponse
 from .models import *
 import json 
@@ -6,6 +7,7 @@ from django.db.models import Sum
 from django.utils import timezone
 from datetime import timedelta
 from django.views.decorators.http import require_POST
+from .forms import CategoryForm, MenuItemForm
 
 def home(request):
     tables = Table.objects.all()
@@ -68,7 +70,8 @@ def owner(request):
     orders = Order.objects.filter(completed=False)
     total_income_today = Order.objects.filter(completed=True, created_at__date=today).aggregate(total=Sum('total'))['total'] or 0
     total_income_yesterday = Order.objects.filter(completed=True,created_at__date=yesterday).aggregate(total=Sum('total'))['total'] or 0
-    return render(request, 'admin.html', {'tables':tables, 'orders':orders , 'tid':total_income_today, 'tiy':total_income_yesterday})    
+    total_orders_today = Order.objects.filter(created_at__date=today).count()
+    return render(request, 'admin.html', {'tables':tables, 'orders':orders , 'tid':total_income_today, 'tiy':total_income_yesterday, 'tot':total_orders_today})    
 
 
 @require_POST
@@ -162,3 +165,100 @@ def update_quantity(request):
         return JsonResponse({"success": False, "message": "Order item not found."})
     except Exception as e:
         return JsonResponse({"success": False, "message": str(e)})
+
+def settings(request):
+    categories = MenuCategory.objects.all()
+    menu_items = MenuItem.objects.all()
+    return render(request, 'settings.html', {'categories': categories,
+                                             'menu_items':menu_items})
+
+
+# from django.contrib.auth.decorators import login_required
+
+# views.py
+
+# @login_required
+def add_category(request):
+    if request.method == 'POST':
+        form = CategoryForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Category added successfully!')
+        else:
+            messages.error(request, 'Error adding category: ' + str(form.errors))
+        return redirect('settings')
+
+# @login_required
+def edit_category(request):
+    if request.method == 'POST':
+        # Make sure MenuCategory matches your actual model name
+        category = get_object_or_404(MenuCategory, id=request.POST.get('id'))
+        form = CategoryForm(request.POST, instance=category)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Category updated successfully!')
+        else:
+            messages.error(request, 'Error updating category: ' + str(form.errors))
+        return redirect('settings')
+
+# @login_required
+def delete_category(request, category_id):
+    if request.method == 'POST':
+        category = get_object_or_404(MenuCategory, id=category_id)
+        category.delete()
+        messages.success(request, 'Category deleted successfully!')
+        return redirect('settings')
+
+# @login_required
+def add_menu_item(request):
+    if request.method == 'POST':
+        form = MenuItemForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Menu item added successfully!')
+        else:
+            messages.error(request, 'Error adding menu item: ' + str(form.errors))
+        return redirect('settings')
+# 
+# @login_required
+def edit_menu_item(request):
+    if request.method == 'POST':
+        menu_item = get_object_or_404(MenuItem, id=request.POST.get('id'))
+        form = MenuItemForm(request.POST, instance=menu_item)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Menu item updated successfully!')
+        else:
+            messages.error(request, 'Error updating menu item: ' + str(form.errors))
+        return redirect('settings')
+
+# @login_required
+def delete_menu_item(request, item_id):
+    if request.method == 'POST':
+        menu_item = get_object_or_404(MenuItem, id=item_id)
+        menu_item.delete()
+        messages.success(request, 'Menu item deleted successfully!')
+        return redirect('settings')
+    
+
+def add_table(request):
+    if request.method == "POST":
+        name = request.POST.get("name")
+        if name:
+            Table.objects.create(name=name, occupied=False)  # Always False when adding a new table
+            messages.success(request, "Table added successfully!")
+        return redirect('restaurant_settings')
+
+def edit_table(request, table_id):
+    table = get_object_or_404(Table, id=table_id)
+    if request.method == "POST":
+        table.name = request.POST.get("name")
+        table.save()
+        messages.success(request, "Table updated successfully!")
+    return redirect('restaurant_settings')
+
+def delete_table(request, table_id):
+    table = get_object_or_404(Table, id=table_id)
+    table.delete()
+    messages.success(request, "Table deleted successfully!")
+    return redirect('restaurant_settings')
