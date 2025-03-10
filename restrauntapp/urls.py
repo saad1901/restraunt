@@ -20,6 +20,6 @@ urlpatterns = [
     path('settings/items/delete/<int:item_id>/', views.delete_menu_item, name='delete_menu_item'),
 
     path('table/add/', views.add_table, name='add_table'),
-    path('table/edit/<int:table_id>/', views.edit_table, name='edit_table'),
+    path('table/edit/', views.edit_table, name='edit_table'),
     path('table/delete/<int:table_id>/', views.delete_table, name='delete_table'),
 ]

@@ -29,3 +29,9 @@ class MenuItemForm(forms.ModelForm):
             'category': forms.Select(attrs={'class': 'form-select'}),
             'price': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'})
         }
+
+class TableForm(forms.ModelForm):
+    class Meta:
+        model = Table
+        # Only include the fields you want to allow editing.
+        fields = ['name']

@@ -7,7 +7,7 @@ from django.db.models import Sum
 from django.utils import timezone
 from datetime import timedelta
 from django.views.decorators.http import require_POST
-from .forms import CategoryForm, MenuItemForm
+from .forms import CategoryForm, MenuItemForm, TableForm
 
 def home(request):
     tables = Table.objects.all()
@@ -167,9 +167,9 @@ def update_quantity(request):
         return JsonResponse({"success": False, "message": str(e)})
 
 def settings(request):
-    tables = Table.objects.all()
+    tables = Table.objects.all().order_by('name')
     categories = MenuCategory.objects.all()
-    menu_items = MenuItem.objects.all()
+    menu_items = MenuItem.objects.all().order_by('category')
     return render(request, 'settings.html', {'categories': categories, 'tables':tables,
                                              'menu_items':menu_items})
 
@@ -253,14 +253,39 @@ def add_table(request):
             messages.success(request, "Table added successfully!")
         return redirect('settings')
 
-def edit_table(request, table_id):
-    table = get_object_or_404(Table, id=table_id)
-    if request.method == "POST":
-        table.name = request.POST.get("name")
-        table.save()
-        messages.success(request, "Table updated successfully!")
-    return redirect('restaurant_settings')
 
+
+# def edit_table(request, table_id):
+#     table = get_object_or_404(Table, id=table_id)
+#     if request.method == "POST":
+#         table.name = request.POST.get("name")
+#         table.save()
+#         messages.success(request, "Table updated successfully!")
+#     return redirect('restaurant_settings')
+
+# def edit_table(request, table_id):
+#     table = get_object_or_404(Table, id=table_id)
+#     if request.method == 'POST':
+#         form = TableForm(request.POST, instance=table)
+#         if form.is_valid():
+#             form.save()
+#             messages.success(request, "Table updated successfully!")
+#         else:
+#             messages.error(request, "Error updating table: " + str(form.errors))
+#         return redirect('settings')
+    
+def edit_table(request):
+    print(1)
+    if request.method == 'POST':
+        table = get_object_or_404(Table, id=request.POST.get('table_id'))
+        form = TableForm(request.POST, instance=table)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Table updated successfully!')
+        else:
+            messages.error(request, 'Error updating Table: ' + str(form.errors))
+    return redirect('settings')
+        
 def delete_table(request, table_id):
     table = get_object_or_404(Table, id=table_id)
     table.delete()
