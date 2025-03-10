@@ -334,10 +334,12 @@
                                             <small class="text-muted">₹{{ item.item.price }} each</small>
                                         </div>
                                         <div class="quantity-control">
-                                            <button class="quantity-btn minus" onclick="updateQuantity({{ item.id }}, -1)">-</button>
+                                            <button class="quantity-btn minus"
+                                                onclick="updateQuantity({{ item.id }}, -1)">-</button>
                                             <span class="mx-2 fw-medium">{{ item.quantity }}</span>
-                                            <button class="quantity-btn plus" onclick="updateQuantity({{ item.id }}, 1)">+</button>
-                                            
+                                            <button class="quantity-btn plus"
+                                                onclick="updateQuantity({{ item.id }}, 1)">+</button>
+
                                         </div>
                                     </div>
                                     {% endfor %}
@@ -346,7 +348,8 @@
                             <div class="card-footer bg-white border-0 pt-0">
                                 <div class="d-flex justify-content-between align-items-center border-top pt-3">
                                     <span class="text-muted">Total</span>
-                                    <h5 class="mb-0 text-success" id="orderTotal{{ order.id }}"><span>₹{{order.total}}</span></h5>
+                                    <h5 class="mb-0 text-success" id="orderTotal{{ order.id }}">
+                                        <span>₹{{order.total}}</span></h5>
                                 </div>
                             </div>
                         </div>
@@ -546,6 +549,12 @@
                 financeToggleIcon.classList.add('fa-plus');
             });
         }
+    </script>
+    <script>
+        // Auto-refresh the page every 5 seconds (5000 milliseconds)
+        setInterval(function () {
+            window.location.reload();
+        }, 5000);
     </script>
 </body>
 
