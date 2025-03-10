@@ -1,0 +1,109 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings - Restaurant Manager</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    body {
+      background-color: #f8f9fa;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .card {
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .table-hover tbody tr:hover {
+      background-color: #f8f9fa;
+    }
+
+    .action-buttons .btn {
+      padding: 0.375rem 0.75rem;
+    }
+
+    .modal-header {
+      background-color: #f8f9fa;
+      border-bottom: none;
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="navbar navbar-dark bg-dark mb-4">
+    <div class="container-fluid">
+      <span class="navbar-brand">Restaurant Settings</span>
+      <a href="{% url 'button' %}" class="btn btn-outline-light">
+        <i class="fas fa-arrow-left me-2"></i>Dashboard
+      </a>
+    </div>
+  </nav>
+
+  <div class="container-lg">
+    <div class="card mb-4">
+      <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Restaurant Tables</h5>
+        <button class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#addTableModal">
+          <i class="fas fa-plus me-2"></i>Add Table
+        </button>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Table Number</th>
+                <th style="width: 120px">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for table in tables %}
+              <tr>
+                <td class="align-middle">{{ table.name }}</td>
+                <td class="align-middle action-buttons">
+                  <button class="btn btn-sm btn-outline-primary edit-table" data-bs-toggle="modal"
+                    data-bs-target="#editTableModal" data-id="{{ table.id }}" data-name="{{ table.name }}">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <form action="{% url 'delete_table' table.id %}" method="post" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-outline-danger"
+                      onclick="return confirm('Delete this table?');">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </form>
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="3" class="text-center py-4 text-muted">No tables configured</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  <!-- Modals -->
+  {% include 'modals.html' %}
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+
+    document.querySelectorAll('.edit-table').forEach(button => {
+      button.addEventListener('click', () => {
+        const modal = document.querySelector('#editTableModal');
+        modal.querySelector('#edit_table_id').value = button.dataset.id;
+        modal.querySelector('#edit_table_number').value = button.dataset.name;
+      });
+    });
+  </script>
+</body>
+
+</html>
