@@ -187,7 +187,7 @@ def add_category(request):
             messages.success(request, 'Category added successfully!')
         else:
             messages.error(request, 'Error adding category: ' + str(form.errors))
-        return redirect('settings')
+        return redirect('category')
 
 # @login_required
 def edit_category(request):
@@ -200,7 +200,7 @@ def edit_category(request):
             messages.success(request, 'Category updated successfully!')
         else:
             messages.error(request, 'Error updating category: ' + str(form.errors))
-        return redirect('settings')
+        return redirect('category')
 
 # @login_required
 def delete_category(request, category_id):
@@ -208,7 +208,7 @@ def delete_category(request, category_id):
         category = get_object_or_404(MenuCategory, id=category_id)
         category.delete()
         messages.success(request, 'Category deleted successfully!')
-        return redirect('settings')
+        return redirect('category')
 
 # @login_required
 def add_menu_item(request):
@@ -219,7 +219,7 @@ def add_menu_item(request):
             messages.success(request, 'Menu item added successfully!')
         else:
             messages.error(request, 'Error adding menu item: ' + str(form.errors))
-        return redirect('settings')
+        return redirect('item')
 # 
 # @login_required
 def edit_menu_item(request):
@@ -231,7 +231,7 @@ def edit_menu_item(request):
             messages.success(request, 'Menu item updated successfully!')
         else:
             messages.error(request, 'Error updating menu item: ' + str(form.errors))
-        return redirect('settings')
+        return redirect('item')
 
 # @login_required
 def delete_menu_item(request, item_id):
@@ -239,7 +239,7 @@ def delete_menu_item(request, item_id):
         menu_item = get_object_or_404(MenuItem, id=item_id)
         menu_item.delete()
         messages.success(request, 'Menu item deleted successfully!')
-        return redirect('settings')
+        return redirect('item')
     
 
 def add_table(request):
@@ -251,29 +251,9 @@ def add_table(request):
             print(name)
             Table.objects.create(name=name, occupied=False)  # Always False when adding a new table
             messages.success(request, "Table added successfully!")
-        return redirect('settings')
+        return redirect('table')
 
 
-
-# def edit_table(request, table_id):
-#     table = get_object_or_404(Table, id=table_id)
-#     if request.method == "POST":
-#         table.name = request.POST.get("name")
-#         table.save()
-#         messages.success(request, "Table updated successfully!")
-#     return redirect('restaurant_settings')
-
-# def edit_table(request, table_id):
-#     table = get_object_or_404(Table, id=table_id)
-#     if request.method == 'POST':
-#         form = TableForm(request.POST, instance=table)
-#         if form.is_valid():
-#             form.save()
-#             messages.success(request, "Table updated successfully!")
-#         else:
-#             messages.error(request, "Error updating table: " + str(form.errors))
-#         return redirect('settings')
-    
 def edit_table(request):
     print(1)
     if request.method == 'POST':
@@ -284,10 +264,30 @@ def edit_table(request):
             messages.success(request, 'Table updated successfully!')
         else:
             messages.error(request, 'Error updating Table: ' + str(form.errors))
-    return redirect('settings')
+    return redirect('table')
         
 def delete_table(request, table_id):
     table = get_object_or_404(Table, id=table_id)
     table.delete()
     messages.success(request, "Table deleted successfully!")
-    return redirect('restaurant_settings')
+    return redirect('table')
+
+def button(request):
+    return render(request, 'buttons.html')
+
+def table(request):
+    tables = Table.objects.all()
+    return render(request, 'table.html', {'tables':tables})
+
+def category(request):
+    categories = MenuCategory.objects.all()
+    return render(request, 'category.html', {'categories':categories})
+
+def item(request):
+    items = MenuItem.objects.all()
+    categories = MenuCategory.objects.all()
+    return render(request, 'items.html', {'menu_items':items, 'categories':categories})
+
+def reports(request):
+    # items = MenuItem.objects.all()
+    return render(request, 'reports.html')
