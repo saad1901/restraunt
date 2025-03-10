@@ -193,7 +193,15 @@
 
     <input type="hidden" id="csrfToken" value="{{ csrf_token }}">
 
+    
     <div class="container mt-4">
+        <div class="row mb-4">
+            <div class="col-12 text-end">
+                <button class="btn btn-primary btn-sm" onclick="location.reload()">
+                    <i class="fas fa-sync me-2"></i>Refresh
+                </button>
+            </div>
+        </div>
         <!-- Table Selector -->
         <div class="mb-4 mx-auto" style="max-width: 500px;">
             <div class="card p-3 shadow-sm">
@@ -203,7 +211,7 @@
                     {% for table in tables %}
                     <option value="{{ table.id }}"
                         data-status="{% if table.occupied %}occupied{% else %}free{% endif %}">
-                        {{ table.name }}
+                        {{ table.name }} {% if table.occupied %}(OCC){% else %}(FREE){% endif %}
                     </option>
                     {% endfor %}
                 </select>
