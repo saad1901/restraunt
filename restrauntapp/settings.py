@@ -27,7 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['hotelsoftware.pythonanywhere.com', '127.0.0.1', 'localhost']
 
-
+AUTH_USER_MODEL = 'app.User'
+LOGIN_URL = 'owner_login'
 # Application definition
 
 INSTALLED_APPS = [
