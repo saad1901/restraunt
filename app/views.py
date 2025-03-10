@@ -70,7 +70,7 @@ def owner(request):
     orders = Order.objects.filter(completed=False)
     total_income_today = Order.objects.filter(completed=True, created_at__date=today).aggregate(total=Sum('total'))['total'] or 0
     total_income_yesterday = Order.objects.filter(completed=True,created_at__date=yesterday).aggregate(total=Sum('total'))['total'] or 0
-    total_orders_today = Order.objects.filter(created_at__date=today).count()
+    total_orders_today = Order.objects.filter(created_at__date=today, completed=True).count()
     return render(request, 'admin.html', {'tables':tables, 'orders':orders , 'tid':total_income_today, 'tiy':total_income_yesterday, 'tot':total_orders_today})    
 
 
