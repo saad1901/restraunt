@@ -6,4 +6,6 @@ admin.site.register(MenuCategory)
 admin.site.register(MenuItem)
 admin.site.register(Order)
 admin.site.register(OrderItems)
-# admin.site.register(User)
+admin.site.register(Hotel)
+admin.site.register(User)
+

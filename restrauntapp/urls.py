@@ -1,11 +1,21 @@
 from django.contrib import admin
 from django.urls import path
 from app import views
-
+from app.setupView import owner_register, hotel_register
+from app.authView import owner_login
 urlpatterns = [
+    path('login/', owner_login, name='owner_login'),
+
+    path('register/owner/', owner_register, name='owner_register'),
+    path('register/hotel/', hotel_register, name='hotel_register'),
+
     path('admin/', admin.site.urls),
     path('', views.home, name='waiterhome'),
     path('owner/', views.owner, name='owner'),
+    path('owner/staff/', views.staff, name='staff'),
+    path('owner/staff/addstaff', views.add_staff, name='add_staff'),
+    path('owner/staff/editstaff', views.edit_staff, name='edit_staff'),
+
     path('submit-order/', views.submit_order, name='submit_order'),
     path('complete_order/', views.complete_order, name='complete_order'),
     path('delete_order/', views.delete_order, name='delete_order'),

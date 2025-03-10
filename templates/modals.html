@@ -187,3 +187,78 @@
     </div>
   </div>
 </div>
+
+
+<!-- Add Staff Modal -->
+<div class="modal fade" id="addStaffModal" tabindex="-1" aria-labelledby="addStaffModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addStaffModalLabel">Add New Staff</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="post" action="{% url 'add_staff' %}">
+        {% csrf_token %}
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" class="form-control" id="username" name="username" required>
+          </div>
+          <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" class="form-control" id="password" name="password" required>
+          </div>
+          <div class="mb-3">
+            <label for="role" class="form-label">Role</label>
+            <select class="form-select" id="role" name="role">
+              <option value="staff">Staff</option>
+              <!-- <option value="manager">Manager</option> -->
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Add Staff</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<!-- Edit Staff Modal -->
+<div class="modal fade" id="editStaffModal" tabindex="-1" aria-labelledby="editStaffModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editStaffModalLabel">Edit Staff</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="post" action="{% url 'edit_staff' %}">
+        {% csrf_token %}
+        <div class="modal-body">
+          <input type="hidden" id="id" name="id">
+          <div class="mb-3">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" class="form-control" id="username" name="username" required>
+          </div>
+          <div class="mb-3">
+            <label for="password" class="form-label">New Password (Leave empty to keep current password)</label>
+            <input type="password" class="form-control" id="password" name="password">
+          </div>
+          <div class="mb-3">
+            <label for="role" class="form-label">Role</label>
+            <select class="form-select" id="role" name="role">
+              <option value="staff">Staff</option>
+              <option value="manager">Manager</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
