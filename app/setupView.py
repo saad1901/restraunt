@@ -2,10 +2,15 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from .forms import OwnerRegistrationForm, HotelRegistrationForm
 from django.contrib.auth import get_user_model
-
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 User = get_user_model()
 
+@login_required
 def owner_register(request):
+    if request.user.role not in ['owner', 'agent']:
+        return redirect('owner_login')
+
     if request.method == 'POST':
         form = OwnerRegistrationForm(request.POST)
         if form.is_valid():
@@ -20,6 +25,8 @@ def owner_register(request):
     return render(request, 'registration/owner_register.html', {'form': form})
 
 def hotel_register(request):
+    if request.user.role not in ['owner', 'agent']:
+        return redirect('owner_login')
     # Ensure we have the owner_id stored in the session
     owner_id = request.session.get('owner_id')
     if not owner_id:

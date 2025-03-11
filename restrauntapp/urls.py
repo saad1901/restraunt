@@ -2,9 +2,13 @@ from django.contrib import admin
 from django.urls import path
 from app import views
 from app.setupView import owner_register, hotel_register
-from app.authView import owner_login
+from app.authView import owner_login, logout_user
+from app.adminView import home
 urlpatterns = [
+    path('home/', home, name='home'),
+
     path('login/', owner_login, name='owner_login'),
+    path('logout/', logout_user, name='logout'),
 
     path('register/owner/', owner_register, name='owner_register'),
     path('register/hotel/', hotel_register, name='hotel_register'),

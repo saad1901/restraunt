@@ -36,7 +36,7 @@ def submit_order(request):
 
             if not table.occupied:
                 # Create a new order for a free table
-                order = Order.objects.create(table=table, total=0, hotel=request.user.staffof)
+                order = Order.objects.create(table=table, total=0, hotel=request.user.staffof, completedby=request.user)
                 table.occupied = True
                 table.save()
                 total_price = 0
@@ -325,7 +325,7 @@ def staff(request):
 from django.contrib.auth import get_user_model
 # @login_required
 def add_staff(request):
-    # hotel = Hotel.objects.get(id=request.user.staffof.id)
+    hotel = Hotel.objects.get(id=request.user.staffof.id)
     User = get_user_model()
     if request.method == 'POST':
         print(2)
