@@ -312,7 +312,10 @@
                         <div class="order-card card h-100 shadow-sm {% if order.completed %}completed{% endif %}">
                             <div
                                 class="card-header bg-white d-flex justify-content-between align-items-center border-0">
-                                <h5 class="mb-0 table-name">{{ order.table.name }}</h5>
+                                <div class="row">
+                                    <h5 class="mb-0 table-name">{{ order.table.name }} ({{order.completedby}})</h5>
+                                    
+                                </div>
                                 <div class="d-flex gap-2">
                                     <button class="btn btn-danger btn-sm" onclick="deleteOrder({{ order.id }})">
                                         <i class="fas fa-trash"></i>

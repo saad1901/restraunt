@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 
 def owner_login(request):
@@ -19,3 +19,7 @@ def owner_login(request):
             messages.error(request, "Invalid username or password.")
 
     return render(request, 'login.html')
+
+def logout_user(request):
+    logout(request)
+    return redirect('owner_login')
