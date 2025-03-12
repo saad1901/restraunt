@@ -11,4 +11,4 @@ def agenthome(request):
     hotels = Hotel.objects.filter(agent=request.user)
     total = Order.objects.filter(hotel__in=hotels).aggregate(Sum('total'))['total__sum'] or 0
     print(total)
-    return render(request, 'agent/agent.html',{'hotels':hotels, 'total':total})
+    return render(request, 'Agent/agent.html',{'hotels':hotels, 'total':total})
