@@ -15,6 +15,10 @@ def owner_login(request):
                 return redirect('owner')
             elif user.role == 'staff':
                 return redirect('waiterhome')
+            elif user.role == 'agent':
+                return redirect('agenthome')
+            elif user.role == 'superadmin':
+                return redirect('home')
         else:
             messages.error(request, "Invalid username or password.")
 

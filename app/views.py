@@ -13,9 +13,12 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 
+#THis is for waiters
 @login_required
-def home(request):
+def home(request): 
     hotel = Hotel.objects.get(id=request.user.staffof.id)
+    if not hotel.status:
+        return render(request, 'notallowed.html')
     tables = Table.objects.filter(hotel=request.user.staffof).order_by('name')
     categories = MenuCategory.objects.filter(hotel=request.user.staffof)
     items = MenuItem.objects.filter(hotel=request.user.staffof)
@@ -73,9 +76,11 @@ yesterday = today - timedelta(days=1)
 
 @login_required
 def owner(request):
-    if request.user.role == 'staff':
-        return JsonResponse({"success": False, "message": "Staff are not authorized to view this page. Please login as an owner."})
-    hotel = Hotel.objects.get(owner=request.user)
+    if request.user.role != 'owner':
+        return JsonResponse({"success": False, "message": "You are not authorized to view this page. Please login as an owner."})
+    hotel = Hotel.objects.get(id=request.user.staffof.id)
+    if not hotel.status:
+        return render(request, 'notallowed.html')
     tables = Table.objects.filter(hotel=request.user.staffof).order_by('name')
     orders = Order.objects.filter(completed=False, hotel=request.user.staffof)
     total_income_today = Order.objects.filter(completed=True, created_at__date=today, hotel=request.user.staffof).aggregate(total=Sum('total'))['total'] or 0
@@ -355,3 +360,19 @@ def edit_staff(request):
         messages.success(request, "Staff details updated.")
 
     return redirect('staff')
+
+@login_required
+def toggle_hotel_status(request, hotel_id):
+    if request.user.role != 'superadmin':
+        return JsonResponse({"success": False, "message": "You are not authorized to perform this action"})
+    hotel = get_object_or_404(Hotel, pk=hotel_id)
+    if request.method == 'POST':
+        print(hotel_id)
+        # Toggle the allowed status
+        if hotel.status == 1:
+            hotel.status = 0
+        else:
+            hotel.status = 1
+        hotel.save()
+        messages.success(request, 'Hotel status updated successfully.')
+    return redirect('home')  # Adjust with your portal URL name

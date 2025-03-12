@@ -3,18 +3,25 @@ from django.urls import path
 from app import views
 from app.setupView import owner_register, hotel_register
 from app.authView import owner_login, logout_user
-from app.adminView import home
+from app.adminView import home, addagent
+from app.redirectionView import redirection
+from app.agentView import agenthome
 urlpatterns = [
     path('home/', home, name='home'),
+    path('booking/', views.home, name='waiterhome'),
+    path('home/toggle/<int:hotel_id>', views.toggle_hotel_status, name='toggle_hotel_status'),
 
     path('login/', owner_login, name='owner_login'),
     path('logout/', logout_user, name='logout'),
+
+    path('addagent/', addagent, name='addagent'),
+    path('agent/', agenthome, name='agenthome'),
 
     path('register/owner/', owner_register, name='owner_register'),
     path('register/hotel/', hotel_register, name='hotel_register'),
 
     path('admin/', admin.site.urls),
-    path('', views.home, name='waiterhome'),
+    path('', redirection, name='redirection'),
     path('owner/', views.owner, name='owner'),
     path('owner/staff/', views.staff, name='staff'),
     path('owner/staff/addstaff', views.add_staff, name='add_staff'),
