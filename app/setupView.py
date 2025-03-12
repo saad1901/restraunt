@@ -8,7 +8,7 @@ User = get_user_model()
 
 @login_required
 def owner_register(request):
-    if request.user.role not in ['owner', 'agent']:
+    if request.user.role not in ['superadmin', 'agent']:
         return redirect('owner_login')
 
     if request.method == 'POST':
@@ -25,7 +25,7 @@ def owner_register(request):
     return render(request, 'registration/owner_register.html', {'form': form})
 
 def hotel_register(request):
-    if request.user.role not in ['owner', 'agent']:
+    if request.user.role not in ['superadmin', 'agent']:
         return redirect('owner_login')
     # Ensure we have the owner_id stored in the session
     owner_id = request.session.get('owner_id')
@@ -46,7 +46,10 @@ def hotel_register(request):
             # Clear the session key after use.
             del request.session['owner_id']
             # Redirect to login page or a success page.
-            return redirect('owner')
+            if request.user.role == 'superadmin':
+                return redirect('home')
+            else:
+                return redirect('agenthome')
     else:
         form = HotelRegistrationForm()
     return render(request, 'registration/hotel_register.html', {'form': form})

@@ -1,20 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Owner Registration</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Bootstrap CSS for mobile-friendly styling -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <meta charset="UTF-8">
+  <title>Owner Registration</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Bootstrap CSS for mobile-friendly styling -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    body {
+      background: #f8f9fa;
+    }
+    .card {
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .card-header {
+      background-color: #e7ca46;
+      color: #fff;
+      border-bottom: none;
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 1.25rem;
+    }
+    .btn-primary {
+      background-color: #e7ca46;
+      border: none;
+      transition: background-color 0.3s ease;
+    }
+    .btn-primary:hover {
+      background-color: #0056b3;
+    }
+  </style>
 </head>
 <body>
-<div class="container mt-5">
-    <h2 class="mb-4">Owner Registration</h2>
-    <form method="post">
+<div class="container d-flex align-items-center justify-content-center" style="min-height: 100vh;">
+  <div class="card w-100" style="max-width: 400px;">
+    <div class="card-header">
+      Owner Registration Form
+    </div>
+    <div class="card-body">
+      <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary btn-block">Register as Owner</button>
-    </form>
+        <table class="table">
+            {{ form.as_table }}
+
+        </table>
+        <button type="submit" class="btn btn-primary btn-block">Register Owner</button>
+      </form>
+    </div>
+  </div>
 </div>
 </body>
 </html>
