@@ -1,4 +1,3 @@
-{% load widget_tweaks %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -45,35 +44,34 @@
     <div class="card-body">
       <form method="post">
         {% csrf_token %}
-        
+
         <!-- Hotel Name Field -->
         <div class="form-group">
           <label for="id_name">Hotel Name</label>
-          <input type="text" class="form-control" id="id_name" name="name" placeholder="Enter hotel name" value="{{ form.name.value|default:'' }}">
+          {{ form.name }}
           {% if form.name.errors %}
             <small class="text-danger">{{ form.name.errors }}</small>
           {% endif %}
         </div>
-        
+
         <!-- Agent Field -->
         <div class="form-group">
-          <div class="form-group">
-            <label for="id_agent">Agent</label>
-            {{ form.agent|add_class:"form-control" }}
-            {% if form.agent.errors %}
-              <small class="text-danger">{{ form.agent.errors }}</small>
-            {% endif %}
-          </div>
-        
+          <label for="id_agent">Agent</label>
+          {{ form.agent }}
+          {% if form.agent.errors %}
+            <small class="text-danger">{{ form.agent.errors }}</small>
+          {% endif %}
+        </div>
+
         <!-- Address Field -->
         <div class="form-group">
           <label for="id_address">Address</label>
-          <textarea class="form-control" id="id_address" name="address" placeholder="Enter address">{{ form.address.value|default:'' }}</textarea>
+          {{ form.address }}
           {% if form.address.errors %}
             <small class="text-danger">{{ form.address.errors }}</small>
           {% endif %}
         </div>
-        
+
         <button type="submit" class="btn btn-primary btn-block mt-3">Register Hotel</button>
       </form>
     </div>
