@@ -6,7 +6,6 @@ from django.conf import settings
 class Hotel(models.Model):
     name = models.CharField(max_length=255, unique=True)
     address = models.TextField(blank=True, null=True)
-    payment = models.IntegerField(default=0)
     # owner = models.ForeignKey('auth.User', on_delete=models.CASCADE)  # Assuming Django's built-in User model
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     status = models.BooleanField(default=False)
