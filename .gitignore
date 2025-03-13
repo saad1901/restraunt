@@ -7,3 +7,5 @@ app/migrations/
 
 # Ignore settings file
 restrauntapp/settings.py
+
+myapp/
