@@ -3,6 +3,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 
 def owner_login(request):
+    if request.user.is_authenticated:
+        return redirect('redirection')
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')

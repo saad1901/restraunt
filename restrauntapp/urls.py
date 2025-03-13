@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 from app import views
-from app.setupView import owner_register, hotel_register
+from app.setupView import owner_register, hotel_register, register
 from app.authView import owner_login, logout_user
 from app.adminView import home, addagent
 from app.redirectionView import redirection
@@ -14,7 +14,9 @@ urlpatterns = [
     path('login/', owner_login, name='owner_login'),
     path('logout/', logout_user, name='logout'),
 
+    path('register/', register, name='register'),
     path('addagent/', addagent, name='addagent'),
+
     path('agent/', agenthome, name='agenthome'),
 
     path('register/owner/', owner_register, name='owner_register'),
