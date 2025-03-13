@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Owner Registration</title>
+  <title>Agent Registration</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Bootstrap CSS for mobile-friendly styling -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -16,7 +16,7 @@
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
     .card-header {
-      background-color: #007bff;
+      background-color: #28a745;
       color: #fff;
       border-bottom: none;
       border-top-left-radius: 10px;
@@ -25,13 +25,13 @@
       font-weight: bold;
       font-size: 1.25rem;
     }
-    .btn-primary {
-      background-color: #007bff;
+    .btn-success {
+      background-color: #28a745;
       border: none;
       transition: background-color 0.3s ease;
     }
-    .btn-primary:hover {
-      background-color: #0056b3;
+    .btn-success:hover {
+      background-color: #218838;
     }
   </style>
 </head>
@@ -39,19 +39,75 @@
 <div class="container d-flex align-items-center justify-content-center" style="min-height: 100vh;">
   <div class="card w-100" style="max-width: 400px;">
     <div class="card-header">
-      Agent Registration Form
+      Agent Registration
     </div>
     <div class="card-body">
       <form method="post">
         {% csrf_token %}
-        <table class="table">
-            {{ form.as_table }}
-
-        </table>
-        <button type="submit" class="btn btn-primary btn-block">Register Agent</button>
+        <div class="form-group">
+          <label for="id_username">Username</label>
+          <input type="text" name="username" class="form-control" id="id_username" placeholder="Enter username" value="{{ form.username.value|default:'' }}">
+          {% if form.username.errors %}
+            <small class="text-danger">{{ form.username.errors }}</small>
+          {% endif %}
+        </div>
+        <div class="form-group">
+          <label for="id_first_name">First Name</label>
+          <input type="text" name="first_name" class="form-control" id="id_first_name" placeholder="Enter first name" value="{{ form.first_name.value|default:'' }}">
+          {% if form.first_name.errors %}
+            <small class="text-danger">{{ form.first_name.errors }}</small>
+          {% endif %}
+        </div>
+        <div class="form-group">
+          <label for="id_last_name">Last Name</label>
+          <input type="text" name="last_name" class="form-control" id="id_last_name" placeholder="Enter last name" value="{{ form.last_name.value|default:'' }}">
+          {% if form.last_name.errors %}
+            <small class="text-danger">{{ form.last_name.errors }}</small>
+          {% endif %}
+        </div>
+        <div class="form-group">
+          <label for="id_email">Email</label>
+          <input type="email" name="email" class="form-control" id="id_email" placeholder="Enter email" value="{{ form.email.value|default:'' }}">
+          {% if form.email.errors %}
+            <small class="text-danger">{{ form.email.errors }}</small>
+          {% endif %}
+        </div>
+        <div class="form-group">
+          <label for="id_phone">Phone</label>
+          <input type="text" name="phone" class="form-control" id="id_phone" placeholder="Enter phone number" value="{{ form.phone.value|default:'' }}">
+          {% if form.phone.errors %}
+            <small class="text-danger">{{ form.phone.errors }}</small>
+          {% endif %}
+        </div>
+        <div class="form-group">
+          <label for="id_city">City</label>
+          <input type="text" name="city" class="form-control" id="id_city" placeholder="Enter city" value="{{ form.city.value|default:'' }}">
+          {% if form.city.errors %}
+            <small class="text-danger">{{ form.city.errors }}</small>
+          {% endif %}
+        </div>
+        <div class="form-group">
+          <label for="id_password">Password</label>
+          <input type="password" name="password" class="form-control" id="id_password" placeholder="Enter password">
+          {% if form.password.errors %}
+            <small class="text-danger">{{ form.password.errors }}</small>
+          {% endif %}
+        </div>
+        <div class="form-group">
+          <label for="id_password2">Confirm Password</label>
+          <input type="password" name="password2" class="form-control" id="id_password2" placeholder="Confirm password">
+          {% if form.password2.errors %}
+            <small class="text-danger">{{ form.password2.errors }}</small>
+          {% endif %}
+        </div>
+        <button type="submit" class="btn btn-success btn-block">Register Agent</button>
       </form>
     </div>
   </div>
 </div>
+<!-- Bootstrap JS and dependencies -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

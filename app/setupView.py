@@ -3,14 +3,15 @@ from django.urls import reverse
 from .forms import OwnerRegistrationForm, HotelRegistrationForm
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login
 from django.contrib import messages
 User = get_user_model()
 
-@login_required
-def owner_register(request):
-    if request.user.role not in ['superadmin', 'agent']:
-        return redirect('owner_login')
 
+def owner_register(request):
+    # if request.user.role not in ['superadmin', 'agent']:
+    #     return redirect('owner_login')
+    
     if request.method == 'POST':
         form = OwnerRegistrationForm(request.POST)
         if form.is_valid():
@@ -25,8 +26,8 @@ def owner_register(request):
     return render(request, 'registration/owner_register.html', {'form': form})
 
 def hotel_register(request):
-    if request.user.role not in ['superadmin', 'agent']:
-        return redirect('owner_login')
+    # if request.user.role not in ['superadmin', 'agent']:
+    #     return redirect('owner_login')
     # Ensure we have the owner_id stored in the session
     owner_id = request.session.get('owner_id')
     if not owner_id:
@@ -48,8 +49,16 @@ def hotel_register(request):
             # Redirect to login page or a success page.
             if request.user.role == 'superadmin':
                 return redirect('home')
-            else:
+            elif request.user.role == 'agent':
                 return redirect('agenthome')
-    else:
-        form = HotelRegistrationForm()
+            else:
+                user = authenticate(request, username=owner.username, password=owner.hint)
+                login(request, user)
+                return redirect('owner')
+            
+    form = HotelRegistrationForm()
     return render(request, 'registration/hotel_register.html', {'form': form})
+
+
+def register(request):
+    return render(request, 'RegisterUser/register.html')

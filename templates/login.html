@@ -1,33 +1,130 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Owner Login</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(120deg, #7f7fd5, #86a8e7, #91eae4);
+            min-height: 100vh;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .form-control:focus {
+            border-color: #7f7fd5;
+            box-shadow: 0 0 0 0.2rem rgba(127, 127, 213, 0.25);
+        }
+
+        .btn-primary {
+            background: #7f7fd5;
+            border: none;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            background: #6c6cbd;
+            transform: translateY(-2px);
+        }
+
+        .register-link {
+            color: #7f7fd5;
+            transition: all 0.3s;
+        }
+
+        .register-link:hover {
+            color: #6c6cbd;
+            text-decoration: none;
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
 </head>
+
 <body>
-<div class="container mt-5">
-    <h2 class="text-center">Login</h2>
-    {% if messages %}
-        <div class="alert alert-danger">
-            {% for message in messages %}
-                {{ message }}
-            {% endfor %}
+    <div class="container">
+        <div class="row justify-content-center align-items-center min-vh-100">
+            <div class="col-md-6 col-lg-5">
+                <div class="login-card p-5 animate-fade-in">
+                    <div class="text-center mb-5">
+                        <h2 class="font-weight-bold text-primary mb-3">Welcome Back! 👋</h2>
+                        <p class="text-muted">Please sign in to continue</p>
+                    </div>
+
+                    {% if messages %}
+                    <div class="alert alert-danger">
+                        {% for message in messages %}
+                        {{ message }}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label class="font-weight-bold">Username</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                </div>
+                                <input type="text" name="username" class="form-control"
+                                    placeholder="Enter your username" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="font-weight-bold">Password</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                </div>
+                                <input type="password" name="password" class="form-control"
+                                    placeholder="Enter your password" required>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-block py-2 mt-4">
+                            <i class="fas fa-sign-in-alt mr-2"></i>Sign In
+                        </button>
+
+                        <div class="text-center mt-4">
+                            <p class="text-muted">Don't have an account?</p>
+                            <a href="{% url 'register' %}" class="register-link font-weight-bold">Create Account</a>
+                            <div class="dropdown-divider"></div>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-    {% endif %}
-    <form method="post">
-        {% csrf_token %}
-        <div class="form-group">
-            <label>Username:</label>
-            <input type="text" name="username" class="form-control" required>
-        </div>
-        <div class="form-group">
-            <label>Password:</label>
-            <input type="password" name="password" class="form-control" required>
-        </div>
-        <button type="submit" class="btn btn-primary btn-block">Login</button>
-    </form>
-</div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
+
 </html>
