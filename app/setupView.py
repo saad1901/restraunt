@@ -25,7 +25,7 @@ def owner_register(request):
 def hotel_register(request):
     # if request.user.role not in ['superadmin', 'agent']:
     #     return redirect('owner_login')
-    # Ensure we have the owner_id stored in the session
+    # Ensure we have the owner_id stored in the session.
     owner_id = request.session.get('owner_id')
     if not owner_id:
         return redirect('owner_register')
