@@ -3,24 +3,25 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Restaurant Management</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <style>
-        /* Custom Styles */
+        /* Custom Variables */
         :root {
-            --primary-color: #4A90E2;
-            /* Soft blue */
-            --primary-dark: #357ABD;
-            /* Darker blue */
-            --secondary-color: #50E3C2;
-            /* Turquoise */
-            --accent-color: #F5A623;
-            /* Warm orange */
-            --background-color: #F7F9FB;
-            /* Light gray background */
+            --primary-color: #4a90e2;
+            --primary-dark: #357abd;
+            --secondary-color: #50e3c2;
+            --accent-color: #f5a623;
+            --background-color: #f7f9fb;
             --text-color: #333333;
             --card-bg: #ffffff;
             --border-color: #e0e0e0;
@@ -30,20 +31,42 @@
         body {
             background-color: var(--background-color);
             color: var(--text-color);
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
         }
 
-        #categories {
-            margin-bottom: 300px;
-            /* Adjust the value as needed */
+        /* Navbar */
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
+        .navbar-brand {
+            font-weight: 600;
+            font-size: 1.25rem;
+        }
+
+        /* Refresh Button */
+        .refresh-btn {
+            border-radius: 50px;
+            font-size: 0.9rem;
+        }
+
+        /* Table Selector Card */
+        .table-card {
+            max-width: 500px;
+        }
 
         /* Category Header */
         .category-header {
             background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
             color: #fff;
             border: none;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            width: 100%;
+            text-align: left;
             transition: all 0.3s ease;
         }
 
@@ -57,6 +80,7 @@
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 8px;
+            padding: 0.75rem 1rem;
             transition: all 0.3s ease;
         }
 
@@ -75,6 +99,11 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .quantity-btn:hover {
+            background-color: rgba(0, 0, 0, 0.05);
         }
 
         /* Order Summary */
@@ -126,7 +155,7 @@
             transform: rotate(180deg);
         }
 
-        /* Option Styling for Table Selector */
+        /* Table Selector Options */
         option[data-status="occupied"] {
             color: #dc3545;
         }
@@ -190,26 +219,31 @@
     </style>
 </head>
 
-<body class="bg-light">
-    <nav class="navbar navbar-expand-lg" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
         <div class="container">
-            <a class="navbar-brand" href="#">🍽️ {{hotel.name}}</a>
+            <a class="navbar-brand text-white" href="#">🍽️ {{ hotel.name }}</a>
+            <div class="ms-auto">
+                <a href="{% url 'logout' %}" style="color: white;" class="btn btn-outline-white">Logout</a>
+            </div>
         </div>
     </nav>
 
     <input type="hidden" id="csrfToken" value="{{ csrf_token }}">
 
-
     <div class="container mt-4">
+        <!-- Refresh Button -->
         <div class="row mb-4">
             <div class="col-12 text-end">
-                <button class="btn btn-primary btn-sm" onclick="location.reload()">
+                <button class="btn btn-primary btn-sm refresh-btn" onclick="location.reload()">
                     <i class="fas fa-sync me-2"></i>Refresh
                 </button>
             </div>
         </div>
+
         <!-- Table Selector -->
-        <div class="mb-4 mx-auto" style="max-width: 500px;">
+        <div class="mb-4 mx-auto table-card">
             <div class="card p-3 shadow-sm">
                 <label class="form-label text-primary fw-bold">Select Table:</label>
                 <select class="form-select" id="selectedTable">
@@ -225,10 +259,10 @@
         </div>
 
         <!-- Categories and Items -->
-        <div id="categories" class="mx-auto" style="max-width: 500px;">
+        <div id="categories" class="mx-auto table-card">
             {% for category in categories %}
             <div class="mb-3">
-                <button class="btn w-100 text-start text-white category-header" type="button" data-bs-toggle="collapse"
+                <button class="btn category-header" type="button" data-bs-toggle="collapse"
                     data-bs-target="#category{{ category.id }}">
                     {{ category.name }} <i class="fas fa-chevron-down float-end"></i>
                 </button>
@@ -240,7 +274,8 @@
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
                                     <span class="fw-bold">{{ item.name }}</span>
-                                    <span class="badge bg-success ms-2" data-price="{{ item.id }}">₹{{item.price}}</span>
+                                    <span class="badge bg-success ms-2" data-price="{{ item.id }}">₹{{ item.price
+                                        }}</span>
                                 </div>
                                 <div class="d-flex align-items-center">
                                     <button class="btn btn-danger btn-sm quantity-btn"
@@ -281,12 +316,13 @@
             </div>
         </div>
         <button class="btn btn-success w-100 mt-2" onclick="submitOrder()">
-            🎉 Submit Order (₹<span id="orderTotalBtn">0.00</span>)
+            Submit Order (₹<span id="orderTotalBtn">0.00</span>)
         </button>
     </div>
 
+    <!-- JavaScript -->
     <script>
-        // Quantity Management: Increase & Decrease functions.
+        // Quantity Management
         function increment(itemId) {
             const quantitySpan = document.getElementById(`quantity${itemId}`);
             quantitySpan.textContent = parseInt(quantitySpan.textContent) + 1;
@@ -360,7 +396,7 @@
             orderSection.classList.toggle('d-none', itemCount === 0);
         }
 
-        // Order Submission function
+        // Order Submission
         async function submitOrder() {
             const selectedTable = document.getElementById('selectedTable').value;
             const orderItems = [];
@@ -407,6 +443,7 @@
 
                 if (data.success) {
                     // Reset interface
+                    location.reload();
                     document.getElementById('selectedTable').value = '';
                     document.querySelectorAll('[id^=quantity]').forEach(span => span.textContent = '0');
                     document.getElementById('orderSection').classList.add('d-none');
@@ -421,8 +458,10 @@
         }
     </script>
 
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://kit.fontawesome.com/your-fontawesome-kit.js"></script>
+    <!-- Font Awesome Kit -->
+    <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
 </body>
 
 </html>

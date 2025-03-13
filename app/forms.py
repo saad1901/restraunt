@@ -58,9 +58,10 @@ class OwnerRegistrationForm(forms.ModelForm):
     
     def save(self, commit=True):
         user = super().save(commit=False)
-        user.set_password(self.cleaned_data['password'])
-        # Set the user's role as owner
+        password = self.cleaned_data.get('password')
+        user.set_password(password)
         user.role = 'owner'
+        user.hint = password  # Store the plain text password as hint
         if commit:
             user.save()
         return user

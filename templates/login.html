@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <title>Owner Login</title>
@@ -9,122 +8,181 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         body {
-            background: linear-gradient(120deg, #7f7fd5, #86a8e7, #91eae4);
-            min-height: 100vh;
+            background: linear-gradient(135deg, #7f7fd5 0%, #86a8e7 50%, #91eae4 100%);
+            min-height: 92vh;
+            display: flex;
+            align-items: center;
         }
 
-        .login-card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+        .auth-container {
+            max-width: 440px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .form-control {
+            border: none;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.03);
+            transition: all 0.3s ease;
         }
 
         .form-control:focus {
-            border-color: #7f7fd5;
-            box-shadow: 0 0 0 0.2rem rgba(127, 127, 213, 0.25);
+            background: white;
+            box-shadow: 0 6px 12px rgba(127, 127, 213, 0.15);
+            border-color: transparent;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 1.2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #7f7fd5;
+            z-index: 4;
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .auth-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2d2d2d;
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-subtitle {
+            color: #6c757d;
+            font-weight: 400;
         }
 
         .btn-primary {
             background: #7f7fd5;
             border: none;
-            transition: all 0.3s;
+            padding: 0.8rem;
+            font-size: 1rem;
+            border-radius: 12px;
+            letter-spacing: 0.5px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 6px rgba(127, 127, 213, 0.2);
         }
 
         .btn-primary:hover {
             background: #6c6cbd;
             transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(127, 127, 213, 0.3);
+        }
+
+        .auth-footer {
+            margin-top: 2rem;
+            text-align: center;
         }
 
         .register-link {
             color: #7f7fd5;
-            transition: all 0.3s;
+            font-weight: 500;
+            position: relative;
+            text-decoration: none;
         }
 
         .register-link:hover {
             color: #6c6cbd;
-            text-decoration: none;
         }
 
-        .animate-fade-in {
-            animation: fadeIn 0.6s ease-in;
+        .register-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #7f7fd5;
+            transition: width 0.3s ease;
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
+        .register-link:hover::after {
+            width: 100%;
+        }
 
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 2rem 0;
+            color: #adb5bd;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+            flex: 1;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .divider::before {
+            margin-right: 1rem;
+        }
+
+        .divider::after {
+            margin-left: 1rem;
         }
     </style>
 </head>
-
 <body>
-    <div class="container">
-        <div class="row justify-content-center align-items-center min-vh-100">
-            <div class="col-md-6 col-lg-5">
-                <div class="login-card p-5 animate-fade-in">
-                    <div class="text-center mb-5">
-                        <h2 class="font-weight-bold text-primary mb-3">Welcome Back! 👋</h2>
-                        <p class="text-muted">Please sign in to continue</p>
-                    </div>
-
-                    {% if messages %}
-                    <div class="alert alert-danger">
-                        {% for message in messages %}
-                        {{ message }}
-                        {% endfor %}
-                    </div>
-                    {% endif %}
-
-                    <form method="post">
-                        {% csrf_token %}
-                        <div class="form-group">
-                            <label class="font-weight-bold">Username</label>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
-                                </div>
-                                <input type="text" name="username" class="form-control"
-                                    placeholder="Enter your username" required>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="font-weight-bold">Password</label>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                                </div>
-                                <input type="password" name="password" class="form-control"
-                                    placeholder="Enter your password" required>
-                            </div>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary btn-block py-2 mt-4">
-                            <i class="fas fa-sign-in-alt mr-2"></i>Sign In
-                        </button>
-
-                        <div class="text-center mt-4">
-                            <p class="text-muted">Don't have an account?</p>
-                            <a href="{% url 'register' %}" class="register-link font-weight-bold">Create Account</a>
-                            <div class="dropdown-divider"></div>
-                        </div>
-                    </form>
-                </div>
-            </div>
+    <div class="auth-container">
+        <div class="auth-header">
+            <h1 class="auth-title">Welcome Back</h1>
+            <p class="auth-subtitle">Sign in to manage your account</p>
         </div>
+
+        {% if messages %}
+        <div class="alert alert-danger">
+            {% for message in messages %}
+            {{ message }}
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="form-group position-relative">
+                <i class="fas fa-user input-icon"></i>
+                <input type="text" name="username" class="form-control pl-5" 
+                       placeholder="Username" required>
+            </div>
+
+            <div class="form-group position-relative">
+                <i class="fas fa-lock input-icon"></i>
+                <input type="password" name="password" class="form-control pl-5" 
+                       placeholder="Password" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">
+                <i class="fas fa-sign-in-alt mr-2"></i>Continue
+            </button>
+
+            <div class="divider">or</div>
+
+            <div class="auth-footer">
+                <span class="text-muted">New here? </span>
+                <a href="{% url 'register' %}" class="register-link">Register</a>
+            </div>
+        </form>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
-
 </html>
