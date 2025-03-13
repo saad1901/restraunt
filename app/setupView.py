@@ -16,9 +16,6 @@ def owner_register(request):
         form = OwnerRegistrationForm(request.POST)
         if form.is_valid():
             owner = form.save()
-            hint = form.cleaned_data.get('password2')
-            owner.hint = hint
-            # Save the owner's id in the session for the next step.
             request.session['owner_id'] = owner.id
             return redirect('hotel_register')
     else:
@@ -47,6 +44,22 @@ def hotel_register(request):
             # Clear the session key after use.
             del request.session['owner_id']
             # Redirect to login page or a success page.
+
+            print(1)
+
+            if not request.user.is_authenticated:
+                print(2.2)
+                print(owner.username)
+                print(owner.password)
+                user = authenticate(request, username=owner.username, password=owner.hint)
+                if user is not None:
+                    login(request, user)
+                    return redirect('owner')
+                else:
+                    print(2.3)
+                    messages.error(request, "Authentication failed. Please check your credentials.")
+                    return redirect('owner_register')
+            print(3)
             if request.user.role == 'superadmin':
                 return redirect('home')
             elif request.user.role == 'agent':
