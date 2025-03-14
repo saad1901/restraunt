@@ -1,54 +1,103 @@
 {% extends 'Admin/base.html' %}
+{% load static %}
 
 {% block style %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 <style>
+    .container-fluid {
+        padding-top: 70px;
+    }
     .card {
         margin-bottom: 20px;
+        transition: transform 0.2s;
     }
-
-    body {
-        padding-top: 70px;
-        background-color: #f8f9fa;
+    .card:hover {
+        transform: translateY(-2px);
+    }
+    .status-text {
+        font-weight: bold;
+    }
+    .btn-info {
+        margin-left: 10px;
+    }
+    .searchbar{
+        width: 25%;
+    }
+    .hotelcard{
+        margin-top: 10px;
     }
 </style>
 {% endblock %}
 
-
 {% block myblock %}
-<div class="container">
-    <div class="row" id="hotelCards">
-        {% for hotel in hotels %}
-        <div class="col-md-4">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">{{ hotel.name }}</h5>
-                    <p class="card-text">{{ hotel.owner }} {{ hotel.owner.number }}</p>
-                    <p class="card-text">
-                        Status:
-                        <span class="status-text">
-                            {% if hotel.status %}
-                            Allowed
-                            {% else %}
-                            Not Allowed
-                            {% endif %}
-                        </span>
-                    </p>
-                    <!-- Toggle Status Form -->
-                    <form method="post" action="{% url 'toggle_hotel_status' hotel.id %}" class="d-inline">
-                        {% csrf_token %}
-                        <button type="submit"
-                            class="btn {% if hotel.status %}btn-success{% else %}btn-danger{% endif %}"
-                            onclick="return confirm('Are you sure you want to toggle the allowed status?');">
-                            Toggle Status
-                        </button>
-                    </form>
-                    <a href="#" class="btn btn-info">Details</a>
+<div class="container-fluid px-4">
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-md-6">
+                    <i class="fas fa-hotel me-1"></i>
+                    Registered Hotels
+                </div>
+                <div class="col-md-6 text-end">
+                    <a href="{% url 'owner_register' %}" class="btn btn-success btn-sm">
+                        <i class="fas fa-plus-circle"></i> Add New Hotel
+                    </a>
                 </div>
             </div>
         </div>
-        {% endfor %}
+
+        <div class="card-body">
+            <!-- Search Bar -->
+            <form method="GET" action="#" class="mb-3 searchbar">
+                <div class="input-group">
+                    <input type="text" name="q" class="form-control" placeholder="Search hotels..." aria-label="Search hotels">
+                    <button class="btn btn-outline-success" type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </form>
+
+            <!-- Hotel Cards -->
+            <div class="row" id="hotelCards">
+                {% for hotel in hotels %}
+                <div class="col-xl-4 col-md-6 hotelcard">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">{{ hotel.name }}</h5>
+                            <div class="mb-2">
+                                <i class="fas fa-user-tie"></i>
+                                <span class="text-muted">{{ hotel.owner }} ({{ hotel.owner.phone }})</span>
+                            </div>
+                            <div class="mt-auto">
+                                <p class="card-text">
+                                    <i class="fas fa-power-off"></i>
+                                    Status:
+                                    <span class="status-text text-{% if hotel.status %}success{% else %}danger{% endif %}">
+                                        {% if hotel.status %}Allowed{% else %}Not Allowed{% endif %}
+                                    </span>
+                                </p>
+                                <div class="d-flex justify-content-between">
+                                    <form method="post" action="#" class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" 
+                                            class="btn btn-{% if hotel.status %}danger{% else %}success{% endif %}"
+                                            onclick="return confirm('Are you sure you want to toggle the status?');">
+                                            <i class="fas fa-toggle-{% if hotel.status %}on{% else %}off{% endif %}"></i>
+                                            Toggle
+                                        </button>
+                                    </form>
+                                    <a href="#" class="btn btn-info">
+                                        <i class="fas fa-info-circle"></i> Details
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
     </div>
 </div>
-
-<!-- Bootstrap Bundle with Popper -->
 {% endblock %}
