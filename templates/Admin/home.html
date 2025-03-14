@@ -7,23 +7,29 @@
     .container-fluid {
         padding-top: 70px;
     }
+
     .card {
         margin-bottom: 20px;
         transition: transform 0.2s;
     }
+
     .card:hover {
         transform: translateY(-2px);
     }
+
     .status-text {
         font-weight: bold;
     }
+
     .btn-info {
         margin-left: 10px;
     }
-    .searchbar{
+
+    .searchbar {
         width: 25%;
     }
-    .hotelcard{
+
+    .hotelcard {
         margin-top: 10px;
     }
 </style>
@@ -51,7 +57,8 @@
             <!-- Search Bar -->
             <form method="GET" action="#" class="mb-3 searchbar">
                 <div class="input-group">
-                    <input type="text" name="q" class="form-control" placeholder="Search hotels..." aria-label="Search hotels">
+                    <input type="text" name="q" class="form-control" placeholder="Search hotels..."
+                        aria-label="Search hotels">
                     <button class="btn btn-outline-success" type="submit">
                         <i class="fas fa-search"></i>
                     </button>
@@ -73,18 +80,19 @@
                                 <p class="card-text">
                                     <i class="fas fa-power-off"></i>
                                     Status:
-                                    <span class="status-text text-{% if hotel.status %}success{% else %}danger{% endif %}">
+                                    <span
+                                        class="status-text text-{% if hotel.status %}success{% else %}danger{% endif %}">
                                         {% if hotel.status %}Allowed{% else %}Not Allowed{% endif %}
                                     </span>
                                 </p>
                                 <div class="d-flex justify-content-between">
-                                    <form method="post" action="#" class="d-inline">
+                                    <form method="post" action="{% url 'toggle_hotel_status' hotel.id %}"
+                                        class="d-inline">
                                         {% csrf_token %}
-                                        <button type="submit" 
-                                            class="btn btn-{% if hotel.status %}danger{% else %}success{% endif %}"
-                                            onclick="return confirm('Are you sure you want to toggle the status?');">
-                                            <i class="fas fa-toggle-{% if hotel.status %}on{% else %}off{% endif %}"></i>
-                                            Toggle
+                                        <button type="submit"
+                                            class="btn {% if hotel.status %}btn-success{% else %}btn-danger{% endif %}"
+                                            onclick="return confirm('Are you sure you want to toggle the allowed status?');">
+                                            Toggle Status
                                         </button>
                                     </form>
                                     <a href="#" class="btn btn-info">
