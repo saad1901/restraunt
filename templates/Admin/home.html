@@ -89,7 +89,7 @@
                                     <form method="post" action="{% url 'toggle_hotel_status' hotel.id %}" class="d-inline">
                                         {% csrf_token %}
                                         <button type="submit" 
-                                            class="btn btn-{% if hotel.status %}danger{% else %}success{% endif %}"
+                                            class="btn btn-{% if hotel.status %}success{% else %}danger{% endif %}"
                                             onclick="return confirm('Are you sure you want to toggle the status?');">
                                             <i class="fas fa-toggle-{% if hotel.status %}on{% else %}off{% endif %}"></i>
                                             Toggle
