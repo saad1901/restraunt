@@ -3,11 +3,12 @@ from django.urls import path
 from app import views
 from app.setupView import owner_register, hotel_register, register
 from app.authView import owner_login, logout_user
-from app.adminView import home, addagent
+from app.adminView import home, addagent, users
 from app.redirectionView import redirection
 from app.agentView import agenthome
 urlpatterns = [
     path('home/', home, name='home'),
+    path('home/users', users, name='users'),
     path('booking/', views.home, name='waiterhome'),
     path('home/toggle/<int:hotel_id>', views.toggle_hotel_status, name='toggle_hotel_status'),
 
