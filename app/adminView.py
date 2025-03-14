@@ -23,3 +23,8 @@ def addagent(request):
             messages.success(request, 'Agent added successfully.')
             return redirect('home')
     return render(request, 'Admin/addagent.html', {'form': form})
+
+
+def users(request):
+    users = User.objects.all()
+    return render(request, 'Admin/users.html', {'users': users})
