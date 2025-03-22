@@ -2,7 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.http import JsonResponse
 from .models import *
-import json 
+import json
+from datetime import datetime
 from django.db.models import Sum
 from django.utils import timezone
 from datetime import timedelta
@@ -319,7 +320,42 @@ def item(request):
 
 def reports(request):
     # items = MenuItem.objects.all()
-    return render(request, 'reports.html')
+    return render(request, 'reports/reports.html')
+
+def inventory(request):
+    return render(request, 'reports/inventory.html')
+
+def sales(request):
+    return render(request, 'reports/sales.html')
+
+@login_required
+def dailytransc(request):
+    selected_date = request.GET.get('date')
+    if selected_date:
+        try:
+            # Convert the date string to a date object
+            selected_date_obj = datetime.strptime(selected_date, '%Y-%m-%d').date()
+            # Filter orders for the given day (assuming created_at is a DateTimeField)
+            orders = Order.objects.filter(
+                hotel=request.user.staffof, 
+                created_at__date=selected_date_obj
+            ).prefetch_related('orderitems').order_by('-created_at')
+        except ValueError:
+            orders = Order.objects.filter(hotel=request.user.staffof).prefetch_related('orderitems').order_by('-created_at')
+            selected_date_obj = None
+    else:
+        orders = Order.objects.filter(hotel=request.user.staffof).prefetch_related('orderitems').order_by('-created_at')
+        selected_date_obj = None
+
+    return render(request, 'reports/dailytransc.html', {
+        'orders': orders,
+        'selected_date': selected_date_obj,
+    })
+def revenue(request):
+    return render(request, 'reports/revenue.html')
+
+def timeanalysis(request):
+    return render(request, 'reports/timeanalysis.html')
 
 def staff(request):
     User = get_user_model()

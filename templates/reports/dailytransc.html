@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Orders</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f4f7f6;
+        }
+
+        .navbar {
+            background-color: #343a40;
+        }
+
+        .order-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .order-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .order-table {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .table thead th {
+            background: #343a40;
+            color: white;
+        }
+
+        .modal-content {
+            border-radius: 10px;
+        }
+
+        .modal-header {
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .list-group-item {
+            border: none;
+            border-bottom: 1px solid rgba(0, 0, 0, .125);
+        }
+
+        .badge {
+            font-size: 0.85em;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="btn btn-link text-white me-2" href="{% url 'sales' %}">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <span class="navbar-brand text-white">Daily Orders</span>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Date Selection -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <form method="GET">
+                            {% csrf_token %}
+                            <label class="form-label"><strong>Select Date</strong></label>
+                            <input type="date" class="form-control" name="date"
+                                value="{{ selected_date|date:'Y-m-d' }}">
+                            <button type="submit" class="btn btn-primary mt-2">Load Orders</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Orders Table -->
+        <div class="order-table shadow-sm">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Total</th>
+                        <th>Time</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="ordersBody">
+                    {% if orders %}
+                    {% for order in orders %}
+                    <tr class="order-card">
+                        <td>{{ order.id }}</td>
+                        <td>₹{{ order.total|floatformat:2 }}</td>
+                        <td>{{ order.created_at|date:"g:i A" }}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary view-btn" data-order='{
+                                            "id": "{{ order.id }}",
+                                            "phone": "{{ order.customer_phone }}",
+                                            "items": [
+                                                {% for item in order.items.all %}
+                                                {
+                                                    "name": "{{ item.product.name }}",
+                                                    "price": {{ item.price }},
+                                                    "quantity": {{ item.quantity }}
+                                                }{% if not forloop.last %},{% endif %}
+                                                {% endfor %}
+                                            ]
+                                        }'>
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="4">
+                            <div class="text-center py-5">
+                                <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+                                <h4 class="text-muted">No orders found for this date</h4>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- Add this modal template at the bottom of the body -->
+    <div class="modal fade" id="orderModal" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="orderModalLabel">Order Details #<span id="modalOrderId"></span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Items:</h6>
+                            <ul class="list-group mb-3" id="orderItems">
+                                <!-- Items will be inserted here -->
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Customer Details:</h6>
+                            <div class="card">
+                                <div class="card-body">
+                                    <p class="mb-1"><strong>Phone:</strong>
+                                        <a id="customerPhone" href="#" class="text-decoration-none">{{order.phone_number}}</a>
+                                    </p>
+                                    <!-- Add more customer details if needed -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const viewButtons = document.querySelectorAll('.view-btn');
+            const modal = new bootstrap.Modal(document.getElementById('orderModal'));
+
+            viewButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const orderData = JSON.parse(this.dataset.order);
+
+                    // Update modal content
+                    document.getElementById('modalOrderId').textContent = orderData.id;
+                    document.getElementById('customerPhone').href = `tel:${orderData.phone}`;
+                    document.getElementById('customerPhone').textContent = orderData.phone;
+
+                    // Clear previous items
+                    const itemsContainer = document.getElementById('orderItems');
+                    itemsContainer.innerHTML = '';
+
+                    // Add new items
+                    orderData.items.forEach(item => {
+                        const li = document.createElement('li');
+                        li.className = 'list-group-item d-flex justify-content-between align-items-center';
+                        li.innerHTML = `
+                    ${item.name}
+                    <span class="badge bg-primary rounded-pill">Qty: ${item.quantity}</span>
+                    <span class="text-muted">₹${item.price.toFixed(2)}</span>
+                `;
+                        itemsContainer.appendChild(li);
+                    });
+
+                    modal.show();
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

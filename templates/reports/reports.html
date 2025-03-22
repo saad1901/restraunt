@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,26 +11,30 @@
     body {
       background-color: #f4f7f6;
     }
-    /* Navbar Styles */
+
     .navbar {
       background-color: #343a40;
       color: #fff;
     }
+
     .navbar-brand {
       font-size: 1.5rem;
       font-weight: 600;
+      color: white;
     }
+
     .btn-back {
       background: none;
       border: none;
       color: #fff;
       font-size: 1.25rem;
     }
+
     .btn-back:focus {
       outline: none;
       box-shadow: none;
     }
-    /* Report Card Styles */
+
     .report-card {
       margin-bottom: 1rem;
       border: none;
@@ -38,30 +43,40 @@
       transition: transform 0.2s ease, box-shadow 0.2s ease;
       background: #fff;
     }
+
     .report-card:hover {
       transform: translateY(-2px);
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
+
     .report-card .card-body {
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
+
     .report-icon {
       font-size: 1.75rem;
       margin-right: 1rem;
     }
+
     .card-title {
       margin-bottom: 0;
       font-size: 1.1rem;
     }
+
     .card-text {
       font-size: 0.85rem;
     }
+
+    .no-underline {
+      text-decoration: none;
+      color: inherit;
+    }
   </style>
 </head>
+
 <body>
-  <!-- Navbar with Back Button and Title -->
   <nav class="navbar navbar-expand-lg">
     <div class="container-fluid">
       <button class="btn-back me-2" onclick="window.history.back();">
@@ -71,56 +86,59 @@
     </div>
   </nav>
 
-  <!-- Main Content -->
   <div class="container mt-4">
-    <!-- Sales Report Card -->
     <div class="card report-card shadow-sm">
       <div class="card-body">
         <div class="d-flex align-items-center">
           <i class="fas fa-chart-line report-icon text-primary"></i>
           <div>
-            <h5 class="card-title">Sales Report</h5>
-            <p class="card-text text-muted mb-0">Daily, Weekly, Monthly</p>
+            <a href="{% url 'sales'%}" class="no-underline">
+              <h5 class="card-title">Sales Report</h5>
+              <p class="card-text text-muted mb-0">Daily, Weekly, Monthly</p>
+            </a>
           </div>
         </div>
         <i class="fas fa-chevron-right text-muted"></i>
       </div>
     </div>
-    <!-- Revenue Report Card -->
     <div class="card report-card shadow-sm">
       <div class="card-body">
         <div class="d-flex align-items-center">
           <i class="fas fa-file-invoice-dollar report-icon text-success"></i>
           <div>
-            <h5 class="card-title">Revenue Report</h5>
-            <p class="card-text text-muted mb-0">Monthly and Yearly Overview</p>
+            <a href="{% url 'revenue'%}" class="no-underline">
+              <h5 class="card-title">Revenue Report</h5>
+              <p class="card-text text-muted mb-0">Monthly and Yearly Overview</p>
+            </a>
           </div>
         </div>
         <i class="fas fa-chevron-right text-muted"></i>
       </div>
     </div>
-    <!-- Inventory Report Card -->
     <div class="card report-card shadow-sm">
       <div class="card-body">
         <div class="d-flex align-items-center">
           <i class="fas fa-boxes report-icon text-danger"></i>
           <div>
-            <h5 class="card-title">Inventory Report</h5>
-            <p class="card-text text-muted mb-0">Stock & Supply</p>
+            <a href="{% url 'inventory'%}" class="no-underline">
+              <h5 class="card-title">Inventory Report</h5>
+              <p class="card-text text-muted mb-0">Stock & Supply</p>
+            </a>
           </div>
         </div>
         <i class="fas fa-chevron-right text-muted"></i>
       </div>
     </div>
-    <!-- Time Analysis Card -->
     <div class="card report-card shadow-sm">
       <div class="card-body">
         <div class="d-flex align-items-center">
           <i class="fas fa-clock report-icon text-info"></i>
-          <div>
-            <h5 class="card-title">Time Analysis</h5>
-            <p class="card-text text-muted mb-0">Peak Hours & Trends</p>
-          </div>
+          <a href="{% url 'timeanalysis'%}" class="no-underline">
+            <div>
+              <h5 class="card-title">Time Analysis</h5>
+              <p class="card-text text-muted mb-0">Peak Hours & Trends</p>
+            </div>
+          </a>
         </div>
         <i class="fas fa-chevron-right text-muted"></i>
       </div>
@@ -129,4 +147,5 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

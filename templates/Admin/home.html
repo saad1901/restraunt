@@ -55,15 +55,15 @@
 
         <div class="card-body">
             <!-- Search Bar -->
-            <form method="GET" action="#" class="mb-3 searchbar">
+            <form method="POST" class="mb-3 searchbar">
+                {% csrf_token %}
                 <div class="input-group">
-                    <input type="text" name="q" class="form-control" placeholder="Search hotels..."
-                        aria-label="Search hotels">
+                    <input type="text" name="q" class="form-control" placeholder="Search hotels..." aria-label="Search hotels">
                     <button class="btn btn-outline-success" type="submit">
                         <i class="fas fa-search"></i>
                     </button>
                 </div>
-            </form>
+            </form>            
 
             <!-- Hotel Cards -->
             <div class="row" id="hotelCards">
@@ -74,7 +74,7 @@
                             <h5 class="card-title">{{ hotel.name }}</h5>
                             <div class="mb-2">
                                 <i class="fas fa-user-tie"></i>
-                                <span class="text-muted">{{ hotel.owner }} ({{ hotel.owner.phone }})</span>
+                                <span class="text-muted">{{ hotel.owner }} {% if hotel.owner.phone %}({{ hotel.owner.phone }}) {% endif%}</span>
                             </div>
                             <div class="mt-auto">
                                 <p class="card-text">
