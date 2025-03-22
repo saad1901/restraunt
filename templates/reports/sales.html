@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Reports</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f4f7f6; }
+        .navbar { background-color: #343a40; }
+        .report-card {
+            border: none;
+            border-radius: 15px;
+            transition: transform 0.3s ease;
+            /* text-align: center; */
+            padding: 2rem;
+        }
+        .report-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        a:hover { text-decoration: none; }
+
+        .atag {
+            text-decoration: none;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="btn btn-link text-white me-2" href="{% url 'reports'%}">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <span class="navbar-brand text-white">Sales Reports</span>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <div class="row g-4">
+            <!-- Daily Report Button -->
+            <div class="col-md-4">
+                <a href="{% url 'dailytransc'%}" class="text-dark atag">
+                    <div class="report-card bg-white shadow-sm">
+                        <h4>Daily Report</h4>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Monthly Report Button -->
+            <div class="col-md-4">
+                <a href="month_report.html" class="text-dark atag">
+                    <div class="report-card bg-white shadow-sm">
+                        <h4>Monthly Report</h4>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Custom Period Button -->
+            <div class="col-md-4">
+                <a href="custom_period.html" class="text-dark atag">
+                    <div class="report-card bg-white shadow-sm">
+                        <h4>Custom Period</h4>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

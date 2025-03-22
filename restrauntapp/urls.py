@@ -9,8 +9,9 @@ from app.agentView import agenthome
 urlpatterns = [
     path('home/', home, name='home'),
     path('home/users', users, name='users'),
-    path('booking/', views.home, name='waiterhome'),
     path('home/toggle/<int:hotel_id>', views.toggle_hotel_status, name='toggle_hotel_status'),
+    
+    path('booking/', views.home, name='waiterhome'),
 
     path('login/', owner_login, name='owner_login'),
     path('logout/', logout_user, name='logout'),
@@ -35,8 +36,15 @@ urlpatterns = [
     path('delete_order/', views.delete_order, name='delete_order'),
     path('update_quantity/', views.update_quantity, name='update_quantity'),
 
-    path('settings', views.button, name='button'),
-    path('reports', views.reports, name='reports'),
+    path('owner/settings', views.button, name='button'),
+    path('owner/settings/reports', views.reports, name='reports'),
+
+    path('owner/settings/reports/sales', views.sales, name='sales'),
+    path('owner/settings/reports/sales/dailytransc', views.dailytransc, name='dailytransc'),
+    
+    path('owner/settings/reports/revenue', views.revenue, name='revenue'),
+    path('owner/settings/reports/inventory', views.inventory, name='inventory'),
+    path('owner/settings/reports/timeanalysis', views.timeanalysis, name='timeanalysis'),
 
     path('settings/categories/', views.category, name='category'),
     path('settings/categories/add/', views.add_category, name='add_category'),

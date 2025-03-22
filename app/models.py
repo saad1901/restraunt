@@ -73,7 +73,7 @@ class Order(models.Model):
 class OrderItems(models.Model):
     hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE)  # Link order items to hotel
     item = models.ForeignKey(MenuItem, on_delete=models.CASCADE)
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='orderitems')
     quantity = models.IntegerField(default=1)
 
 

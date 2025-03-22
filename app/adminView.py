@@ -11,6 +11,11 @@ def home(request):
     if request.user.role != 'superadmin':
         return redirect('owner_login')
     hotels = Hotel.objects.all()
+    if request.method == 'POST' and 'q' in request.POST:
+        query = request.POST.get('q', '').strip()
+        if query:
+            hotels = hotels.filter(name__icontains=query)
+
     return render(request, 'Admin/home.html', {'hotels': hotels})
 
 def addagent(request):
