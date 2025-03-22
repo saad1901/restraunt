@@ -1,0 +1,125 @@
+<!-- Updated HTML template -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hotel Busy Times by Hour</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+    }
+    .chart-container {
+      position: relative;
+      width: 100%;
+      height: 300px;
+    }
+    .time-filter {
+      margin: 20px 0;
+      text-align: center;
+    }
+    .time-filter button {
+      padding: 8px 16px;
+      margin: 0 5px;
+      border: 1px solid #4CAF50;
+      border-radius: 4px;
+      background: white;
+      cursor: pointer;
+    }
+    .time-filter button.active {
+      background: #4CAF50;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <h1>Hotel Busy Times by Hour</h1>
+  
+  <div class="time-filter">
+    <button 
+      onclick="window.location.href='?days=1'" 
+      class="{% if selected_days == 1 %}active{% endif %}"
+    >
+      Today
+    </button>
+    <button 
+      onclick="window.location.href='?days=7'" 
+      class="{% if selected_days == 7 %}active{% endif %}"
+    >
+      7 Days
+    </button>
+    <button 
+      onclick="window.location.href='?days=30'" 
+      class="{% if selected_days == 30 %}active{% endif %}"
+    >
+      Month
+    </button>
+  </div>
+
+  <div class="chart-container">
+    <canvas id="busyChart"></canvas>
+  </div>
+
+  <script>
+    const hours = JSON.parse('{{ hours|escapejs }}');
+    const totals = JSON.parse('{{ totals|escapejs }}');
+
+    // Format hour labels to 12-hour format with AM/PM
+    const formattedHours = hours.map(h => {
+      return h === 0 ? '12 AM' : 
+             h < 12 ? `${h} AM` : 
+             h === 12 ? '12 PM' : 
+             `${h - 12} PM`;
+    });
+
+    const ctx = document.getElementById('busyChart').getContext('2d');
+    const busyChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: formattedHours,
+        datasets: [{
+          label: 'Number of Orders',
+          data: totals,
+          backgroundColor: 'rgba(75, 192, 192, 0.5)',
+          borderColor: 'rgba(75, 192, 192, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: 'Hour of the Day'
+            }
+          },
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Number of Orders'
+            },
+            ticks: {
+              stepSize: 1,
+              precision: 0
+            }
+          }
+        },
+        plugins: {
+          tooltip: {
+            callbacks: {
+              title: (context) => `Hour: ${formattedHours[context[0].dataIndex]}`,
+              label: (context) => `Orders: ${context.formattedValue}`
+            }
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

@@ -3,17 +3,17 @@ from django.contrib import messages
 from django.http import JsonResponse
 from .models import *
 import json
-from datetime import datetime
 from django.db.models import Sum
 from django.utils import timezone
-from datetime import timedelta
+from datetime import datetime, timedelta
 from django.views.decorators.http import require_POST
 from .forms import CategoryForm, MenuItemForm, TableForm
 from .sendmsg import sendbill
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
-
+from django.db.models import Count
+from django.db.models.functions import ExtractHour
 #THis is for waiters
 @login_required
 def home(request): 
@@ -355,7 +355,35 @@ def revenue(request):
     return render(request, 'reports/revenue.html')
 
 def timeanalysis(request):
-    return render(request, 'reports/timeanalysis.html')
+    # Get time filter from request (default to 1 day)
+    days = int(request.GET.get('days', 1))
+    start_date = timezone.now() - timedelta(days=days)
+    
+    # Filter orders based on time range and annotate hours
+    orders = (
+        Order.objects
+        .filter(created_at__gte=start_date)
+        .annotate(hour=ExtractHour('created_at'))
+        .values('hour')
+        .annotate(total=Count('id'))
+        .order_by('hour')
+    )
+
+    # Create complete 24-hour structure with zeros for missing hours
+    hour_dict = {entry['hour']: entry['total'] for entry in orders}
+    full_hours = []
+    full_totals = []
+    
+    for hour in range(24):
+        full_hours.append(hour)
+        full_totals.append(hour_dict.get(hour, 0))
+
+    context = {
+        'hours': json.dumps(full_hours),
+        'totals': json.dumps(full_totals),
+        'selected_days': days
+    }
+    return render(request, 'reports/timeanalysis.html', context)
 
 def staff(request):
     User = get_user_model()
