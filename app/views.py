@@ -3,9 +3,10 @@ from django.contrib import messages
 from django.http import JsonResponse
 from .models import *
 import json
+import calendar
 from django.db.models import Sum
 from django.utils import timezone
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from django.views.decorators.http import require_POST
 from .forms import CategoryForm, MenuItemForm, TableForm
 from .sendmsg import sendbill
@@ -340,21 +341,21 @@ def dailytransc(request):
             orders = Order.objects.filter(
                 hotel=request.user.staffof, 
                 created_at__date=selected_date_obj
-            ).prefetch_related('orderitems').order_by('-created_at')
+            ).prefetch_related('orderitems').order_by('created_at')
         except ValueError:
-            orders = Order.objects.filter(hotel=request.user.staffof).prefetch_related('orderitems').order_by('-created_at')
+            orders = Order.objects.filter(hotel=request.user.staffof).prefetch_related('orderitems').order_by('created_at')
             selected_date_obj = None
     else:
-        orders = Order.objects.filter(hotel=request.user.staffof).prefetch_related('orderitems').order_by('-created_at')
+        orders = Order.objects.filter(hotel=request.user.staffof).prefetch_related('orderitems').order_by('created_at')
         selected_date_obj = None
 
     return render(request, 'reports/sales/dailytransc.html', {
         'orders': orders,
         'selected_date': selected_date_obj,
+        'grand_total' : orders.aggregate(total=Sum('total'))['total'] or 0,
+
     })
 
-from datetime import datetime, date
-import calendar
 @login_required
 def monthly_report(request):
 
@@ -373,6 +374,16 @@ def monthly_report(request):
     # Determine the number of days in the selected month
     num_days = calendar.monthrange(selected_year, selected_month)[1]
     day_data = []
+
+    def get_day_suffix(day):
+        if 4 <= day <= 20 or 24 <= day <= 30:
+            suffix = "th"
+        else:
+            suffix = ["st", "nd", "rd"][day % 10 - 1]
+        return suffix
+
+    grand_total = 0
+
     for day in range(1, num_days + 1):
         current_date = date(selected_year, selected_month, day)
         # Filter orders for the current date
@@ -380,19 +391,26 @@ def monthly_report(request):
             hotel=request.user.staffof,
             created_at__date=current_date
         )
-        # Aggregate the total revenue for the day (assuming Order.total exists)
+        # Aggregate the total revenue for the day
         total_revenue = orders.aggregate(total=Sum('total'))['total'] or 0
+        
+        # Format the date as "2nd Mar" or "10th Dec"
+        day_suffix = get_day_suffix(day)
+        formatted_date = f"{day}{day_suffix} {current_date.strftime('%b')}"
+        
         day_data.append({
             'day': day,
-            'date': current_date.strftime('%Y-%m-%d'),
+            'date': formatted_date,  # This will now be like "2nd Mar"
             'total_revenue': total_revenue,
         })
+        grand_total+=total_revenue
 
     return render(request, 'reports/sales/monthlytransac.html', {
         'selected_year': selected_year,
         'selected_month': calendar.month_name[selected_month],
         'day_data': day_data,
         'month_str': month_str,
+        'grand_total': grand_total,
     })
 
 
