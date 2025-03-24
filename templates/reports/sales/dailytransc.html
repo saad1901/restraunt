@@ -104,7 +104,7 @@
                     {% for order in orders %}
                     <tr class="order-card">
                         <td>{{ order.id }}</td>
-                        <td>₹{{ order.total|floatformat:2 }}</td>
+                        <td style="font-weight: bold;">₹{{ order.total|floatformat:2 }}</td>
                         <td>{{ order.created_at|date:"g:i A" }}</td>
                         <td>
                             <button class="btn btn-sm btn-outline-primary view-btn" data-order='{
@@ -125,6 +125,10 @@
                         </td>
                     </tr>
                     {% endfor %}
+                    <tr>
+                        <td style="font-weight: bold;">Total:</td>
+                        <td style="color: rgb(231, 14, 220); font-weight: bold;">₹{{grand_total|floatformat:2 }}</td>
+                    </tr>
                     {% else %}
                     <tr>
                         <td colspan="4">
