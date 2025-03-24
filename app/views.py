@@ -14,6 +14,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from django.db.models import Count
 from django.db.models.functions import ExtractHour
+
 #THis is for waiters
 @login_required
 def home(request): 
@@ -326,7 +327,7 @@ def inventory(request):
     return render(request, 'reports/inventory.html')
 
 def sales(request):
-    return render(request, 'reports/sales.html')
+    return render(request, 'reports/sales/sales.html')
 
 @login_required
 def dailytransc(request):
@@ -347,10 +348,55 @@ def dailytransc(request):
         orders = Order.objects.filter(hotel=request.user.staffof).prefetch_related('orderitems').order_by('-created_at')
         selected_date_obj = None
 
-    return render(request, 'reports/dailytransc.html', {
+    return render(request, 'reports/sales/dailytransc.html', {
         'orders': orders,
         'selected_date': selected_date_obj,
     })
+
+from datetime import datetime, date
+import calendar
+@login_required
+def monthly_report(request):
+
+    # Get month parameter from GET request in "YYYY-MM" format; default to current month if not provided.
+    month_str = request.GET.get('month')
+    if month_str:
+        try:
+            selected_year, selected_month = map(int, month_str.split('-'))
+        except ValueError:
+            selected_year, selected_month = datetime.today().year, datetime.today().month
+            month_str = f"{selected_year}-{selected_month:02d}"
+    else:
+        selected_year, selected_month = datetime.today().year, datetime.today().month
+        month_str = f"{selected_year}-{selected_month:02d}"
+
+    # Determine the number of days in the selected month
+    num_days = calendar.monthrange(selected_year, selected_month)[1]
+    day_data = []
+    for day in range(1, num_days + 1):
+        current_date = date(selected_year, selected_month, day)
+        # Filter orders for the current date
+        orders = Order.objects.filter(
+            hotel=request.user.staffof,
+            created_at__date=current_date
+        )
+        # Aggregate the total revenue for the day (assuming Order.total exists)
+        total_revenue = orders.aggregate(total=Sum('total'))['total'] or 0
+        day_data.append({
+            'day': day,
+            'date': current_date.strftime('%Y-%m-%d'),
+            'total_revenue': total_revenue,
+        })
+
+    return render(request, 'reports/sales/monthlytransac.html', {
+        'selected_year': selected_year,
+        'selected_month': calendar.month_name[selected_month],
+        'day_data': day_data,
+        'month_str': month_str,
+    })
+
+
+
 def revenue(request):
     return render(request, 'reports/revenue.html')
 
