@@ -41,6 +41,7 @@ urlpatterns = [
 
     path('owner/settings/reports/sales', views.sales, name='sales'),
     path('owner/settings/reports/sales/dailytransc', views.dailytransc, name='dailytransc'),
+    path('owner/settings/reports/sales/monthlytransac', views.monthly_report, name='monthlytransac'),
     
     path('owner/settings/reports/revenue', views.revenue, name='revenue'),
     path('owner/settings/reports/inventory', views.inventory, name='inventory'),
