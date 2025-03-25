@@ -402,6 +402,7 @@ def monthly_report(request):
             'day': day,
             'date': formatted_date,  # This will now be like "2nd Mar"
             'total_revenue': total_revenue,
+            'org_date': current_date.strftime('%Y-%m-%d'),
         })
         grand_total+=total_revenue
 
