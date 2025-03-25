@@ -21,7 +21,9 @@ from django.db.models.functions import ExtractHour
 def home(request): 
     hotel = Hotel.objects.get(id=request.user.staffof.id)
     if not hotel.status:
-        return render(request, 'notallowed.html')
+        agent_cell = hotel.agent.phone if hotel.agent else "NOAGENT"
+        agent_name = hotel.agent.first_name if hotel.agent else "NOAGENT"
+        return render(request, 'notallowed.html', {'agent_cell':agent_cell, 'agent_name':agent_name})
     tables = Table.objects.filter(hotel=request.user.staffof).order_by('name')
     categories = MenuCategory.objects.filter(hotel=request.user.staffof)
     items = MenuItem.objects.filter(hotel=request.user.staffof)
@@ -83,7 +85,9 @@ def owner(request):
         return JsonResponse({"success": False, "message": "You are not authorized to view this page. Please login as an owner."})
     hotel = Hotel.objects.get(id=request.user.staffof.id)
     if not hotel.status:
-        return render(request, 'notallowed.html')
+        agent_cell = hotel.agent.phone if hotel.agent else "NOAGENT"
+        agent_name = hotel.agent.first_name if hotel.agent else "NOAGENT"
+        return render(request, 'notallowed.html', {'agent_cell':agent_cell, 'agent_name':agent_name})
     tables = Table.objects.filter(hotel=request.user.staffof).order_by('name')
     orders = Order.objects.filter(completed=False, hotel=request.user.staffof)
     total_income_today = Order.objects.filter(completed=True, created_at__date=today, hotel=request.user.staffof).aggregate(total=Sum('total'))['total'] or 0
@@ -403,6 +407,7 @@ def monthly_report(request):
             'date': formatted_date,  # This will now be like "2nd Mar"
             'total_revenue': total_revenue,
             'org_date': current_date.strftime('%Y-%m-%d'),
+            'whichday' : current_date.weekday()
         })
         grand_total+=total_revenue
 
@@ -412,6 +417,7 @@ def monthly_report(request):
         'day_data': day_data,
         'month_str': month_str,
         'grand_total': grand_total,
+
     })
 
 
