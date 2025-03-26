@@ -11,12 +11,12 @@ from django.views.decorators.http import require_POST
 from .forms import CategoryForm, MenuItemForm, TableForm
 from .sendmsg import sendbill
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from django.db.models import Count
 from django.db.models.functions import ExtractHour
-
-#THis is for waiters
+from django.contrib.auth import get_user_model
+#THis is for waiteRS
 @login_required
 def home(request): 
     hotel = Hotel.objects.get(id=request.user.staffof.id)
@@ -481,15 +481,15 @@ def add_staff(request):
 
     return redirect('staff')
 
-# @login_required
+
+User = get_user_model()
+@login_required
 def edit_staff(request):
     if request.method == 'POST':
         staff = get_object_or_404(User, id=request.POST.get('id'))
         staff.username = request.POST.get('username')
-        
         if request.POST.get('password'):
             staff.password = make_password(request.POST.get('password'))
-        
         staff.role = request.POST.get('role')
         staff.save()
         messages.success(request, "Staff details updated.")
