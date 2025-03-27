@@ -105,6 +105,15 @@
 <body>
   <div class="card">
     <div class="card-body">
+      <div class="d-flex justify-content-end gap-3 mb-4">
+        <a href="#" onclick="window.location.reload(); return false;" class="text-secondary text-decoration-none">
+          <i class="fas fa-sync-alt fa-lg"></i>
+        </a>
+        <a href="{% url 'logout' %}" class="text-secondary text-decoration-none">
+          <i class="fas fa-sign-out-alt fa-lg"></i>
+        </a>
+      </div>
+
       <div class="status-icon">
         <i class="fas fa-exclamation-triangle"></i>
       </div>
