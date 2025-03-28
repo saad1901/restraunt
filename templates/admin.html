@@ -437,7 +437,6 @@
                             <div class="input-group">
                                 <input type="number" id="discountInput" class="form-control" min="0" max="100" value="0"
                                     placeholder="Enter discount percentage">
-                                    <span class="input-group-text bg-success text-white">%</span>
 
                                 <button type="button" class="btn btn-gradient-primary" onclick="calculateFinalAmount()">
                                     <i class="fas fa-calculator me-2"></i>Calculate
@@ -476,7 +475,11 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="modal-footer">
+                    <button type="button" class="btn btn-info me-auto" onclick="showQRCode()">
+                        <i class="fas fa-qrcode me-2"></i>Show QR
+                    </button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                         <i class="fas fa-times me-2"></i>Close
                     </button>
@@ -489,8 +492,65 @@
     </div>
 
     <!-- Scripts -->
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://kit.fontawesome.com/your-fontawesome-kit.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <!-- QR Code Modal (remains same as before) -->
+    <div class="modal fade" id="qrModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Payment QR Code</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div id="qrcodeContainer"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to show the QR code modal with UPI payment QR code using the final amount
+        function showQRCode() {
+            // Get the final amount value and remove non-numeric characters
+            var finalAmountText = document.getElementById('finalAmount').textContent;
+            var amount = finalAmountText.replace(/[^\d.]/g, '');
+
+            // Define your UPI details
+            var upiId = "saadv.1@ybl";           // Replace with your UPI ID
+            var upiName = "MY HOTEL";         // Replace with your merchant name
+
+            // Construct the UPI URL. More parameters can be added as needed.
+            var qrData = "upi://pay?pa=" + encodeURIComponent(upiId) +
+                "&pn=" + encodeURIComponent(upiName) +
+                "&am=" + encodeURIComponent(amount) +
+                "&cu=INR";
+
+            // Clear previous QR code (if any)
+            document.getElementById('qrcodeContainer').innerHTML = "";
+
+            // Generate the QR code using QRCode.js
+            new QRCode(document.getElementById('qrcodeContainer'), {
+                text: qrData,
+                width: 200,
+                height: 200,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+
+            // Show the QR modal using Bootstrap's modal method
+            var qrModal = new bootstrap.Modal(document.getElementById('qrModal'));
+            qrModal.show();
+        }
+    </script>
+
     <script>
         let currentOrderId = null;
         let currentOrderTotal = 0;
