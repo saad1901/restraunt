@@ -175,7 +175,7 @@ def update_quantity(request):
             order_item.save()
         
         # Recalculate the order total
-        total = sum(item.item.price * item.quantity for item in order.orderitems_set.all())
+        total = sum(item.item.price * item.quantity for item in order.orderitems.all())
         order.total = total
         order.save()
         
