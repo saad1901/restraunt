@@ -213,6 +213,52 @@
             font-size: 0.8em;
         }
 
+        .btn-gradient-primary {
+            background: linear-gradient(45deg, #4b6cb7, #3b5188);
+            color: white;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-gradient-primary:hover {
+            background: linear-gradient(45deg, #3b5188, #4b6cb7);
+            transform: translateY(-1px);
+        }
+
+        .btn-discount {
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-weight: 500;
+            color: white;
+            border: none;
+        }
+
+        .btn-teal {
+            background-color: #20c997;
+        }
+
+        .btn-blue {
+            background-color: #0d6efd;
+        }
+
+        .btn-purple {
+            background-color: #6f42c1;
+        }
+
+        .btn-pink {
+            background-color: #d63384;
+        }
+
+        .btn-discount:hover {
+            opacity: 0.9;
+            transform: scale(1.05);
+        }
+
+        .input-group-text {
+            background-color: #e9ecef;
+        }
+
+
         /* Responsive Mobile Styles */
         @media (max-width: 576px) {
 
@@ -247,7 +293,7 @@
             </a>
         </div>
     </nav>
-    
+
 
     <!-- CSRF Token -->
     <input type="hidden" id="csrfToken" value="{{ csrf_token }}">
@@ -316,20 +362,22 @@
                                 class="card-header bg-white d-flex justify-content-between align-items-center border-0">
                                 <div class="row">
                                     <h5 class="mb-0 table-name">{{ order.table.name }} ({{order.completedby}})</h5>
-                                    
+
                                 </div>
                                 <div class="d-flex gap-2">
-                                    <button class="btn btn-danger btn-sm" onclick="deleteOrder({{ order.id }})">
+                                    <button class="btn btn-danger btn-sm"
+                                        onclick="haltRefresher(); deleteOrder({{ order.id }})">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                     {% if not order.completed %}
                                     <button class="btn btn-success btn-sm" data-bs-toggle="modal"
                                         data-bs-target="#completeModal"
-                                        onclick="prepareCompleteModal({{ order.id }}, {{ order.total }})">
+                                        onclick="haltRefresher(); prepareCompleteModal({{ order.id }}, {{ order.total }})">
                                         <i class="fas fa-check"></i>
                                     </button>
                                     {% endif %}
                                 </div>
+
                             </div>
                             <div class="card-body">
                                 <div class="order-items">
@@ -355,7 +403,8 @@
                                 <div class="d-flex justify-content-between align-items-center border-top pt-3">
                                     <span class="text-muted">Total</span>
                                     <h5 class="mb-0 text-success" id="orderTotal{{ order.id }}">
-                                        <span>₹{{order.total}}</span></h5>
+                                        <span>₹{{order.total}}</span>
+                                    </h5>
                                 </div>
                             </div>
                         </div>
@@ -370,43 +419,69 @@
     <div class="modal fade" id="completeModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Complete Order</h5>
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title"><i class="fas fa-check-circle me-2"></i>Complete Order</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="mb-4">
-                        <label class="form-label text-muted">Order Total</label>
-                        <h2 class="text-primary" id="modalTotal">₹0.00</h2>
-                    </div>
-                    <div class="mb-4">
-                        <label class="form-label text-muted">Discount (%)</label>
-                        <div class="input-group">
-                            <input type="number" id="discountInput" class="form-control form-control-lg" min="0"
-                                max="100" value="0">
-                            <span class="input-group-text">%</span>
+                    <!-- Order Summary Section -->
+                    <div class="order-summary mb-4 p-3 bg-light rounded">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="text-muted">Subtotal:</span>
+                            <h4 class="mb-0 text-primary" id="modalTotal">₹0.00</h4>
+                        </div>
+
+                        <!-- Discount Input with Calculate Button -->
+                        <div class="mb-3">
+                            <label class="form-label text-muted">Apply Discount</label>
+                            <div class="input-group">
+                                <input type="number" id="discountInput" class="form-control" min="0" max="100" value="0"
+                                    placeholder="Enter discount percentage">
+                                    <span class="input-group-text bg-success text-white">%</span>
+
+                                <button type="button" class="btn btn-gradient-primary" onclick="calculateFinalAmount()">
+                                    <i class="fas fa-calculator me-2"></i>Calculate
+                                </button>
+                            </div>
+                            <!-- Quick Discount Buttons -->
+                            <div class="mt-2 d-flex gap-2 flex-wrap">
+                                <button class="btn btn-sm btn-discount btn-teal"
+                                    onclick="applyPresetDiscount(10)">10%</button>
+                                <button class="btn btn-sm btn-discount btn-blue"
+                                    onclick="applyPresetDiscount(15)">15%</button>
+                                <button class="btn btn-sm btn-discount btn-purple"
+                                    onclick="applyPresetDiscount(20)">20%</button>
+                                <button class="btn btn-sm btn-discount btn-pink"
+                                    onclick="applyPresetDiscount(30)">30%</button>
+                            </div>
+                        </div>
+
+                        <!-- Final Amount Display -->
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <span class="text-muted">Final Amount:</span>
+                            <h3 class="mb-0 text-success" id="finalAmount">₹0.00</h3>
                         </div>
                     </div>
-                    <div class="mb-4">
-                        <label class="form-label text-muted">Final Amount</label>
-                        <h2 class="text-success" id="finalAmount">₹0.00</h2>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label text-muted">Customer Contact</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="fas fa-phone"></i></span>
-                            <input type="tel" id="modalPhone" class="form-control" pattern="[0-9]{10}"
-                                placeholder="Enter 10-digit phone number">
+
+                    <!-- Customer Contact Section -->
+                    <div class="customer-info">
+                        <h6 class="text-muted mb-3"><i class="fas fa-user-circle me-2"></i>Customer Details</h6>
+                        <div class="mb-3">
+                            <div class="input-group">
+                                <span class="input-group-text bg-primary text-white"><i class="fas fa-phone"></i></span>
+                                <input type="tel" id="modalPhone" class="form-control" pattern="[0-9]{10}"
+                                    placeholder="Enter 10-digit mobile number">
+                            </div>
+                            <small class="text-muted">SMS receipt will be sent to this number</small>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" onclick="calculateFinalAmount()">
-                        <i class="fas fa-calculator me-2"></i>Calculate
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Close
                     </button>
                     <button type="button" class="btn btn-success" onclick="completeOrder()">
-                        <i class="fas fa-check-circle me-2"></i>Complete Order
+                        <i class="fas fa-check-circle me-2"></i>Confirm Payment
                     </button>
                 </div>
             </div>
@@ -419,6 +494,11 @@
     <script>
         let currentOrderId = null;
         let currentOrderTotal = 0;
+
+        function applyPresetDiscount(percentage) {
+            document.getElementById('discountInput').value = percentage;
+            calculateFinalAmount();
+        }
 
         // Prepare the complete order modal with the order's details.
         function prepareCompleteModal(orderId, orderTotal) {
@@ -557,11 +637,30 @@
         }
     </script>
     <script>
-        // Auto-refresh the page every 5 seconds (5000 milliseconds)
+        // Global flag to control the auto-refresh behavior
+        var holdRefresh = false;
+
+        // Auto-refresh the page every 40 seconds if not on hold
         setInterval(function () {
-            window.location.reload();
-        }, 40000);
+            if (!holdRefresh) {
+                window.location.reload();
+            }
+        }, 100000);
+
+        // Function to stop the refresh when an action is taken
+        function haltRefresher() {
+            holdRefresh = true;
+        }
+
+        // Listen for the modal closing event (Bootstrap 5)
+        var completeModal = document.getElementById('completeModal');
+        completeModal.addEventListener('hidden.bs.modal', function () {
+            // Reset the flag to resume auto-refresh
+            holdRefresh = false;
+        });
     </script>
+
+
 </body>
 
 </html>
