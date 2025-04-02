@@ -95,7 +95,10 @@ def owner(request):
     total_income_today = Order.objects.filter(completed=True, created_at__date=today, hotel=request.user.staffof).aggregate(total=Sum('total'))['total'] or 0
     total_income_yesterday = Order.objects.filter(completed=True,created_at__date=yesterday, hotel=request.user.staffof).aggregate(total=Sum('total'))['total'] or 0
     total_orders_today = Order.objects.filter(created_at__date=today, completed=True, hotel=request.user.staffof).count()
-    upi = PaymentDetails.objects.get(hotel=hotel)
+    try:
+        upi = PaymentDetails.objects.get(hotel=hotel)
+    except:
+        upi = []
     return render(request, 'admin.html', {'hotel':hotel, 'tables':tables, 'orders':orders , 'tid':total_income_today, 
                                           'tiy':total_income_yesterday, 'tot':total_orders_today,
                                           'upi':upi})    
@@ -224,7 +227,8 @@ def payment(request):
                 'name': name
             }
         )
-        return redirect('payment')   # Redirect to prevent duplicate submissions
+        # return redirect('payment')
+        return redirect("/payment/?success")   # Redirect to prevent duplicate submissions
 
     # Try to get existing payment details
     try:
