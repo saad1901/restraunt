@@ -79,16 +79,17 @@
   </div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    // Show toast if URL has success parameter
     document.addEventListener('DOMContentLoaded', function() {
-      const urlParams = new URLSearchParams(window.location.search);
-      if(urlParams.has('success')) {
-        const toast = new bootstrap.Toast(document.getElementById('successToast'));
-        toast.show();
-        
-        // Clear the URL parameter after showing toast
-        history.replaceState({}, document.title, window.location.pathname);
-      }
+        const urlParams = new URLSearchParams(window.location.search);
+        const toastElement = document.getElementById('successToast');
+  
+        if (urlParams.has('success') && toastElement) {
+            const toast = new bootstrap.Toast(toastElement);
+            toast.show();
+  
+            // Remove 'success' parameter from URL after showing the toast
+            history.replaceState({}, document.title, window.location.pathname);
+        }
     });
   </script>
 </body>
