@@ -11,12 +11,14 @@ from django.views.decorators.http import require_POST
 from .forms import CategoryForm, MenuItemForm, TableForm
 from .sendmsg import sendbill
 from django.contrib.auth.decorators import login_required
-# from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
+from django.http import HttpResponse
 from django.contrib.auth.hashers import make_password
 from django.db.models import Count
 from django.db.models.functions import ExtractHour
 from django.contrib.auth import get_user_model
-#THis is for waiteRS
+
+#THis is for waiters
 @login_required
 def home(request): 
     hotel = Hotel.objects.get(id=request.user.staffof.id)
@@ -93,7 +95,10 @@ def owner(request):
     total_income_today = Order.objects.filter(completed=True, created_at__date=today, hotel=request.user.staffof).aggregate(total=Sum('total'))['total'] or 0
     total_income_yesterday = Order.objects.filter(completed=True,created_at__date=yesterday, hotel=request.user.staffof).aggregate(total=Sum('total'))['total'] or 0
     total_orders_today = Order.objects.filter(created_at__date=today, completed=True, hotel=request.user.staffof).count()
-    return render(request, 'admin.html', {'hotel':hotel, 'tables':tables, 'orders':orders , 'tid':total_income_today, 'tiy':total_income_yesterday, 'tot':total_orders_today})    
+    upi = PaymentDetails.objects.get(hotel=hotel)
+    return render(request, 'admin.html', {'hotel':hotel, 'tables':tables, 'orders':orders , 'tid':total_income_today, 
+                                          'tiy':total_income_yesterday, 'tot':total_orders_today,
+                                          'upi':upi})    
 
 
 @require_POST
@@ -199,8 +204,6 @@ def settings(request):
     return render(request, 'settings.html', {'categories': categories, 'tables':tables,
                                              'menu_items':menu_items})
 
-from django.core.exceptions import ObjectDoesNotExist
-from django.http import HttpResponse
 def payment(request):
     # Get the hotel associated with the current user
     try:
@@ -221,7 +224,7 @@ def payment(request):
                 'name': name
             }
         )
-        return redirect('payment/?success=true')   # Redirect to prevent duplicate submissions
+        return redirect('payment')   # Redirect to prevent duplicate submissions
 
     # Try to get existing payment details
     try:

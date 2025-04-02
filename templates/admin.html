@@ -516,27 +516,35 @@
     </div>
 
     <script>
-        // Function to show the QR code modal with UPI payment QR code using the final amount
         function showQRCode() {
-            // Get the final amount value and remove non-numeric characters
+            // Get and validate amount
             var finalAmountText = document.getElementById('finalAmount').textContent;
             var amount = finalAmountText.replace(/[^\d.]/g, '');
-
-            // Define your UPI details
-            var upiId = "saadv.1@ybl";           // Replace with your UPI ID
-            var upiName = "MY HOTEL";         // Replace with your merchant name
-
-            // Construct the UPI URL. More parameters can be added as needed.
+            
+            if (!amount || isNaN(amount)) {
+                alert("Invalid amount. Please check the total.");
+                return;
+            }
+            
+            // Format amount to two decimal places
+            amount = parseFloat(amount).toFixed(2);
+            
+            // UPI details (ensure these are set correctly in your backend)
+            var upiId = "{{upi.upiid}}";
+            var upiName = "{{upi.name}}";
+            
+            // Build UPI URL
             var qrData = "upi://pay?pa=" + encodeURIComponent(upiId) +
                 "&pn=" + encodeURIComponent(upiName) +
                 "&am=" + encodeURIComponent(amount) +
-                "&cu=INR";
-
-            // Clear previous QR code (if any)
-            document.getElementById('qrcodeContainer').innerHTML = "";
-
-            // Generate the QR code using QRCode.js
-            new QRCode(document.getElementById('qrcodeContainer'), {
+                "&cu=INR" +
+                "&tn=Payment%20for%20Order"; // Customize transaction note
+            
+            // Generate QR code
+            var qrContainer = document.getElementById('qrcodeContainer');
+            qrContainer.innerHTML = ""; // Clear previous
+            
+            new QRCode(qrContainer, {
                 text: qrData,
                 width: 200,
                 height: 200,
@@ -544,12 +552,17 @@
                 colorLight: "#ffffff",
                 correctLevel: QRCode.CorrectLevel.H
             });
-
-            // Show the QR modal using Bootstrap's modal method
-            var qrModal = new bootstrap.Modal(document.getElementById('qrModal'));
+            
+            // Show modal
+            var modalElement = document.getElementById('qrModal');
+            if (!modalElement) {
+                console.error("QR Modal not found!");
+                return;
+            }
+            var qrModal = new bootstrap.Modal(modalElement);
             qrModal.show();
         }
-    </script>
+        </script>
 
     <script>
         let currentOrderId = null;
