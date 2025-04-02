@@ -13,6 +13,7 @@ urlpatterns = [
     path('home/toggle/<int:hotel_id>', views.toggle_hotel_status, name='toggle_hotel_status'),
     
     path('booking/', views.home, name='waiterhome'),
+    path('payment/', views.payment, name='payment'),
 
     path('login/', owner_login, name='owner_login'),
     path('logout/', logout_user, name='logout'),
