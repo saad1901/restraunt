@@ -199,6 +199,38 @@ def settings(request):
     return render(request, 'settings.html', {'categories': categories, 'tables':tables,
                                              'menu_items':menu_items})
 
+from django.core.exceptions import ObjectDoesNotExist
+from django.http import HttpResponse
+def payment(request):
+    # Get the hotel associated with the current user
+    try:
+        hotel = Hotel.objects.get(id=request.user.staffof.id)
+    except ObjectDoesNotExist:
+        return HttpResponse('ERROR __ Associated hotel not found')
+    
+    # Handle form submission
+    if request.method == "POST":
+        upiid = request.POST.get('upi_id')
+        name = request.POST.get('business_name')
+
+        # Update or create payment details
+        PaymentDetails.objects.update_or_create(
+            hotel=hotel,
+            defaults={
+                'upiid': upiid,
+                'name': name
+            }
+        )
+        return redirect('payment/?success=true')   # Redirect to prevent duplicate submissions
+
+    # Try to get existing payment details
+    try:
+        upi = PaymentDetails.objects.get(hotel=hotel)
+    except ObjectDoesNotExist:
+        upi = None
+
+    return render(request, 'paymentsetting.html', {'upi': upi})
+
 
 # from django.contrib.auth.decorators import login_required
 

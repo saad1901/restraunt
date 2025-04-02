@@ -77,3 +77,8 @@ class OrderItems(models.Model):
     quantity = models.IntegerField(default=1)
 
 
+class PaymentDetails(models.Model):
+    upiid = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, null=True, blank=True)
+    hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE)
+     
