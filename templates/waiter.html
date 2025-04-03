@@ -17,14 +17,18 @@
     <style>
         /* Custom Variables */
         :root {
-            --primary-color: #4a90e2;
-            --primary-dark: #357abd;
-            --secondary-color: #50e3c2;
-            --accent-color: #f5a623;
-            --background-color: #f7f9fb;
+            --primary-color: #3a7bd5;
+            --primary-dark: #2a6ac4;
+            --secondary-color: #00d2ff;
+            --accent-color: #0ea0e9;
             --text-color: #333333;
+            --background-color: #f7f9fb;
             --card-bg: #ffffff;
             --border-color: #e0e0e0;
+            --success: #4CAF50;
+            --success-dark: #3d8b40;
+            --danger: #F44336;
+            --danger-dark: #d32f2f;
         }
 
         /* Global Styles */
@@ -38,8 +42,9 @@
 
         /* Navbar */
         .navbar {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            box-shadow: 0 2px 10px rgba(58, 123, 213, 0.2);
+            padding: 0.8rem 1rem;
         }
 
         .navbar-brand {
@@ -51,37 +56,51 @@
         .refresh-btn {
             border-radius: 50px;
             font-size: 0.9rem;
+            background: var(--primary-color);
+            border: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .refresh-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
         }
 
         /* Table Selector Card */
         .table-card {
             max-width: 500px;
+            margin: 0 auto;
         }
 
         /* Category Header */
         .category-header {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
             color: #fff;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             padding: 0.75rem 1rem;
             width: 100%;
             text-align: left;
             transition: all 0.3s ease;
+            font-weight: 500;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.08);
         }
 
-        .category-header:hover {
+        .category-header:hover, .category-header:focus {
             transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(53, 122, 189, 0.3);
+            box-shadow: 0 4px 15px rgba(58, 123, 213, 0.25);
+            color: white;
         }
 
         /* Item Cards */
         .item-card {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
+            border-radius: 12px;
             padding: 0.75rem 1rem;
             transition: all 0.3s ease;
+            margin-bottom: 0.75rem;
         }
 
         .item-card:hover {
@@ -91,19 +110,36 @@
 
         /* Quantity Buttons */
         .quantity-btn {
-            width: 30px;
-            height: 30px;
+            width: 36px;
+            height: 36px;
             border: none;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: background-color 0.2s ease;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
-        .quantity-btn:hover {
-            background-color: rgba(0, 0, 0, 0.05);
+        .btn-danger {
+            background-color: var(--danger);
+        }
+        
+        .btn-danger:hover {
+            background-color: var(--danger-dark);
+            transform: scale(1.05);
+        }
+        
+        .btn-success {
+            background-color: var(--success);
+        }
+        
+        .btn-success:hover {
+            background-color: var(--success-dark);
+            transform: scale(1.05);
         }
 
         /* Order Summary */
@@ -111,7 +147,7 @@
             position: fixed;
             bottom: 20px;
             right: 20px;
-            width: 300px;
+            width: 320px;
             z-index: 1000;
             transition: all 0.3s ease;
         }
@@ -119,16 +155,16 @@
         .order-summary {
             background: var(--card-bg);
             border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
             overflow: hidden;
         }
 
         .order-header {
-            background: linear-gradient(135deg, var(--secondary-color) 0%, var(--accent-color) 100%);
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
             color: #fff;
-            padding: 12px;
+            padding: 12px 16px;
             cursor: pointer;
-            transition: filter 0.3s ease;
+            transition: all 0.3s ease;
         }
 
         .order-header:hover {
@@ -138,12 +174,12 @@
         .order-body {
             max-height: 300px;
             overflow-y: auto;
-            padding: 12px;
+            padding: 12px 16px;
             background: #f8f9fa;
         }
 
         .order-item {
-            padding: 6px 0;
+            padding: 8px 0;
             border-bottom: 1px solid #eee;
         }
 
@@ -157,30 +193,68 @@
 
         /* Table Selector Options */
         option[data-status="occupied"] {
-            color: #dc3545;
+            color: #F44336;
         }
 
         option[data-status="free"] {
-            color: #28a745;
+            color: #4CAF50;
         }
 
-        option[data-status="occupied"]::after {
-            content: " (Occupied)";
-            font-size: 0.8em;
+        .badge {
+            font-weight: 500;
+            padding: 0.4em 0.7em;
+            border-radius: 6px;
         }
 
-        option[data-status="free"]::after {
-            content: " (Free)";
-            font-size: 0.8em;
+        .badge.bg-success {
+            background-color: var(--success) !important;
+        }
+
+        .form-select {
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .form-select:focus {
+            box-shadow: 0 0 0 3px rgba(58, 123, 213, 0.25);
+            border-color: var(--primary-color);
+        }
+
+        .card {
+            border-radius: 12px;
+            border: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        /* Bottom button */
+        #orderSection .btn-success {
+            border-radius: 12px;
+            font-weight: 500;
+            font-size: 1rem;
+            padding: 0.75rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        #orderSection .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        }
+
+        /* Form label color */
+        .form-label.text-primary {
+            color: var(--primary-color) !important;
         }
 
         /* Mobile Styles */
-        @media (max-width: 576px) {
-
+        @media (max-width: 768px) {
             .container,
             .container-fluid {
-                padding-left: 10px;
-                padding-right: 10px;
+                padding-left: 12px;
+                padding-right: 12px;
             }
 
             #categories,
@@ -191,16 +265,17 @@
             #orderSection {
                 bottom: 10px;
                 right: 10px;
-                width: 90%;
+                left: 10px;
+                width: auto;
             }
 
             .order-summary {
-                border-radius: 10px;
+                border-radius: 15px;
             }
 
             .order-header,
             .order-body {
-                padding: 8px;
+                padding: 10px 14px;
             }
 
             .order-header span.fw-bold {
@@ -208,12 +283,21 @@
             }
 
             .order-body .order-item {
-                font-size: 0.9rem;
+                font-size: 0.95rem;
             }
 
             .quantity-btn {
-                width: 35px;
-                height: 35px;
+                width: 38px;
+                height: 38px;
+            }
+            
+            .item-card {
+                padding: 0.75rem;
+            }
+            
+            .category-header {
+                padding: 0.7rem 1rem;
+                font-size: 1rem;
             }
         }
     </style>

@@ -10,77 +10,107 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
-            --primary-color: #2a3f54;
-            /* Dark blue */
-            --secondary-color: #5b7c8d;
-            /* Soft blue */
-            --accent-color: #8fbc8f;
-            /* Soft green */
-            --success-color: #28a745;
-            /* Bootstrap green */
-            --warning-color: #ffc107;
-            /* Bootstrap yellow */
-            --danger-color: #dc3545;
-            /* Bootstrap red */
+            --primary-color: #3a7bd5; /* Main blue */
+            --secondary-color: #00d2ff; /* Secondary blue */
+            --accent-color: #0ea0e9; /* Accent blue */
+            --dark-text: #2c3e50; /* Dark text */
+            --light-text: #f8f9fa; /* Light text */
+            --background: #f5f7fa; /* Light background */
+            --card-bg: #ffffff; /* Card background */
+            --border-color: #e5e9f0; /* Border color */
+            --success-color: #4CAF50; /* Green */
+            --warning-color: #FFC107; /* Yellow */
+            --danger-color: #F44336; /* Red */
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
+            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
+            --border-radius: 12px;
         }
 
         body {
-            background-color: #f8f9fa;
+            background-color: var(--background);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--dark-text);
+            line-height: 1.6;
         }
 
         /* Navbar */
         .navbar {
-            background: var(--primary-color);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            box-shadow: var(--shadow-sm);
+            padding: 0.8rem 1rem;
+        }
+        
+        .navbar-brand {
+            font-weight: 600;
+            font-size: 1.25rem;
+            color: var(--light-text) !important;
+        }
+        
+        .nav-link {
+            color: var(--light-text) !important;
+            opacity: 0.9;
+            transition: all 0.2s ease;
+        }
+        
+        .nav-link:hover {
+            opacity: 1;
+            transform: translateY(-1px);
         }
 
         /* Dashboard / Stat Cards */
         .dashboard-card,
         .stat-card {
             border: none;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            background: white;
-            padding: 1rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: var(--card-bg);
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
         }
 
         .dashboard-card:hover,
         .stat-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
         }
 
         .stat-card h6 {
             font-size: 0.85rem;
             text-transform: uppercase;
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.35rem;
             color: var(--primary-color);
+            letter-spacing: 0.5px;
+            font-weight: 600;
         }
 
         .stat-card h4 {
-            font-size: 1.5rem;
+            font-size: 1.65rem;
             margin: 0;
-            color: var(--success-color);
+            font-weight: 700;
+            color: var(--dark-text);
         }
 
         /* Order Cards */
         .order-card {
             border-left: 4px solid var(--primary-color);
-            background: white;
-            border-radius: 8px;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-bottom: 1rem;
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
         }
 
         .order-card.completed {
-            border-left-color: var(--accent-color);
-            opacity: 0.85;
+            border-left-color: var(--success-color);
+            opacity: 0.9;
         }
 
         .order-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
         }
 
         .table-name {
@@ -90,9 +120,17 @@
 
         /* Icons */
         .stat-icon {
-            font-size: 2rem;
-            opacity: 0.8;
+            font-size: 2.2rem;
+            opacity: 0.9;
             color: var(--primary-color);
+            background: rgba(58, 123, 213, 0.1);
+            border-radius: 50%;
+            padding: 12px;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         /* Quantity Controls */
@@ -103,50 +141,54 @@
         }
 
         .quantity-btn {
-            width: 40px;
-            height: 40px;
+            width: 42px;
+            height: 42px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.2rem;
-            transition: transform 0.2s ease;
+            transition: all 0.3s ease;
             border: none;
+            box-shadow: var(--shadow-sm);
         }
 
         /* Plus button styling */
         .quantity-btn.plus {
             background: var(--success-color);
-            /* Green */
-            color: #fff;
+            color: white;
         }
 
         .quantity-btn.plus:hover {
-            background: #218838;
-            /* Darker green */
+            background: #3d8b40;
             transform: scale(1.05);
+            box-shadow: var(--shadow-md);
         }
 
         /* Minus button styling */
         .quantity-btn.minus {
             background: var(--danger-color);
-            /* Red */
-            color: #fff;
+            color: white;
         }
 
         .quantity-btn.minus:hover {
-            background: #c82333;
-            /* Darker red */
+            background: #d32f2f;
             transform: scale(1.05);
+            box-shadow: var(--shadow-md);
         }
-
-
 
         /* Modal Header */
         .modal-header {
-            background: var(--primary-color);
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
             color: white;
-            border-radius: 12px 12px 0 0;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+            padding: 1rem 1.5rem;
+        }
+        
+        .modal-content {
+            border-radius: var(--border-radius);
+            border: none;
+            box-shadow: var(--shadow-lg);
         }
 
         /* Finance Toggle Text */
@@ -156,6 +198,13 @@
         }
 
         /* Buttons */
+        .btn {
+            border-radius: 50px;
+            padding: 0.5rem 1.25rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
         .btn-outline-primary {
             border-color: var(--primary-color);
             color: var(--primary-color);
@@ -164,21 +213,56 @@
         .btn-outline-primary:hover {
             background: var(--primary-color);
             color: white;
+            box-shadow: 0 4px 10px rgba(58, 123, 213, 0.25);
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            border: none;
+            box-shadow: 0 4px 10px rgba(58, 123, 213, 0.25);
+        }
+        
+        .btn-primary:hover {
+            background: #2a6ac4;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(58, 123, 213, 0.3);
         }
 
         .btn-success {
             background: var(--success-color);
             border: none;
+            box-shadow: 0 4px 10px rgba(76, 175, 80, 0.25);
+        }
+        
+        .btn-success:hover {
+            background: #3d8b40;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(76, 175, 80, 0.3);
         }
 
         .btn-danger {
             background: var(--danger-color);
             border: none;
+            box-shadow: 0 4px 10px rgba(244, 67, 54, 0.25);
+        }
+        
+        .btn-danger:hover {
+            background: #d32f2f;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(244, 67, 54, 0.3);
         }
 
         .btn-warning {
             background: var(--warning-color);
             border: none;
+            color: #212529;
+            box-shadow: 0 4px 10px rgba(255, 193, 7, 0.25);
+        }
+        
+        .btn-warning:hover {
+            background: #e0a800;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(255, 193, 7, 0.3);
         }
 
         /* Input Group Text */
@@ -186,94 +270,123 @@
             background: var(--primary-color);
             color: white;
             border: none;
+            border-radius: var(--border-radius) 0 0 var(--border-radius);
         }
 
         /* Focus on Form Controls */
-        .form-control:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.2rem rgba(42, 63, 84, 0.25);
-        }
-
-        /* Option Styling for Table Selector */
-        option[data-status="occupied"] {
-            color: var(--danger-color);
-        }
-
-        option[data-status="free"] {
-            color: var(--success-color);
-        }
-
-        option[data-status="occupied"]::after {
-            content: " (Occupied)";
-            font-size: 0.8em;
-        }
-
-        option[data-status="free"]::after {
-            content: " (Free)";
-            font-size: 0.8em;
-        }
-
-        .btn-gradient-primary {
-            background: linear-gradient(45deg, #4b6cb7, #3b5188);
-            color: white;
-            border: none;
+        .form-control, .form-select {
+            border-radius: var(--border-radius);
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
             transition: all 0.3s ease;
         }
-
-        .btn-gradient-primary:hover {
-            background: linear-gradient(45deg, #3b5188, #4b6cb7);
-            transform: translateY(-1px);
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(58, 123, 213, 0.25);
         }
 
-        .btn-discount {
-            border-radius: 20px;
-            padding: 4px 12px;
-            font-weight: 500;
-            color: white;
+        /* Card styling */
+        .card {
+            border-radius: var(--border-radius);
             border: none;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+            overflow: hidden;
         }
-
-        .btn-teal {
-            background-color: #20c997;
+        
+        .card:hover {
+            box-shadow: var(--shadow-md);
         }
-
-        .btn-blue {
-            background-color: #0d6efd;
+        
+        .card-header {
+            background: rgba(58, 123, 213, 0.1);
+            color: var(--primary-color);
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-color);
         }
-
-        .btn-purple {
-            background-color: #6f42c1;
+        
+        /* Badge styling */
+        .badge {
+            padding: 0.5em 0.75em;
+            font-weight: 500;
+            border-radius: 6px;
         }
-
-        .btn-pink {
-            background-color: #d63384;
+        
+        /* Table styling */
+        .table {
+            border-radius: var(--border-radius);
+            overflow: hidden;
         }
-
-        .btn-discount:hover {
-            opacity: 0.9;
-            transform: scale(1.05);
+        
+        .table thead th {
+            background: rgba(58, 123, 213, 0.1);
+            color: var(--primary-color);
+            font-weight: 600;
+            border-bottom: none;
         }
-
-        .input-group-text {
-            background-color: #e9ecef;
-        }
-
-
-        /* Responsive Mobile Styles */
-        @media (max-width: 576px) {
-
-            .container,
-            .container-fluid {
-                padding: 0 10px;
+        
+        /* Mobile responsive adjustments */
+        @media (max-width: 768px) {
+            .container, .container-fluid {
+                padding-left: 15px;
+                padding-right: 15px;
             }
-
+            
+            .dashboard-card, .stat-card {
+                padding: 1rem;
+            }
+            
+            .stat-icon {
+                font-size: 1.8rem;
+                width: 50px;
+                height: 50px;
+            }
+            
             .stat-card h4 {
-                font-size: 1.25rem;
+                font-size: 1.4rem;
             }
-
+            
+            .btn {
+                padding: 0.4rem 1rem;
+            }
+            
+            .order-card {
+                margin-bottom: 0.75rem;
+            }
+            
             .quantity-btn {
-                width: 35px;
-                height: 35px;
+                width: 38px;
+                height: 38px;
+            }
+            
+            /* Stack items on mobile */
+            .d-flex.flex-wrap.justify-content-between {
+                flex-direction: column;
+            }
+            
+            /* Smaller modals on mobile */
+            .modal-dialog {
+                margin: 0.5rem;
+            }
+            
+            .modal-content {
+                border-radius: 12px;
+            }
+        }
+        
+        /* Small refinements */
+        @media (max-width: 576px) {
+            .stat-card {
+                margin-bottom: 1rem;
+            }
+            
+            h1, h2, h3 {
+                font-size: 1.5rem;
+            }
+            
+            .navbar-brand {
+                font-size: 1.1rem;
             }
         }
     </style>
