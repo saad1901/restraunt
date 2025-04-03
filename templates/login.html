@@ -8,22 +8,28 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         body {
-            background: linear-gradient(135deg, #7f7fd5 0%, #86a8e7 50%, #91eae4 100%);
-            min-height: 92vh;
+            background: linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%);
+            min-height: 100vh;
             display: flex;
             align-items: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         .auth-container {
-            max-width: 440px;
-            width: 100%;
+            max-width: 380px;
+            width: 92%;
             margin: 0 auto;
             padding: 2rem;
-            background: rgba(255, 255, 255, 0.88);
-            backdrop-filter: blur(12px);
-            border-radius: 24px;
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: transform 0.3s ease;
+        }
+        
+        .auth-container:hover {
+            transform: translateY(-5px);
         }
 
         .form-control {
@@ -33,11 +39,12 @@
             padding: 1rem 1.5rem;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.03);
             transition: all 0.3s ease;
+            font-size: 1rem;
         }
 
         .form-control:focus {
             background: white;
-            box-shadow: 0 6px 12px rgba(127, 127, 213, 0.15);
+            box-shadow: 0 6px 12px rgba(58, 123, 213, 0.15);
             border-color: transparent;
         }
 
@@ -46,7 +53,7 @@
             left: 1.2rem;
             top: 50%;
             transform: translateY(-50%);
-            color: #7f7fd5;
+            color: #3a7bd5;
             z-index: 4;
         }
 
@@ -56,7 +63,7 @@
         }
 
         .auth-title {
-            font-size: 2rem;
+            font-size: 1.8rem;
             font-weight: 700;
             color: #2d2d2d;
             margin-bottom: 0.5rem;
@@ -65,23 +72,25 @@
         .auth-subtitle {
             color: #6c757d;
             font-weight: 400;
+            font-size: 0.95rem;
         }
 
         .btn-primary {
-            background: #7f7fd5;
+            background: linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%);
             border: none;
             padding: 0.8rem;
             font-size: 1rem;
             border-radius: 12px;
             letter-spacing: 0.5px;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 6px rgba(127, 127, 213, 0.2);
+            box-shadow: 0 4px 6px rgba(58, 123, 213, 0.2);
+            font-weight: 500;
         }
 
         .btn-primary:hover {
-            background: #6c6cbd;
+            background: linear-gradient(135deg, #2a6ac4 0%, #00b8e0 100%);
             transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(127, 127, 213, 0.3);
+            box-shadow: 0 6px 12px rgba(58, 123, 213, 0.3);
         }
 
         .auth-footer {
@@ -90,14 +99,15 @@
         }
 
         .register-link {
-            color: #7f7fd5;
+            color: #3a7bd5;
             font-weight: 500;
             position: relative;
             text-decoration: none;
+            transition: all 0.3s ease;
         }
 
         .register-link:hover {
-            color: #6c6cbd;
+            color: #2a6ac4;
         }
 
         .register-link::after {
@@ -107,7 +117,7 @@
             left: 0;
             width: 0;
             height: 2px;
-            background: #7f7fd5;
+            background: #3a7bd5;
             transition: width 0.3s ease;
         }
 
@@ -136,13 +146,33 @@
         .divider::after {
             margin-left: 1rem;
         }
+        
+        /* Mobile-specific adjustments */
+        @media (max-width: 576px) {
+            .auth-container {
+                width: 88%;
+                padding: 1.5rem;
+            }
+            
+            .auth-title {
+                font-size: 1.6rem;
+            }
+            
+            .form-control {
+                padding: 0.9rem 1.5rem;
+            }
+            
+            .btn-primary {
+                padding: 0.75rem;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="auth-container">
         <div class="auth-header">
             <h1 class="auth-title">Welcome Back</h1>
-            <p class="auth-subtitle">Sign in to manage your account</p>
+            <p class="auth-subtitle">Sign in to manage your restaurant</p>
         </div>
 
         {% if messages %}
@@ -159,13 +189,13 @@
             <div class="form-group position-relative">
                 <i class="fas fa-user input-icon"></i>
                 <input type="text" name="username" class="form-control pl-5" 
-                       placeholder="Username" required>
+                       placeholder="Username" required autocomplete="username">
             </div>
 
             <div class="form-group position-relative">
                 <i class="fas fa-lock input-icon"></i>
                 <input type="password" name="password" class="form-control pl-5" 
-                       placeholder="Password" required>
+                       placeholder="Password" required autocomplete="current-password">
             </div>
 
             <button type="submit" class="btn btn-primary btn-block">
