@@ -64,7 +64,18 @@ def submit_order(request):
             for item_data in items:
                 item = MenuItem.objects.get(id=item_data["item"])
                 quantity = int(item_data["quantity"])
-                OrderItems.objects.create(order=order, item=item, quantity=quantity, hotel=request.user.staffof)
+                
+                # Check if this item already exists in the order
+                existing_item = OrderItems.objects.filter(order=order, item=item).first()
+                
+                if existing_item:
+                    # Update existing item quantity
+                    existing_item.quantity += quantity
+                    existing_item.save()
+                else:
+                    # Create new order item
+                    OrderItems.objects.create(order=order, item=item, quantity=quantity, hotel=request.user.staffof)
+                
                 total_price += item.price * quantity
 
             order.total = total_price
@@ -95,13 +106,16 @@ def owner(request):
     total_income_today = Order.objects.filter(completed=True, created_at__date=today, hotel=request.user.staffof).aggregate(total=Sum('total'))['total'] or 0
     total_income_yesterday = Order.objects.filter(completed=True,created_at__date=yesterday, hotel=request.user.staffof).aggregate(total=Sum('total'))['total'] or 0
     total_orders_today = Order.objects.filter(created_at__date=today, completed=True, hotel=request.user.staffof).count()
+    # Get categories and menu items for the new order modal
+    categories = MenuCategory.objects.filter(hotel=request.user.staffof)
+    items = MenuItem.objects.filter(hotel=request.user.staffof).order_by('category')
     try:
         upi = PaymentDetails.objects.get(hotel=hotel)
     except:
         upi = []
-    return render(request, 'admin.html', {'hotel':hotel, 'tables':tables, 'orders':orders , 'tid':total_income_today, 
+    return render(request, 'admin.html', {'hotel':hotel, 'tables':tables, 'orders':orders, 'tid':total_income_today, 
                                           'tiy':total_income_yesterday, 'tot':total_orders_today,
-                                          'upi':upi})    
+                                          'upi':upi, 'categories':categories, 'items':items})
 
 
 @require_POST
@@ -166,12 +180,35 @@ def delete_order(request):
 def update_quantity(request):
     try:
         data = json.loads(request.body)
+        
+        # Support both methods of identifying the order item
         order_item_id = data.get("order_item_id")
+        order_id = data.get("order_id")
+        menu_id = data.get("menu_id")
         change = int(data.get("change", 0))
-        if not order_item_id or change == 0:  # Corrected here
+        action = data.get("action")
+        
+        # Convert action to change if needed
+        if change == 0 and action:
+            if action == "increase":
+                change = 1
+            elif action == "decrease":
+                change = -1
+        
+        if (not order_item_id and (not order_id or not menu_id)) or change == 0:
             return JsonResponse({"success": False, "message": "Invalid parameters."})
         
-        order_item = OrderItems.objects.get(id=order_item_id)
+        # Find the order item by either direct ID or by order+menu ids
+        if order_item_id:
+            order_item = OrderItems.objects.get(id=order_item_id)
+        else:
+            # Find the order item by order_id and menu_id
+            order = Order.objects.get(id=order_id)
+            order_item = OrderItems.objects.filter(order_id=order_id, item_id=menu_id).first()
+            
+            if not order_item:
+                return JsonResponse({"success": False, "message": "Order item not found for the given order and menu."})
+        
         order = order_item.order
         new_quantity = order_item.quantity + change
         
@@ -195,6 +232,8 @@ def update_quantity(request):
         })
     except OrderItems.DoesNotExist:
         return JsonResponse({"success": False, "message": "Order item not found."})
+    except Order.DoesNotExist:
+        return JsonResponse({"success": False, "message": "Order not found."})
     except Exception as e:
         return JsonResponse({"success": False, "message": str(e)})
 
