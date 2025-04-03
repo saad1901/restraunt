@@ -470,11 +470,11 @@
                 <div class="row g-4">
                     {% for order in orders %}
                     <div class="col-md-6 col-lg-4">
-                        <div class="order-card card h-100 shadow-sm {% if order.completed %}completed{% endif %}">
+                        <div class="order-card card h-100 shadow-sm border {% if order.completed %}completed{% endif %}">
                             <div
                                 class="card-header bg-white d-flex justify-content-between align-items-center border-0">
                                 <div class="row">
-                                    <h5 class="mb-0 table-name">{{ order.table.name }} ({{order.completedby}})</h5>
+                                    <h5 class="mb-0 table-name"><span class="text-danger">{{ order.table.name }}</span> <span class="text-primary" style="font-size: 0.8em">({{order.completedby}})</span></h5>
 
                                 </div>
                                 <div class="d-flex gap-2">
@@ -511,11 +511,14 @@
                                     </div>
                                     {% endfor %}
                                 </div>
+                                <div class="text-end text-muted mt-2">
+                                    {{ order.created_at|time:"g:i A" }}
+                                </div>
                             </div>
                             <div class="card-footer bg-white border-0 pt-0">
                                 <div class="d-flex justify-content-between align-items-center border-top pt-3">
                                     <span class="text-muted">Total</span>
-                                    <h5 class="mb-0 text-success" id="orderTotal{{ order.id }}">
+                                    <h5 class="mb-0 text-success fw-bold" id="orderTotal{{ order.id }}">
                                         <span>₹{{order.total}}</span>
                                     </h5>
                                 </div>
@@ -761,10 +764,20 @@
         // Update the quantity of an order item via AJAX.
         async function updateQuantity(orderItemId, change) {
             try {
+                // Pause auto-refresh while updating
+                holdRefresh = true;
+
                 if (!orderItemId || !change || change === 0) {
                     alert('Invalid input for quantity update.');
                     return;
                 }
+                
+                // Find the quantity element before making the request
+                const quantitySpan = document.querySelector(`.quantity-control span[class="mx-2 fw-medium"]:has(+ button[onclick*="updateQuantity(${orderItemId},"])`);
+                if (!quantitySpan) {
+                    console.error(`Quantity span element not found for item ID: ${orderItemId}`);
+                }
+                
                 const response = await fetch('/update_quantity/', {
                     method: 'POST',
                     headers: {
@@ -773,35 +786,50 @@
                     },
                     body: JSON.stringify({ order_item_id: orderItemId, change: change })
                 });
+                
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
+                
                 const data = await response.json();
                 console.log('Server response:', data);
+                
                 if (!data.success) {
                     alert(data.message);
                     return;
                 }
-                const qtyElem = document.getElementById(`quantity${orderItemId}`);
-                if (qtyElem) {
-                    if (data.new_quantity === 0) {
-                        // Optionally remove the item from UI if needed.
-                        qtyElem.textContent = 0;
-                    } else {
-                        qtyElem.textContent = data.new_quantity;
-                    }
-                } else {
-                    console.error(`Quantity element not found: quantity${orderItemId}`);
+                
+                // Update the quantity display in the UI - direct approach
+                if (quantitySpan) {
+                    quantitySpan.textContent = data.new_quantity;
                 }
+                
+                // Update the order total
                 const orderTotalElem = document.querySelector(`#orderTotal${data.order_id} span`);
                 if (orderTotalElem) {
                     orderTotalElem.textContent = "₹" + data.order_total.toFixed(2);
                 } else {
                     console.error(`Order total element not found: #orderTotal${data.order_id} span`);
                 }
+                
+                // If the item was removed (quantity = 0), we could optionally remove the entire item row
+                if (data.new_quantity === 0 && quantitySpan) {
+                    const itemRow = quantitySpan.closest('.d-flex.justify-content-between.align-items-center.mb-2');
+                    if (itemRow) {
+                        // Optional: Add a fade-out effect
+                        itemRow.style.transition = "opacity 0.5s ease";
+                        itemRow.style.opacity = "0.5";
+                        
+                        // Either remove immediately or after a short delay
+                        // setTimeout(() => itemRow.remove(), 500);
+                    }
+                }
             } catch (error) {
                 console.error('Error:', error);
                 alert('An error occurred while updating quantity.');
+            } finally {
+                // Resume auto-refresh after update is complete
+                setTimeout(() => { holdRefresh = false; }, 2000);
             }
         }
     </script>
