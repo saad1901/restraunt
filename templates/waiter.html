@@ -335,7 +335,7 @@
                     {% for table in tables %}
                     <option value="{{ table.id }}"
                         data-status="{% if table.occupied %}occupied{% else %}free{% endif %}">
-                        {{ table.name }} {% if table.occupied %} ({{user.username}}) {% else %}(FREE){% endif %}
+                        {{ table.name }} {% if table.occupied %} (OCC) {% else %}(FREE){% endif %}
                     </option>
                     {% endfor %}
                 </select>
