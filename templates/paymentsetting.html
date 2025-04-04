@@ -4,68 +4,376 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Payment Settings - Restaurant Manager</title>
+  <title>Payment Settings - {{ request.user.staffof.name }}</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-light: rgba(79, 70, 229, 0.1);
+      --primary-dark: #4338ca;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --info: #0ea5e9;
+      --bg-color: #f8fafc;
+      --text-color: #334155;
+      --card-bg: #ffffff;
+      --border-color: #e2e8f0;
+      --hover-bg: #f1f5f9;
+      --radius: 0.75rem;
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
     body {
-      background-color: #f8f9fa;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-color);
+      font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text-color);
+      line-height: 1.5;
+      font-size: 0.95rem;
     }
-    .card {
-      border-radius: 12px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+
+    .navbar {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      box-shadow: var(--shadow-md);
+      padding: 0.75rem 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
     }
+
+    .navbar-brand {
+      font-weight: 600;
+      font-size: 1.25rem;
+      color: white !important;
+    }
+
+    .btn-back {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      background-color: rgba(255, 255, 255, 0.1);
+      border: none;
+      border-radius: 50px;
+      padding: 0.5rem 1rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .btn-back:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-1px);
+    }
+
+    .page-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 1.5rem 1rem;
+    }
+
+    .page-title {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--text-color);
+      margin-bottom: 1rem;
+    }
+
+    .payment-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transition: box-shadow 0.3s ease;
+    }
+
+    .payment-card:hover {
+      box-shadow: var(--shadow-md);
+    }
+
+    .card-header {
+      background-color: white;
+      border-bottom: 1px solid var(--border-color);
+      padding: 1.25rem;
+    }
+
+    .card-header h5 {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      border-color: var(--primary);
+      border-radius: 50px;
+      padding: 0.5rem 1.25rem;
+      font-weight: 500;
+      box-shadow: 0 1px 3px rgba(79, 70, 229, 0.2);
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+      border-color: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 6px rgba(79, 70, 229, 0.25);
+    }
+
+    .btn-outline-primary {
+      color: var(--primary);
+      border-color: var(--primary);
+      border-radius: 50px;
+      padding: 0.5rem 1.25rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .btn-outline-primary:hover {
+      background-color: var(--primary);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 6px rgba(79, 70, 229, 0.25);
+    }
+
     .form-label {
       font-weight: 500;
-      color: #495057;
+      color: var(--text-color);
+      margin-bottom: 0.5rem;
+      font-size: 0.95rem;
+    }
+
+    .form-text {
+      font-size: 0.8rem;
+    }
+
+    .form-control {
+      border-radius: var(--radius);
+      border: 1px solid var(--border-color);
+      padding: 0.75rem 1rem;
+      font-size: 0.9rem;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s ease;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+    }
+
+    .modal-content {
+      border-radius: var(--radius);
+      border: none;
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+    }
+
+    .modal-header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      padding: 1.25rem;
+      border-bottom: none;
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+    }
+
+    .qr-preview {
+      background-color: var(--primary-light);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .qr-image {
+      width: 200px;
+      height: 200px;
+      background-color: white;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .qr-info {
+      background-color: white;
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      margin-top: 1rem;
+      font-weight: 500;
+      width: 200px;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+      font-size: 0.85rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .qr-placeholder {
+      color: #a1a1aa;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+    }
+
+    .qr-placeholder i {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .preview-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .toast-container {
+      z-index: 1100;
+    }
+
+    .toast {
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-md);
+    }
+
+    /* Footer */
+    .page-footer {
+      text-align: center;
+      padding: 1rem;
+      color: #64748b;
+      font-size: 0.875rem;
+      margin-top: 2rem;
+    }
+
+    /* Mobile adjustments */
+    @media (max-width: 768px) {
+      .page-container {
+        padding: 1rem 0.75rem;
+      }
+      
+      .qr-image {
+        width: 180px;
+        height: 180px;
+      }
+      
+      .qr-info {
+        width: 180px;
+        font-size: 0.8rem;
+      }
     }
   </style>
 </head>
 <body>
-  <nav class="navbar navbar-dark bg-dark mb-4">
+  <nav class="navbar navbar-dark">
     <div class="container-fluid">
-      <span class="navbar-brand">Payment Settings</span>
-      <a href="{% url 'button' %}" class="btn btn-outline-light">
-        <i class="fas fa-arrow-left me-2"></i>Dashboard
+      <span class="navbar-brand">Payments</span>
+      <a href="{% url 'button' %}" class="btn-back">
+        <i class="fas fa-arrow-left me-2"></i>Back to Settings
       </a>
     </div>
   </nav>
   
-  <div class="container-lg">
-    <div class="card mb-4">
-      <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-        <h5 class="mb-0">Payment Configuration</h5>
+  <div class="page-container">
+    <h1 class="page-title">Payment Configuration</h1>
+    
+    <div class="row">
+      <div class="col-12">
+        <div class="payment-card">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">UPI Payment Details</h5>
+            <span class="badge bg-primary-light text-primary">Customer Payments</span>
+          </div>
+          <div class="card-body p-4">
+            <form method="post">
+              {% csrf_token %}
+              <div class="mb-4">
+                <label for="upiId" class="form-label">UPI ID</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="fas fa-at"></i></span>
+                  <input type="text" class="form-control" id="upiId" name="upi_id"
+                         placeholder="your_upi@provider" required
+                         value="{{ upi.upiid|default:'' }}">
+                </div>
+                <div class="form-text">Enter Your UPI ID (e.g., name@okhdfcbank)</div>
+              </div>
+              
+              <div class="mb-4">
+                <label for="businessName" class="form-label">Registered Name</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="fas fa-user"></i></span>
+                  <input type="text" class="form-control" id="businessName" name="business_name"
+                         placeholder="Business or Individual Name" required
+                         value="{{ upi.name|default:'' }}">
+                </div>
+                <div class="form-text">Your Registered Name</div>
+              </div>
+              
+              <div class="d-flex justify-content-between align-items-center">
+                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#qrPreviewModal">
+                  <i class="fas fa-qrcode me-2"></i>QR
+                </button>
+                
+                <button type="submit" class="btn btn-primary px-4">
+                  <i class="fas fa-save me-2"></i>Save Changes
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       </div>
-      <div class="card-body">
-        <form method="post">
-          {% csrf_token %}
-          <div class="row g-3 mb-4">
-            <div class="col-md-6">
-              <label for="upiId" class="form-label">UPI ID</label>
-              <input type="text" class="form-control" id="upiId" name="upi_id"
-                     placeholder="your_upi@bank" required
-                     value="{{ upi.upiid }}">
-              <div class="form-text">Enter your registered UPI ID for payments</div>
+    </div>
+    
+    <div class="page-footer">
+      <p class="mb-0">{{ request.user.staffof.name }} • Version 1.0.0</p>
+    </div>
+  </div>
+  
+  <!-- QR Code Preview Modal -->
+  <div class="modal fade" id="qrPreviewModal" tabindex="-1" aria-labelledby="qrPreviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="qrPreviewModalLabel">QR Code Preview</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-4">
+          <div class="qr-preview">
+            <div class="qr-image" id="qrCodeContainer">
+              <div class="qr-placeholder">
+                <i class="fas fa-qrcode"></i>
+                <p>Enter UPI details to generate QR</p>
+              </div>
             </div>
-            <div class="col-md-6">
-              <label for="businessName" class="form-label">Registered Name</label>
-              <input type="text" class="form-control" id="businessName" name="business_name"
-                     placeholder="Registered Business Name" required
-                     value="{{ upi.name }}">
-              <div class="form-text">Legal name associated with your bank account</div>
-            </div>
+            
+            <div id="qrInfoContainer"></div>
+            
+            <p class="mt-3 mb-0 text-muted small">This QR code will be displayed to customers during checkout</p>
           </div>
-          
-          <div class="d-flex justify-content-end">
-            <button type="submit" class="btn btn-primary px-4">
-              <i class="fas fa-save me-2"></i>Save Changes
-            </button>
-          </div>
-        </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
       </div>
     </div>
   </div>
+  
+  <!-- Success Toast -->
   <div class="toast-container position-fixed bottom-0 end-0 p-3">
     <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
       <div class="toast-header bg-success text-white">
@@ -77,19 +385,86 @@
       </div>
     </div>
   </div>
+  
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const toastElement = document.getElementById('successToast');
+      // Show toast on success parameter
+      const urlParams = new URLSearchParams(window.location.search);
+      const toastElement = document.getElementById('successToast');
   
-        if (urlParams.has('success') && toastElement) {
-            const toast = new bootstrap.Toast(toastElement);
-            toast.show();
+      if (urlParams.has('success') && toastElement) {
+        const toast = new bootstrap.Toast(toastElement);
+        toast.show();
   
-            // Remove 'success' parameter from URL after showing the toast
-            history.replaceState({}, document.title, window.location.pathname);
+        // Remove 'success' parameter from URL after showing the toast
+        history.replaceState({}, document.title, window.location.pathname);
+      }
+      
+      // QR Code Preview Modal Handler
+      const upiIdInput = document.getElementById('upiId');
+      const businessNameInput = document.getElementById('businessName');
+      const qrCodeContainer = document.getElementById('qrCodeContainer');
+      const qrInfoContainer = document.getElementById('qrInfoContainer');
+      const qrPreviewModal = document.getElementById('qrPreviewModal');
+      
+      // Generate QR code when modal is opened
+      qrPreviewModal.addEventListener('show.bs.modal', function() {
+        updateQRCode();
+      });
+      
+      // Function to update QR code
+      function updateQRCode() {
+        const upiId = upiIdInput.value.trim();
+        const businessName = businessNameInput.value.trim();
+        
+        if (upiId && businessName) {
+          // Use QRServer API for QR code generation
+          const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(businessName)}&cu=INR`;
+          
+          // Update QR code display
+          qrCodeContainer.innerHTML = `<img id="qrCode" src="${qrUrl}" alt="QR Code" width="100%">`;
+          
+          // Update UPI info display
+          qrInfoContainer.innerHTML = `
+            <div class="qr-info">
+              <i class="fas fa-info-circle me-1"></i> ${upiId}
+            </div>
+          `;
+        } else {
+          // Show placeholder when fields are empty
+          qrCodeContainer.innerHTML = `
+            <div class="qr-placeholder">
+              <i class="fas fa-qrcode"></i>
+              <p>Enter UPI details to generate QR</p>
+            </div>
+          `;
+          
+          qrInfoContainer.innerHTML = '';
         }
+      }
+      
+      // Update QR when inputs change to keep preview current
+      upiIdInput.addEventListener('input', function() {
+        if (qrPreviewModal.classList.contains('show')) {
+          updateQRCode();
+        }
+      });
+      
+      businessNameInput.addEventListener('input', function() {
+        if (qrPreviewModal.classList.contains('show')) {
+          updateQRCode();
+        }
+      });
+      
+      // Initial QR code for existing data
+      {% if upi.upiid and upi.name %}
+      const initialQrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa={{ upi.upiid|urlencode }}&pn={{ upi.name|urlencode }}&cu=INR`;
+      
+      // Pre-load the QR code image for faster display
+      const preloadImg = new Image();
+      preloadImg.src = initialQrUrl;
+      {% endif %}
     });
   </script>
 </body>

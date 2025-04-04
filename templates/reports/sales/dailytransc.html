@@ -4,57 +4,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daily Orders</title>
+    <title>Daily Orders | {{ request.user.staffof.name }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #4f46e5;
+            --primary-dark: #4338ca;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --info-color: #0ea5e9;
+            --background: #f8fafc;
+            --card-bg: #ffffff;
+            --border-color: #e2e8f0;
+            --secondary-color: #334155;
+            --light-text: #f8fafc;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --border-radius: 0.5rem;
+        }
+
         body {
-            background-color: #f4f7f6;
+            background-color: var(--background);
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Oxygen, Ubuntu, sans-serif;
+            color: var(--secondary-color);
+            line-height: 1.5;
+            font-size: 0.95rem;
         }
 
         .navbar {
-            background-color: #343a40;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: var(--light-text);
+            box-shadow: var(--shadow-md);
+            padding: 0.75rem 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
 
-        .order-card {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        .navbar-brand {
+            font-weight: 600;
+        }
+
+        .stats-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-sm);
             transition: transform 0.2s ease;
-        }
-
-        .order-card:hover {
-            transform: translateY(-2px);
-        }
-
-        .order-table {
-            background: white;
-            border-radius: 8px;
+            border: 1px solid var(--border-color);
             overflow: hidden;
         }
 
+        .stats-card-header {
+            background: rgba(79, 70, 229, 0.1);
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .stats-card-body {
+            padding: 1.25rem;
+        }
+
+        .orders-table {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
         .table thead th {
-            background: #343a40;
-            color: white;
+            background: rgba(79, 70, 229, 0.1);
+            color: var(--primary-color);
+            font-weight: 600;
+            border-bottom: none;
+            padding: 0.65rem 0.75rem;
+            font-size: 0.9rem;
         }
 
-        .modal-content {
-            border-radius: 10px;
+        .table tbody td {
+            padding: 0.65rem 0.75rem;
+            vertical-align: middle;
+            font-size: 0.9rem;
         }
 
-        .modal-header {
-            background: #f8f9fa;
-            border-bottom: 1px solid #dee2e6;
+        .table tr:not(:last-child) {
+            border-bottom: 1px solid var(--border-color);
         }
 
-        .list-group-item {
-            border: none;
-            border-bottom: 1px solid rgba(0, 0, 0, .125);
+        .btn-primary {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
         }
 
-        .badge {
-            font-size: 0.85em;
-            margin-left: 10px;
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            border-color: var(--primary-dark);
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .empty-state {
+            padding: 3rem 1rem;
+            text-align: center;
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            color: #cbd5e1;
+            margin-bottom: 1rem;
+        }
+
+        .no-data-message {
+            font-size: 1.25rem;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .date-filter {
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+        }
+
+        @media (max-width: 768px) {
+            .date-filter {
+                padding: 1rem;
+            }
+            
+            .table thead th, 
+            .table tbody td {
+                padding: 0.75rem 0.5rem;
+            }
+        }
+
+        .grand-total-row {
+            background-color: rgba(79, 70, 229, 0.05);
+            font-weight: bold;
+        }
+
+        .grand-total-value {
+            color: var(--primary-color);
+            font-size: 1.1rem;
         }
     </style>
 </head>
@@ -65,56 +161,71 @@
         <div class="container-fluid">
             <button class="btn btn-link text-white me-2" onclick="history.back()">
                 <i class="fas fa-arrow-left"></i>
-              </button>
-            <span class="navbar-brand text-white">Daily Orders</span>
+            </button>
+            <span class="navbar-brand text-white">Daily Transactions</span>
+            <a href="{% url 'owner' %}" class="btn btn-link text-white">
+                <i class="fas fa-home"></i>
+            </a>
         </div>
     </nav>
 
-    <div class="container mt-4">
-        <!-- Date Selection -->
+    <div class="container py-4">
+        <!-- Date Filter -->
         <div class="row mb-4">
-            <div class="col-md-6">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <form method="GET">
-                            {% csrf_token %}
-                            <label class="form-label"><strong>Select Date</strong></label>
-                            <input type="date" class="form-control" name="date"
-                                value="{{ selected_date|date:'Y-m-d' }}">
-                            <button type="submit" class="btn btn-primary mt-2">Load Orders</button>
-                        </form>
-                    </div>
+            <div class="col-md-6 mx-auto">
+                <div class="date-filter">
+                    <form method="GET" class="row g-3 align-items-end">
+                        <div class="col-md-8">
+                            <label class="form-label fw-medium">Filter by Date</label>
+                            <input type="date" class="form-control" name="date" id="dateInput" 
+                                   value="{{ selected_date|date:'Y-m-d' }}">
+                        </div>
+                        <div class="col-md-4">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-filter me-1"></i>Apply
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
 
         <!-- Orders Table -->
-        <div class="order-table shadow-sm">
+        <div class="orders-table">
             <table class="table table-hover mb-0">
                 <thead>
                     <tr>
-                        <th>Order ID</th>
-                        <th>Total</th>
+                        <th>ID</th>
                         <th>Time</th>
-                        <th>Actions</th>
+                        <th>Table</th>
+                        <th>Total</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody id="ordersBody">
                     {% if orders %}
                     {% for order in orders %}
-                    <tr class="order-card">
+                    <tr>
                         <td>{{ order.id }}</td>
-                        <td style="font-weight: bold;">₹{{ order.total|floatformat:2 }}</td>
                         <td>{{ order.created_at|date:"g:i A" }}</td>
+                        <td>{{ order.table.name }}</td>
+                        <td class="fw-medium">₹{{ order.total|floatformat:2 }}</td>
                         <td>
                             <button class="btn btn-sm btn-outline-primary view-btn" data-order='{
                                             "id": "{{ order.id }}",
-                                            "phone": "{{ order.customer_phone }}",
+                                            "phone": "{{ order.phone_number }}",
+                                            "total": "{{ order.total|floatformat:2 }}",
+                                            "discount": "{{ order.discount|default:0|floatformat:0 }}",
+                                            "created_at": "{{ order.created_at|date:"g:i A" }}",
+                                            "created_date": "{{ order.created_at|date:"d M Y" }}",
+                                            "completed": "{{ order.completed }}",
+                                            "table": "{{ order.table.name }}",
+                                            "completed_by": "{{ order.completedby.username|default:'N/A' }}",
                                             "items": [
-                                                {% for item in order.items.all %}
+                                                {% for item in order.orderitems.all %}
                                                 {
-                                                    "name": "{{ item.product.name }}",
-                                                    "price": {{ item.price }},
+                                                    "name": "{{ item.item.name }}",
+                                                    "price": {{ item.item.price }},
                                                     "quantity": {{ item.quantity }}
                                                 }{% if not forloop.last %},{% endif %}
                                                 {% endfor %}
@@ -125,16 +236,17 @@
                         </td>
                     </tr>
                     {% endfor %}
-                    <tr>
-                        <td style="font-weight: bold;">Total:</td>
-                        <td style="color: rgb(231, 14, 220); font-weight: bold;">₹{{grand_total|floatformat:2 }}</td>
+                    <tr class="grand-total-row">
+                        <td colspan="3" class="text-end">Grand Total:</td>
+                        <td colspan="2" class="grand-total-value">₹{{ grand_total|floatformat:2 }}</td>
                     </tr>
                     {% else %}
                     <tr>
-                        <td colspan="4">
-                            <div class="text-center py-5">
-                                <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
-                                <h4 class="text-muted">No orders found for this date</h4>
+                        <td colspan="5">
+                            <div class="empty-state">
+                                <i class="fas fa-receipt empty-state-icon"></i>
+                                <h5 class="no-data-message">No orders found for this date</h5>
+                                <p class="text-muted">Try selecting a different date or creating new orders</p>
                             </div>
                         </td>
                     </tr>
@@ -143,44 +255,107 @@
             </table>
         </div>
     </div>
-    <!-- Add this modal template at the bottom of the body -->
+    
+    <!-- Order Details Modal -->
     <div class="modal fade" id="orderModal" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="orderModalLabel">Order Details #<span id="modalOrderId"></span></h5>
+                    <h5 class="modal-title" id="orderModalLabel">Order #<span id="modalOrderId"></span></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h6>Items:</h6>
-                            <ul class="list-group mb-3" id="orderItems">
+                <div class="modal-body p-2">
+                    <div class="card mb-3">
+                        <div class="card-header bg-primary text-white py-2">
+                            <h6 class="mb-0 fs-6"><i class="fas fa-info-circle me-2"></i>Order Details</h6>
+                        </div>
+                        <div class="card-body p-0">
+                            <ul class="list-group list-group-flush small">
+                                <li class="list-group-item d-flex justify-content-between py-2">
+                                    <span><i class="far fa-calendar-alt fa-fw me-1"></i>Date:</span>
+                                    <span id="orderDate" class="fw-bold"></span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between py-2">
+                                    <span><i class="far fa-clock fa-fw me-1"></i>Time:</span>
+                                    <span id="orderTime" class="fw-bold"></span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between py-2">
+                                    <span><i class="fas fa-chair fa-fw me-1"></i>Table:</span>
+                                    <span id="orderTable" class="fw-bold"></span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between py-2">
+                                    <span><i class="fas fa-user fa-fw me-1"></i>Attended by:</span>
+                                    <span id="orderCompletedBy" class="fw-bold"></span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between py-2">
+                                    <span><i class="fas fa-phone fa-fw me-1"></i>Phone:</span>
+                                    <span><a id="customerPhone" href="#" class="text-decoration-none fw-bold"></a></span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between py-2">
+                                    <span><i class="fas fa-percent fa-fw me-1"></i>Discount:</span>
+                                    <span id="orderDiscount" class="fw-bold"></span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between py-2">
+                                    <span><i class="fas fa-check-circle fa-fw me-1"></i>Status:</span>
+                                    <span id="orderStatus" class="fw-bold"></span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="card mb-3">
+                        <div class="card-header bg-success text-white py-2">
+                            <h6 class="mb-0 fs-6 d-flex justify-content-between">
+                                <span><i class="fas fa-shopping-cart me-2"></i>Items</span>
+                                <span id="itemCount" class="badge bg-light text-dark rounded-pill"></span>
+                            </h6>
+                        </div>
+                        <div class="card-body p-0">
+                            <ul class="list-group list-group-flush small" id="orderItems">
                                 <!-- Items will be inserted here -->
                             </ul>
                         </div>
-                        <div class="col-md-6">
-                            <h6>Customer Details:</h6>
-                            <div class="card">
-                                <div class="card-body">
-                                    <p class="mb-1"><strong>Phone:</strong>
-                                        <a id="customerPhone" href="#" class="text-decoration-none">{{order.phone_number}}</a>
-                                    </p>
-                                    <!-- Add more customer details if needed -->
+                    </div>
+
+                    <div class="card">
+                        <div class="card-body bg-light py-2">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="fw-bold">Total Amount:</span>
+                                </div>
+                                <div>
+                                    <span id="orderTotal" class="fs-5 fw-bold text-success"></span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <div class="modal-footer p-2">
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // Set today's date by default if no date is selected
+            const dateInput = document.getElementById('dateInput');
+            if (!dateInput.value) {
+                const today = new Date();
+                const year = today.getFullYear();
+                const month = String(today.getMonth() + 1).padStart(2, '0');
+                const day = String(today.getDate()).padStart(2, '0');
+                dateInput.value = `${year}-${month}-${day}`;
+                
+                // Submit the form to load today's orders
+                if (window.location.search === '') {
+                    dateInput.form.submit();
+                }
+            }
+            
+            // Set up order detail modal functionality
             const viewButtons = document.querySelectorAll('.view-btn');
             const modal = new bootstrap.Modal(document.getElementById('orderModal'));
 
@@ -193,21 +368,40 @@
                     document.getElementById('customerPhone').href = `tel:${orderData.phone}`;
                     document.getElementById('customerPhone').textContent = orderData.phone;
 
+                    // Update order details
+                    document.getElementById('orderDate').textContent = orderData.created_date;
+                    document.getElementById('orderTime').textContent = orderData.created_at;
+                    document.getElementById('orderTable').textContent = orderData.table;
+                    document.getElementById('orderCompletedBy').textContent = orderData.completed_by;
+                    document.getElementById('orderDiscount').textContent = `${orderData.discount}%`;
+                    document.getElementById('orderStatus').textContent = orderData.completed === "True" ? 'Completed' : 'In Progress';
+
+                    // Update total
+                    document.getElementById('orderTotal').textContent = `₹${orderData.total}`;
+
                     // Clear previous items
                     const itemsContainer = document.getElementById('orderItems');
                     itemsContainer.innerHTML = '';
 
                     // Add new items
                     orderData.items.forEach(item => {
+                        const itemTotal = (item.price * item.quantity).toFixed(2);
                         const li = document.createElement('li');
-                        li.className = 'list-group-item d-flex justify-content-between align-items-center';
+                        li.className = 'list-group-item py-2';
                         li.innerHTML = `
-                    ${item.name}
-                    <span class="badge bg-primary rounded-pill">Qty: ${item.quantity}</span>
-                    <span class="text-muted">₹${item.price.toFixed(2)}</span>
-                `;
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="text-truncate pe-2" style="max-width: 60%;">
+                                    <span class="fw-medium small">${item.name}</span>
+                                    <div class="text-muted small">₹${item.price.toFixed(2)} × ${item.quantity}</div>
+                                </div>
+                                <span class="text-success fw-bold small">₹${itemTotal}</span>
+                            </div>
+                        `;
                         itemsContainer.appendChild(li);
                     });
+
+                    // Update item count
+                    document.getElementById('itemCount').textContent = `${orderData.items.length} item${orderData.items.length !== 1 ? 's' : ''}`;
 
                     modal.show();
                 });

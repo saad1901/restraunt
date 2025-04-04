@@ -84,13 +84,9 @@ def submit_order(request):
             return JsonResponse({"success": True, "message": "Order placed successfully!"})
 
         except Exception as e:
-            print("Error:", str(e))  # Debugging Log
             return JsonResponse({"success": False, "message": str(e)})
 
     return JsonResponse({"success": False, "message": "Invalid request"}, status=400)
-
-today = timezone.now().date()
-yesterday = today - timedelta(days=1)
 
 @login_required
 def owner(request):
@@ -101,11 +97,34 @@ def owner(request):
         agent_cell = hotel.agent.phone if hotel.agent else "NOAGENT"
         agent_name = hotel.agent.first_name if hotel.agent else "NOAGENT"
         return render(request, 'notallowed.html', {'agent_cell':agent_cell, 'agent_name':agent_name})
+    
+    # Get current date in Indian timezone
+    india_tz = timezone.get_current_timezone()
+    current_date = timezone.now().astimezone(india_tz).date()
+    yesterday_date = current_date - timedelta(days=1)
     tables = Table.objects.filter(hotel=request.user.staffof).order_by('name')
     orders = Order.objects.filter(completed=False, hotel=request.user.staffof)
-    total_income_today = Order.objects.filter(completed=True, created_at__date=today, hotel=request.user.staffof).aggregate(total=Sum('total'))['total'] or 0
-    total_income_yesterday = Order.objects.filter(completed=True,created_at__date=yesterday, hotel=request.user.staffof).aggregate(total=Sum('total'))['total'] or 0
-    total_orders_today = Order.objects.filter(created_at__date=today, completed=True, hotel=request.user.staffof).count()
+    
+    # Use current_date for today's calculations
+    total_income_today = Order.objects.filter(
+        completed=True, 
+        created_at__date=current_date, 
+        hotel=request.user.staffof
+    ).aggregate(total=Sum('total'))['total'] or 0
+    
+    # Use yesterday_date for yesterday's calculations
+    total_income_yesterday = Order.objects.filter(
+        completed=True,
+        created_at__date=yesterday_date, 
+        hotel=request.user.staffof
+    ).aggregate(total=Sum('total'))['total'] or 0
+    
+    total_orders_today = Order.objects.filter(
+        created_at__date=current_date, 
+        completed=True, 
+        hotel=request.user.staffof
+    ).count()
+    
     # Get categories and menu items for the new order modal
     categories = MenuCategory.objects.filter(hotel=request.user.staffof)
     items = MenuItem.objects.filter(hotel=request.user.staffof).order_by('category')
@@ -113,6 +132,8 @@ def owner(request):
         upi = PaymentDetails.objects.get(hotel=hotel)
     except:
         upi = []
+    
+    
     return render(request, 'admin.html', {'hotel':hotel, 'tables':tables, 'orders':orders, 'tid':total_income_today, 
                                           'tiy':total_income_yesterday, 'tot':total_orders_today,
                                           'upi':upi, 'categories':categories, 'items':items})
@@ -246,28 +267,37 @@ def settings(request):
     return render(request, 'settings.html', {'categories': categories, 'tables':tables,
                                              'menu_items':menu_items})
 
+@login_required
 def payment(request):
     # Get the hotel associated with the current user
     try:
         hotel = Hotel.objects.get(id=request.user.staffof.id)
     except ObjectDoesNotExist:
-        return HttpResponse('ERROR __ Associated hotel not found')
+        messages.error(request, "Unable to find your hotel details. Please contact support.")
+        return redirect('button')
     
     # Handle form submission
     if request.method == "POST":
-        upiid = request.POST.get('upi_id')
-        name = request.POST.get('business_name')
-
+        upiid = request.POST.get('upi_id', '').strip()
+        name = request.POST.get('business_name', '').strip()
+        
+        if not upiid:
+            messages.error(request, "UPI ID is required")
+            return render(request, 'paymentsetting.html', {'upi': None})
+            
         # Update or create payment details
-        PaymentDetails.objects.update_or_create(
-            hotel=hotel,
-            defaults={
-                'upiid': upiid,
-                'name': name
-            }
-        )
-        # return redirect('payment')
-        return redirect("/payment/?success")   # Redirect to prevent duplicate submissions
+        try:
+            PaymentDetails.objects.update_or_create(
+                hotel=hotel,
+                defaults={
+                    'upiid': upiid,
+                    'name': name
+                }
+            )
+            return redirect("/payment/?success")   # Redirect to prevent duplicate submissions
+        except Exception as e:
+            messages.error(request, f"An error occurred: {str(e)}")
+            return render(request, 'paymentsetting.html', {'upi': None})
 
     # Try to get existing payment details
     try:
@@ -282,33 +312,40 @@ def payment(request):
 
 # views.py
 
-# @login_required
+@login_required
 def add_category(request):
     hotel = Hotel.objects.get(id=request.user.staffof.id)
     if request.method == 'POST':
-        form = CategoryForm(request.POST)
-        if form.is_valid():
-            category = form.save(commit=False)  # Don't save yet
-            category.hotel = hotel  # Assign hotel before saving
-            category.save()
-            messages.success(request, 'Category added successfully!')
-        else:
-            messages.error(request, 'Error adding category: ' + str(form.errors))
+        name = request.POST.get('category_name')
+        icon = request.POST.get('category_icon')
+        
+        # Create category directly
+        MenuCategory.objects.create(
+            name=name,
+            icon=icon,
+            hotel=hotel
+        )
+        messages.success(request, 'Category added successfully!')
         return redirect('category')
 
 # @login_required
 def edit_category(request):
-    # hotel = Hotel.objects.get(id=request.user.staffof.id)
     if request.method == 'POST':
-        # Make sure MenuCategory matches your actual model name
         category = get_object_or_404(MenuCategory, id=request.POST.get('id'))
-        form = CategoryForm(request.POST, instance=category)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Category updated successfully!')
-        else:
-            messages.error(request, 'Error updating category: ' + str(form.errors))
+        
+        # Get values directly from POST
+        name = request.POST.get('name')
+        icon = request.POST.get('icon')
+        
+        # Update category directly
+        category.name = name
+        category.icon = icon
+        category.save()
+        
+        messages.success(request, 'Category updated successfully!')
         return redirect('category')
+    
+    return redirect('category')
 
 # @login_required
 def delete_category(request, category_id):
@@ -322,28 +359,42 @@ def delete_category(request, category_id):
 def add_menu_item(request):
     hotel = Hotel.objects.get(id=request.user.staffof.id)
     if request.method == 'POST':
-        form = MenuItemForm(request.POST)
-        if form.is_valid():
-            menuitem = form.save(commit=False)  # Don't save yet
-            menuitem.hotel = hotel  # Assign hotel before saving
-            menuitem.save()
-            messages.success(request, 'Menu item added successfully!')
-        else:
-            messages.error(request, 'Error adding menu item: ' + str(form.errors))
+        # Get values directly from POST request
+        name = request.POST.get('item_name')
+        price = request.POST.get('item_price')
+        category_id = request.POST.get('item_category')
+        # Create new menu item directly
+        MenuItem.objects.create(
+            name=name,
+            price=price,
+            category_id=category_id,
+            hotel=hotel
+        )
+        
+        messages.success(request, 'Menu item added successfully!')
         return redirect('item')
-# 
+
 # @login_required
 def edit_menu_item(request):
     # hotel = Hotel.objects.get(id=request.user.staffof.id)
     if request.method == 'POST':
-        menu_item = get_object_or_404(MenuItem, id=request.POST.get('id'))
-        form = MenuItemForm(request.POST, instance=menu_item)
-        if form.is_valid(): 
-            form.save()
-            messages.success(request, 'Menu item updated successfully!')
-        else:
-            messages.error(request, 'Error updating menu item: ' + str(form.errors))
+        menu_item = get_object_or_404(MenuItem, id=request.POST.get('item_id'))
+        
+        # Get values directly from POST request
+        name = request.POST.get('item_name')
+        price = request.POST.get('item_price')
+        category_id = request.POST.get('item_category')
+        
+        # Update the menu item manually
+        menu_item.name = name
+        menu_item.price = price
+        menu_item.category_id = category_id
+        menu_item.save()
+        
+        messages.success(request, 'Menu item updated successfully!')
         return redirect('item')
+    
+    return redirect('item')
 
 # @login_required
 def delete_menu_item(request, item_id):
@@ -365,7 +416,7 @@ def add_table(request):
 
 
 def edit_table(request):
-    print(1)
+
     if request.method == 'POST':
         table = get_object_or_404(Table, id=request.POST.get('table_id'))
         form = TableForm(request.POST, instance=table)
@@ -546,7 +597,6 @@ def add_staff(request):
     hotel = Hotel.objects.get(id=request.user.staffof.id)
     User = get_user_model()
     if request.method == 'POST':
-        print(2)
         username = request.POST.get('username')
         password = request.POST.get('password')
         role = request.POST.get('role')
@@ -580,7 +630,6 @@ def toggle_hotel_status(request, hotel_id):
         return JsonResponse({"success": False, "message": "You are not authorized to perform this action"})
     hotel = get_object_or_404(Hotel, pk=hotel_id)
     if request.method == 'POST':
-        print(hotel_id)
         # Toggle the allowed status
         if hotel.status == 1:
             hotel.status = 0
