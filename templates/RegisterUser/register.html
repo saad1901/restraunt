@@ -4,187 +4,302 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hotel Booking Portal</title>
+    <title>HotelHub - Management Portal</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #6C63FF;
-            --secondary: #FF6584;
-            --tertiary: #00BFA6;
-            --soft-gray: #F8F9FA;
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --secondary: #ef4444;
+            --tertiary: #10b981;
+            --light-bg: #f3f4f6;
+            --white: #ffffff;
+            --dark: #1e293b;
+            --border: #e5e7eb;
         }
 
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%);
             min-height: 100vh;
-            padding: 20px;
-        }
-
-        .soft-card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 25px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 2rem;
-            margin: 1rem 0;
-        }
-
-        .action-btn {
-            padding: 1.2rem;
-            border-radius: 15px;
-            border: none;
-            width: 100%;
-            margin: 10px 0;
-            transition: all 0.3s ease;
-            font-weight: 500;
-            color: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            padding: 20px;
+            color: var(--dark);
+        }
+
+        .welcome-container {
+            width: 100%;
+            max-width: 480px;
+        }
+
+        .brand-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .brand-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 0;
+            background: linear-gradient(to right, var(--primary), var(--primary-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .brand-subtitle {
+            color: #64748b;
+            font-size: 1rem;
+            font-weight: 400;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            border: none;
+            backdrop-filter: blur(5px);
+            overflow: hidden;
+        }
+
+        .card-body {
+            padding: 2rem;
+        }
+
+        .action-btn {
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            border: none;
+            width: 100%;
+            text-align: left;
         }
 
         .action-btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .action-btn i {
+            font-size: 1.25rem;
+            margin-right: 1rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        .action-btn span {
+            font-size: 1rem;
         }
 
         .login-btn {
-            background: var(--primary);
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .login-btn:hover {
+            background-color: var(--primary-dark);
+            color: white;
         }
 
         .hotel-btn {
-            background: var(--secondary);
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        .hotel-btn:hover {
+            background-color: #dc2626;
+            color: white;
         }
 
         .agent-btn {
-            background: var(--tertiary);
+            background-color: var(--tertiary);
+            color: white;
         }
 
-        .icon-container {
-            font-size: 1.5rem;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 10px;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
+        .agent-btn:hover {
+            background-color: #059669;
+            color: white;
+        }
+
+        .divider {
             display: flex;
             align-items: center;
-            justify-content: center;
+            color: #94a3b8;
+            margin: 1.5rem 0;
+            font-size: 0.875rem;
         }
 
-        .logo {
+        .divider::before,
+        .divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background-color: #e2e8f0;
+        }
+
+        .divider::before {
+            margin-right: 1rem;
+        }
+
+        .divider::after {
+            margin-left: 1rem;
+        }
+
+        .footer-text {
             text-align: center;
-            margin-bottom: 2rem;
+            color: #64748b;
+            font-size: 0.875rem;
+            margin-top: 1.5rem;
         }
 
-        .logo img {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        .footer-text a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .footer-text a:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+
+        .modal-content {
+            border-radius: 16px;
+            border: none;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            background-color: var(--primary);
+            color: white;
+            border-bottom: none;
+            padding: 1.25rem 1.5rem;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-body h6 {
+            color: #64748b;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+
+        .modal-body ul li {
+            margin-bottom: 0.5rem;
+            color: #334155;
+        }
+
+        @media (max-width: 576px) {
+            .card-body {
+                padding: 1.5rem;
+            }
+            
+            .brand-title {
+                font-size: 1.8rem;
+            }
+            
+            .action-btn {
+                padding: 0.875rem 1.25rem;
+            }
+            
+            .action-btn i {
+                font-size: 1.125rem;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <div class="logo">
-            <div class="soft-card" style="padding: 10px; display: inline-block">
-                <img src="https://yt3.googleusercontent.com/ytc/AIdro_laah4hH5CScEIfHlCGqTEegPEnmGPR9hdXWXL9NNJVPw=s900-c-k-c0x00ffffff-no-rj"
-                    alt="App Logo">
-            </div>
+    <div class="welcome-container">
+        <div class="brand-header">
+            <h1 class="brand-title">HotelHub</h1>
+            <p class="brand-subtitle">Hotel Management Made Simple</p>
         </div>
 
-        <div class="soft-card">
-            <h3 class="text-center mb-4" style="color: #2D2D2D; font-weight: 600">Welcome to HotelHub</h3>
-
-            <!-- Login Button -->
-            <button class="action-btn login-btn">
-                <div class="icon-container">
+        <div class="card">
+            <div class="card-body">
+                <a href="{% url 'owner_login' %}" class="action-btn login-btn text-decoration-none">
                     <i class="fas fa-sign-in-alt"></i>
-                </div>
-                <a href="{% url 'owner_login' %}" style="text-decoration: none; color: white;">Login to Account</a>
+                    <span>Login to Account</span>
+                </a>
 
-            </button>
+                <div class="divider">OR</div>
 
-            <!-- Divider -->
-            <div class="divider my-4" style="text-align: center; color: #888; font-size: 0.9rem">
-                ─── OR ───
-            </div>
-
-            <!-- Registration Options -->
-            <button class="action-btn hotel-btn">
-                <div class="icon-container">
+                <a href="{% url 'owner_register' %}" class="action-btn hotel-btn text-decoration-none">
                     <i class="fas fa-hotel"></i>
-                </div>
-                <a style="text-decoration: none; color: white;" href="{% url 'owner_register' %}">Register Your
-                    Hotel</a>
-            </button>
+                    <span>Register Your Hotel</span>
+                </a>
 
-            <button class="action-btn agent-btn">
-                <div class="icon-container">
+                <a href="{% url 'addagent' %}" class="action-btn agent-btn text-decoration-none">
                     <i class="fas fa-user-tie"></i>
-                </div>
-                <a style="text-decoration: none; color: white;" href="{% url 'addagent' %}">Register as Agent</a>
-            </button>
+                    <span>Register as Agent</span>
+                </a>
+            </div>
         </div>
 
-        <div class="text-center mt-3" style="color: #666; font-size: 0.9rem">
+        <div class="footer-text">
             <p>By continuing, you agree to our<br>
                 <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Terms of Service</a> and
                 <a href="#" data-bs-toggle="modal" data-bs-target="#privacyModal">Privacy Policy</a>
             </p>
         </div>
+    </div>
 
-        <div class="modal fade" id="termsModal" tabindex="-1">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Terms of Service</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <h6>Last Updated: 25 March 2025</h6>
-                        <p>By using HotelHub, you agree to these terms:</p>
-                        <ul class="list-unstyled">
-                            <li>• You must be at least 18 years old to use our services</li>
-                            <li>• All bookings are subject to availability</li>
-                            <li>• Owners are responsible for maintaining account security</li>
-                            <li>• We reserve the right to refuse service to anyone</li>
-                            <li>• Contact Agent for any Dispute or Help</li>
-                        </ul>
-                        <p>Any disputes will be governed by the laws of India❤️</p>
-                    </div>
+    <!-- Terms Modal -->
+    <div class="modal fade" id="termsModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Terms of Service</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <h6>Last Updated: 25 March 2025</h6>
+                    <p>By using HotelHub, you agree to these terms:</p>
+                    <ul class="list-unstyled">
+                        <li>• You must be at least 18 years old to use our services</li>
+                        <li>• All bookings are subject to availability</li>
+                        <li>• Owners are responsible for maintaining account security</li>
+                        <li>• We reserve the right to refuse service to anyone</li>
+                        <li>• Contact Agent for any Dispute or Help</li>
+                    </ul>
+                    <p>Any disputes will be governed by the laws of India❤️</p>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Privacy Policy Modal -->
-        <div class="modal fade" id="privacyModal" tabindex="-1">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Privacy Policy</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <h6>Data Collection and Use</h6>
-                        <p>We collect information necessary to provide our services:</p>
-                        <ul>
-                            <li>• Personal identification details</li>
-                            <li>• Contact information</li>
-                            <li>• Payment details (processed securely)</li>
-                            <li>• Booking preferences</li>
-                        </ul>
-                        <p>We never sell your data to third parties. We use industry-standard security measures to
-                            protect your information.</p>
-                        <p>You may request data deletion at any time by contacting our support team.</p>
-                    </div>
+    <!-- Privacy Policy Modal -->
+    <div class="modal fade" id="privacyModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Privacy Policy</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <h6>Data Collection and Use</h6>
+                    <p>We collect information necessary to provide our services:</p>
+                    <ul>
+                        <li>• Personal identification details</li>
+                        <li>• Contact information</li>
+                        <li>• Payment details (processed securely)</li>
+                        <li>• Booking preferences</li>
+                    </ul>
+                    <p>We never sell your data to third parties. We use industry-standard security measures to
+                        protect your information.</p>
+                    <p>You may request data deletion at any time by contacting our support team.</p>
                 </div>
             </div>
         </div>
