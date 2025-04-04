@@ -5,69 +5,621 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agent Dashboard</title>
-    <!-- Bootstrap CSS CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --secondary: #64748b;
+            --light: #f1f5f9;
+            --dark: #334155;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --white: #ffffff;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--light);
+            display: flex;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            color: var(--dark);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background-color: var(--white);
+            border-right: 1px solid var(--gray-200);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+        }
+
+        .sidebar-header h1 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0;
+            color: var(--primary);
+        }
+
+        .sidebar-header i {
+            margin-right: 0.75rem;
+            color: var(--primary);
+        }
+
+        .sidebar-links {
+            padding: 1rem 0;
+            flex-grow: 1;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .sidebar-link i {
+            margin-right: 0.75rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-link:hover, .sidebar-link.active {
+            color: var(--primary);
+            background-color: rgba(59, 130, 246, 0.05);
+        }
+
+        .sidebar-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 0;
+            margin-left: 250px;
+            width: calc(100% - 250px);
+            transition: margin-left 0.3s ease, width 0.3s ease;
+            padding-bottom: 60px;
+        }
+
+        .header {
+            background-color: var(--white);
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .stats-container {
+            background-color: var(--white);
+            margin: 1rem;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .stats-card {
+            display: flex;
+            align-items: center;
+            background-color: rgba(59, 130, 246, 0.05);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            border-left: 4px solid var(--primary);
+        }
+
+        .stats-icon {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-right: 1rem;
+        }
+
+        .stats-info {
+            flex: 1;
+        }
+
+        .stats-title {
+            font-size: 0.875rem;
+            color: var(--secondary);
+            margin: 0;
+        }
+
+        .stats-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin: 0;
+        }
+
+        /* Hotel Cards */
+        .hotels-container {
+            padding: 1rem;
+        }
+
+        .hotels-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .hotel-card {
+            background-color: var(--white);
+            border-radius: 0.5rem;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid var(--gray-200);
+        }
+
+        .hotel-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-color: var(--gray-300);
+        }
+
+        .hotel-header {
+            background-color: rgba(59, 130, 246, 0.05);
+            padding: 1rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .hotel-name {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin: 0;
+            color: var(--dark);
+        }
+
+        .hotel-content {
+            padding: 1rem;
+        }
+
+        .hotel-detail {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+            font-size: 0.875rem;
+        }
+
+        .hotel-detail i {
+            color: var(--primary);
+            width: 20px;
+            margin-right: 0.5rem;
+            margin-top: 0.25rem;
+        }
+
+        .hotel-detail a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .hotel-detail a:hover {
+            text-decoration: underline;
+        }
+
+        .hotel-status {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.375rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+
+        .status-active {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .status-inactive {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            background-color: var(--white);
+            border-radius: 0.5rem;
+            margin: 1rem;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            color: var(--gray-300);
+            margin-bottom: 1rem;
+        }
+
+        .empty-state h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-state p {
+            color: var(--secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Action Button */
+        .action-button {
+            position: fixed;
+            right: 1.5rem;
+            bottom: 1.5rem;
+            width: 3.5rem;
+            height: 3.5rem;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.2s;
+            z-index: 1000;
+        }
+
+        .action-button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-4px);
+            box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+        }
+
+        /* Help Button */
+        .help-button {
+            position: fixed;
+            right: 1.5rem;
+            bottom: 6rem;
+            width: 3.5rem;
+            height: 3.5rem;
+            border-radius: 50%;
+            background-color: var(--warning);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.2s;
+            z-index: 1000;
+        }
+
+        .help-button:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+        }
+
+        /* Modal */
+        .modal-header {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+
+        .modal-body i {
+            color: var(--primary);
+            width: 24px;
+            margin-right: 0.5rem;
+            text-align: center;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            background-color: var(--light);
+            border-radius: 0.5rem;
+        }
+
+        .contact-label {
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+        
+        .contact-link {
+            color: var(--primary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .contact-link:hover {
+            text-decoration: underline;
+            color: var(--primary-dark);
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+            
+            .header {
+                position: sticky;
+                top: 0;
+                z-index: 99;
+            }
+            
+            .mobile-menu-toggle {
+                display: block;
+                background: none;
+                border: none;
+                font-size: 1.5rem;
+                color: var(--dark);
+                cursor: pointer;
+            }
+        }
+
+        /* Replace the existing action buttons with a fixed bottom bar */
+        .action-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--white);
+            padding: 0.75rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--gray-200);
+            z-index: 1000;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            border-radius: 50px;
+            padding: 0.5rem 1.25rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .action-btn i {
+            margin-right: 0.5rem;
+        }
+
+        .add-btn {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+
+        .add-btn:hover {
+            background-color: var(--primary-dark);
+            color: var(--white);
+        }
+
+        .help-btn {
+            background-color: #22c55e;
+            color: var(--white);
+            width: 48px;
+            padding: 0.5rem;
+            justify-content: center;
+        }
+
+        .help-btn:hover {
+            background-color: #16a34a;
+            color: var(--white);
+        }
+
+        .help-btn i {
+            margin-right: 0;
+            font-size: 1.25rem;
+        }
+    </style>
 </head>
 
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">Agent Dashboard - {{user.first_name}}</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'logout' %}">Logout</a>
-                    </li>
-                </ul>
-            </div>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-user-tie"></i>
+            <h1>Agent Portal</h1>
         </div>
-    </nav>
-
-
-    <!-- Register New Hotel Button -->
-    <div class="d-flex justify-content-center mt-4">
-        <a href="{% url 'owner_register' %}" class="btn btn-primary">
-            Register New Hotel
-        </a>
-        <a style="margin-left: 10px;" href="#" class="btn btn-success">
-            Total : {{total}}
-        </a>
+        <div class="sidebar-links">
+            <a href="#" class="sidebar-link active">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="{% url 'owner_register' %}" class="sidebar-link">
+                <i class="fas fa-plus-circle"></i>
+                <span>Register Hotel</span>
+            </a>
+            <a href="#" class="sidebar-link">
+                <i class="fas fa-chart-line"></i>
+                <span>Analytics</span>
+            </a>
+            <a href="#" onclick="showHelpModal()" class="sidebar-link">
+                <i class="fas fa-question-circle"></i>
+                <span>Help & Support</span>
+            </a>
+        </div>
+        <div class="sidebar-footer">
+            <a href="{% url 'logout' %}" class="sidebar-link">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </div>
     </div>
 
     <!-- Main Content -->
-    <div class="container mt-4">
-        <div class="row">
-            {% for hotel in hotels %}
-            <div class="col-12 col-md-6 col-lg-4 mb-3">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ hotel.name }}</h5>
-                        <a href="tel:{{ hotel.owner.phone }}" class="text-primary">{{ hotel.owner.phone }}</a>
-                        <p class="card-text">{{ hotel.address }}</p>
-                        {% if hotel.status%}
-                        <p class="card-text text-success">Active</p>
+    <div class="main-content">
+        <div class="header">
+            <button class="mobile-menu-toggle d-lg-none" id="sidebarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <h2 class="page-title">Dashboard</h2>
+            <div class="d-flex align-items-center">
+                <span class="me-3">Welcome, {{user.username}}</span>
+            </div>
+        </div>
+
+        <!-- Hotels -->
+        <div class="hotels-container">
+            {% if hotels %}
+            <div class="hotels-grid">
+                {% for hotel in hotels %}
+                <div class="hotel-card">
+                    <div class="hotel-header">
+                        <h3 class="hotel-name">{{ hotel.name }}</h3>
+                    </div>
+                    <div class="hotel-content">
+                        <div class="hotel-detail">
+                            <i class="fas fa-phone"></i>
+                            <a href="tel:{{ hotel.owner.phone }}">{{ hotel.owner.phone }}</a>
+                        </div>
+                        <div class="hotel-detail">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>{{ hotel.address|default:"No address provided" }}</span>
+                        </div>
+                        {% if hotel.status %}
+                        <div class="hotel-status status-active">
+                            <i class="fas fa-check-circle me-1"></i>
+                            <span>Active</span>
+                        </div>
                         {% else %}
-                        <p class="card-text text-danger">Currently Inactive</p>
+                        <div class="hotel-status status-inactive">
+                            <i class="fas fa-times-circle me-1"></i>
+                            <span>Inactive</span>
+                        </div>
                         {% endif %}
                     </div>
                 </div>
+                {% endfor %}
             </div>
-            {% empty %}
-            <div class="col-12">
-                <p>No hotels registered yet.</p>
+            {% else %}
+            <div class="empty-state">
+                <i class="fas fa-hotel"></i>
+                <h3>No Hotels Yet</h3>
+                <p>You haven't registered any hotels yet. Get started by clicking the button below.</p>
+                <a href="{% url 'owner_register' %}" class="btn btn-primary">
+                    <i class="fas fa-plus-circle me-2"></i>Register Your First Hotel
+                </a>
             </div>
-            {% endfor %}
+            {% endif %}
         </div>
-
-
     </div>
 
-    <!-- Bootstrap JS CDN -->
+    <!-- Replace the floating action buttons with a fixed action bar -->
+    <div class="action-bar">
+        <a href="{% url 'owner_register' %}" class="action-btn add-btn">
+            <i class="fas fa-plus"></i>
+            ADD HOTEL
+        </a>
+        <button onclick="showHelpModal()" class="action-btn help-btn">
+            <i class="fas fa-headset"></i>
+        </button>
+    </div>
+
+    <!-- Help Modal -->
+    <div class="modal fade" id="helpModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Help & Support</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Need assistance? Contact Us</p>
+                    
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <span class="contact-label">Email:</span>
+                        <a href="mailto:business2saad@gmail.com" class="contact-link">business2saad@gmail.com</a>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <i class="fas fa-phone-alt"></i>
+                        <span class="contact-label">Phone:</span>
+                        <a href="tel:+918799878583" class="contact-link">+91 8799878583</a>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <i class="fas fa-clock"></i>
+                        <span class="contact-label">Hours:</span>
+                        <span>Mon-Sat, 9AM - 6PM</span>
+                    </div>
+                    
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <a href="#" class="btn btn-primary">Visit Help Center</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Improved sidebar toggle function
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('sidebar');
+            
+            sidebarToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('show');
+            });
+            
+            // Close sidebar when clicking outside on mobile
+            document.addEventListener('click', function(event) {
+                const isClickInsideSidebar = sidebar.contains(event.target);
+                const isClickOnToggle = sidebarToggle.contains(event.target);
+                
+                if (!isClickInsideSidebar && !isClickOnToggle && sidebar.classList.contains('show')) {
+                    sidebar.classList.remove('show');
+                }
+            });
+        });
+        
+        function showHelpModal() {
+            var helpModal = new bootstrap.Modal(document.getElementById('helpModal'));
+            helpModal.show();
+        }
+    </script>
 </body>
 
 </html>
