@@ -1,114 +1,270 @@
+{% extends 'Admin/base.html' %}
+{% load static %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Agent Registration</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- Bootstrap CSS for mobile-friendly styling -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <style>
-    body {
-      background: #f8f9fa;
+{% block style %}
+<style>
+    .form-section {
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+        margin-bottom: 2rem;
     }
-    .card {
-      border: none;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+    .form-section-header {
+        padding: 1.5rem 2rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     }
-    .card-header {
-      background-color: #28a745;
-      color: #fff;
-      border-bottom: none;
-      border-top-left-radius: 10px;
-      border-top-right-radius: 10px;
-      text-align: center;
-      font-weight: bold;
-      font-size: 1.25rem;
+
+    .form-section-body {
+        padding: 2rem;
     }
-    .btn-success {
-      background-color: #28a745;
-      border: none;
-      transition: background-color 0.3s ease;
+
+    .form-label {
+        font-weight: 500;
+        color: var(--dark);
+        margin-bottom: 0.5rem;
     }
-    .btn-success:hover {
-      background-color: #218838;
+
+    .form-control {
+        border-radius: 6px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        padding: 0.7rem 1rem;
+        font-size: 0.95rem;
     }
-  </style>
-</head>
-<body>
-<div class="container d-flex align-items-center justify-content-center" style="min-height: 100vh;">
-  <div class="card w-100" style="max-width: 400px;">
-    <div class="card-header">
-      Agent Registration
+
+    .form-control:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.25);
+    }
+
+    .input-group-text {
+        background-color: #f8f9fa;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .form-field {
+        margin-bottom: 1.5rem;
+    }
+
+    .password-toggle-btn {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: var(--gray);
+        z-index: 10;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .btn-submit {
+        padding: 0.7rem 2rem;
+        font-weight: 500;
+    }
+
+    .required-field::after {
+        content: " *";
+        color: var(--danger);
+    }
+
+    .help-text {
+        font-size: 0.85rem;
+        color: var(--gray);
+        margin-top: 0.5rem;
+    }
+
+    .text-danger {
+        font-size: 0.85rem;
+        margin-top: 0.25rem;
+        display: block;
+    }
+</style>
+{% endblock %}
+
+{% block myblock %}
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-0 text-gray-800">Add New Agent</h1>
+        <p class="text-muted mb-0">Create a new agent account to help manage restaurants</p>
     </div>
-    <div class="card-body">
-      <form method="post">
-        {% csrf_token %}
-        <div class="form-group">
-          <label for="id_username">Username</label>
-          <input type="text" name="username" class="form-control" id="id_username" placeholder="Enter username" value="{{ form.username.value|default:'' }}">
-          {% if form.username.errors %}
-            <small class="text-danger">{{ form.username.errors }}</small>
-          {% endif %}
-        </div>
-        <div class="form-group">
-          <label for="id_first_name">First Name</label>
-          <input type="text" name="first_name" class="form-control" id="id_first_name" placeholder="Enter first name" value="{{ form.first_name.value|default:'' }}">
-          {% if form.first_name.errors %}
-            <small class="text-danger">{{ form.first_name.errors }}</small>
-          {% endif %}
-        </div>
-        <div class="form-group">
-          <label for="id_last_name">Last Name</label>
-          <input type="text" name="last_name" class="form-control" id="id_last_name" placeholder="Enter last name" value="{{ form.last_name.value|default:'' }}">
-          {% if form.last_name.errors %}
-            <small class="text-danger">{{ form.last_name.errors }}</small>
-          {% endif %}
-        </div>
-        <div class="form-group">
-          <label for="id_email">Email</label>
-          <input type="email" name="email" class="form-control" id="id_email" placeholder="Enter email" value="{{ form.email.value|default:'' }}">
-          {% if form.email.errors %}
-            <small class="text-danger">{{ form.email.errors }}</small>
-          {% endif %}
-        </div>
-        <div class="form-group">
-          <label for="id_phone">Phone</label>
-          <input type="text" name="phone" class="form-control" id="id_phone" placeholder="Enter phone number" value="{{ form.phone.value|default:'' }}">
-          {% if form.phone.errors %}
-            <small class="text-danger">{{ form.phone.errors }}</small>
-          {% endif %}
-        </div>
-        <div class="form-group">
-          <label for="id_city">City</label>
-          <input type="text" name="city" class="form-control" id="id_city" placeholder="Enter city" value="{{ form.city.value|default:'' }}">
-          {% if form.city.errors %}
-            <small class="text-danger">{{ form.city.errors }}</small>
-          {% endif %}
-        </div>
-        <div class="form-group">
-          <label for="id_password">Password</label>
-          <input type="password" name="password" class="form-control" id="id_password" placeholder="Enter password">
-          {% if form.password.errors %}
-            <small class="text-danger">{{ form.password.errors }}</small>
-          {% endif %}
-        </div>
-        <div class="form-group">
-          <label for="id_password2">Confirm Password</label>
-          <input type="password" name="password2" class="form-control" id="id_password2" placeholder="Confirm password">
-          {% if form.password2.errors %}
-            <small class="text-danger">{{ form.password2.errors }}</small>
-          {% endif %}
-        </div>
-        <button type="submit" class="btn btn-success btn-block">Register Agent</button>
-      </form>
-    </div>
-  </div>
+    <a href="{% url 'users' %}" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left me-2"></i>Back to Users
+    </a>
 </div>
-<!-- Bootstrap JS and dependencies -->
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
-</html>
+
+<!-- Agent Registration Form -->
+<div class="form-section">
+    <div class="form-section-header">
+        <h5 class="mb-0"><i class="fas fa-user-plus me-2 text-primary"></i>Agent Information</h5>
+    </div>
+    <div class="form-section-body">
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-field">
+                        <label for="id_username" class="form-label required-field">Username</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                            <input type="text" name="username" class="form-control" id="id_username" placeholder="Enter username" value="{{ form.username.value|default:'' }}" required>
+                        </div>
+                        {% if form.username.errors %}
+                        <small class="text-danger">{{ form.username.errors }}</small>
+                        {% endif %}
+                        <small class="help-text">The agent will use this username to log in</small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-field">
+                        <label for="id_email" class="form-label required-field">Email</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                            <input type="email" name="email" class="form-control" id="id_email" placeholder="Enter email address" value="{{ form.email.value|default:'' }}" required>
+                        </div>
+                        {% if form.email.errors %}
+                        <small class="text-danger">{{ form.email.errors }}</small>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-field">
+                        <label for="id_first_name" class="form-label required-field">First Name</label>
+                        <input type="text" name="first_name" class="form-control" id="id_first_name" placeholder="Enter first name" value="{{ form.first_name.value|default:'' }}" required>
+                        {% if form.first_name.errors %}
+                        <small class="text-danger">{{ form.first_name.errors }}</small>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-field">
+                        <label for="id_last_name" class="form-label required-field">Last Name</label>
+                        <input type="text" name="last_name" class="form-control" id="id_last_name" placeholder="Enter last name" value="{{ form.last_name.value|default:'' }}" required>
+                        {% if form.last_name.errors %}
+                        <small class="text-danger">{{ form.last_name.errors }}</small>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-field">
+                        <label for="id_phone" class="form-label">Phone Number</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                            <input type="text" name="phone" class="form-control" id="id_phone" placeholder="Enter phone number" value="{{ form.phone.value|default:'' }}">
+                        </div>
+                        {% if form.phone.errors %}
+                        <small class="text-danger">{{ form.phone.errors }}</small>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-field">
+                        <label for="id_city" class="form-label">City</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                            <input type="text" name="city" class="form-control" id="id_city" placeholder="Enter city" value="{{ form.city.value|default:'' }}">
+                        </div>
+                        {% if form.city.errors %}
+                        <small class="text-danger">{{ form.city.errors }}</small>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-field">
+                        <label for="id_password" class="form-label required-field">Password</label>
+                        <div class="input-group position-relative">
+                            <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                            <input type="text" name="password" class="form-control" id="id_password" placeholder="Enter password" required>
+                            <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('id_password')">
+                                <i class="fas fa-eye-slash" id="id_password_icon"></i>
+                            </button>
+                        </div>
+                        {% if form.password.errors %}
+                        <small class="text-danger">{{ form.password.errors }}</small>
+                        {% endif %}
+                        <small class="help-text">Password must be at least 8 characters</small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-field">
+                        <label for="id_password2" class="form-label required-field">Confirm Password</label>
+                        <div class="input-group position-relative">
+                            <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                            <input type="text" name="password2" class="form-control" id="id_password2" placeholder="Confirm password" required>
+                            <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('id_password2')">
+                                <i class="fas fa-eye-slash" id="id_password2_icon"></i>
+                            </button>
+                        </div>
+                        {% if form.password2.errors %}
+                        <small class="text-danger">{{ form.password2.errors }}</small>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <a href="{% url 'users' %}" class="btn btn-outline-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary btn-submit">
+                    <i class="fas fa-user-plus me-2"></i>Create Agent Account
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+    function togglePasswordVisibility(inputId) {
+        const passwordInput = document.getElementById(inputId);
+        const icon = document.getElementById(inputId + '_icon');
+        
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            passwordInput.type = 'password';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    }
+
+    // Make sure icons are initialized correctly when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        const passwordFields = document.querySelectorAll('input[name="password"], input[name="password2"]');
+        passwordFields.forEach(field => {
+            if (field) {
+                const iconEl = document.getElementById(field.id + '_icon');
+                if (iconEl) {
+                    if (field.type === 'password') {
+                        iconEl.classList.remove('fa-eye-slash');
+                        iconEl.classList.add('fa-eye');
+                    } else {
+                        iconEl.classList.remove('fa-eye');
+                        iconEl.classList.add('fa-eye-slash');
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}
