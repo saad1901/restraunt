@@ -694,7 +694,7 @@
                 selectedTable.focus();
                 return;
             }
-            
+
             if (items.length === 0) {
                 alert('Please add at least one item to the order.');
                 return;
@@ -721,7 +721,7 @@
                 });
 
                 const data = await response.json();
-                
+
                 if (data.success) {
                     alert('Order submitted successfully!');
                     // Reset UI state using a more efficient approach

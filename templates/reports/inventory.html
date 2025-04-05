@@ -1,1 +1,673 @@
-<h1>Need Subscription</h1>
+<!DOCTYPE html>
+{% load inventory_filters %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            color: #212529;
+        }
+        .navbar {
+            background-color: #343a40;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 0.5rem 1rem;
+        }
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 15px;
+        }
+        .stat-card {
+            transition: all 0.3s;
+            padding: 10px;
+            text-align: center;
+        }
+        .stat-card .card-title {
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+        }
+        .stat-card .card-text {
+            font-size: 1.2rem;
+            margin-bottom: 0;
+        }
+        .stat-card:hover {
+            transform: translateY(-3px);
+        }
+        .badge-status {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+        }
+        .in-stock { background-color: #28a745; }
+        .low-stock { background-color: #ffc107; color: #000; }
+        .out-of-stock { background-color: #dc3545; }
+        .table thead th {
+            background-color: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+            padding: 0.5rem;
+        }
+        .table td {
+            padding: 0.5rem;
+            vertical-align: middle;
+        }
+        .table-hover tbody tr:hover {
+            background-color: rgba(0,123,255,0.1);
+        }
+        .action-buttons .btn {
+            padding: 0.25rem 0.4rem;
+            font-size: 0.75rem;
+            margin: 0 1px;
+        }
+        .form-label {
+            font-size: 0.8rem;
+            margin-bottom: 0.25rem;
+        }
+        .form-control, .form-select {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #80bdff;
+            box-shadow: 0 0 0 0.1rem rgba(0,123,255,0.25);
+        }
+        .filters-section {
+            transition: all 0.3s ease;
+        }
+        .filter-toggle {
+            cursor: pointer;
+            text-decoration: none;
+            color: #0d6efd;
+        }
+        .compact-stats {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+        }
+        .compact-stats .stat-card {
+            flex: 1;
+            margin: 0;
+        }
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            margin-right: 3px;
+        }
+        .btn-group-sm > .btn {
+            margin: 0;
+            border-radius: 0;
+        }
+        .btn-group-sm > .btn:first-child {
+            border-top-left-radius: 0.25rem;
+            border-bottom-left-radius: 0.25rem;
+        }
+        .btn-group-sm > .btn:last-child {
+            border-top-right-radius: 0.25rem;
+            border-bottom-right-radius: 0.25rem;
+        }
+        @media (max-width: 767.98px) {
+            .action-buttons {
+                display: flex;
+                justify-content: center;
+                margin-top: 5px;
+            }
+            .compact-stats {
+                flex-wrap: wrap;
+            }
+            .compact-stats .stat-card {
+                min-width: 45%;
+                margin-bottom: 8px;
+            }
+            .header-buttons {
+                margin-top: 10px;
+                display: flex;
+                justify-content: space-between;
+                width: 100%;
+            }
+            .header-buttons .btn {
+                flex: 1;
+                margin: 0 3px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="btn btn-link text-white me-2 p-0" href="{% url 'reports'%}">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <span class="navbar-brand">Inventory</span>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'inventory_history' %}">
+                        <i class="fas fa-history me-1"></i>History
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container-fluid py-3">
+        <!-- Messages -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show py-2" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Header with stats and buttons -->
+        <div class="card mb-3">
+            <div class="card-body p-3">
+                <div class="row align-items-center">
+                    <!-- Compact Stats Cards -->
+                    <div class="col-md-8">
+                        <div class="compact-stats">
+                            <div class="stat-card bg-primary text-white">
+                                <h6 class="card-title">Total Items</h6>
+                                <h5 class="card-text">{{ total_items }}</h5>
+                            </div>
+                            <div class="stat-card bg-success text-white">
+                                <h6 class="card-title">Inventory Value</h6>
+                                <h5 class="card-text">₹{{ total_inventory_value|floatformat:2 }}</h5>
+                            </div>
+                            <div class="stat-card bg-warning">
+                                <h6 class="card-title">Low Stock</h6>
+                                <h5 class="card-text">{{ low_stock_count }}</h5>
+                            </div>
+                            <div class="stat-card bg-danger text-white">
+                                <h6 class="card-title">Out of Stock</h6>
+                                <h5 class="card-text">{{ out_of_stock_count }}</h5>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Action Buttons -->
+                    <div class="col-md-4 text-end">
+                        <div class="header-buttons">
+                            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addItemModal">
+                                <i class="fas fa-plus me-1"></i>Add Item
+                            </button>
+                            <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#transactionModal">
+                                <i class="fas fa-exchange-alt me-1"></i>Record
+                            </button>
+                            <a class="filter-toggle btn btn-outline-secondary btn-sm" data-bs-toggle="collapse" href="#filtersCollapse" role="button">
+                                <i class="fas fa-filter me-1"></i>Filters
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Collapsible Filters -->
+                <div class="collapse mt-3" id="filtersCollapse">
+                    <form method="GET" class="row g-2">
+                        <div class="col-md-3">
+                            <label for="status" class="form-label">Status</label>
+                            <select name="status" id="status" class="form-select form-select-sm">
+                                <option value="">All Statuses</option>
+                                <option value="in_stock" {% if status_filter == 'in_stock' %}selected{% endif %}>In Stock</option>
+                                <option value="low_stock" {% if status_filter == 'low_stock' %}selected{% endif %}>Low Stock</option>
+                                <option value="out_of_stock" {% if status_filter == 'out_of_stock' %}selected{% endif %}>Out of Stock</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="category" class="form-label">Category</label>
+                            <select name="category" id="category" class="form-select form-select-sm">
+                                <option value="">All Categories</option>
+                                {% for category in categories %}
+                                    <option value="{{ category.id }}" {% if category_filter == category.id|stringformat:"i" %}selected{% endif %}>{{ category.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="sort" class="form-label">Sort By</label>
+                            <select name="sort" id="sort" class="form-select form-select-sm">
+                                <option value="name" {% if sort_by == 'name' %}selected{% endif %}>Name (A-Z)</option>
+                                <option value="quantity_asc" {% if sort_by == 'quantity_asc' %}selected{% endif %}>Qty (Low-High)</option>
+                                <option value="quantity_desc" {% if sort_by == 'quantity_desc' %}selected{% endif %}>Qty (High-Low)</option>
+                                <option value="price_asc" {% if sort_by == 'price_asc' %}selected{% endif %}>₹ (Low-High)</option>
+                                <option value="price_desc" {% if sort_by == 'price_desc' %}selected{% endif %}>₹ (High-Low)</option>
+                                <option value="updated" {% if sort_by == 'updated' %}selected{% endif %}>Recent</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="search" class="form-label">Search</label>
+                            <div class="input-group input-group-sm">
+                                <input type="text" name="search" id="search" class="form-control" placeholder="Search items..." value="{{ search_query }}">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-1 d-flex align-items-end">
+                            <a href="{% url 'inventory' %}" class="btn btn-outline-secondary btn-sm">
+                                <i class="fas fa-undo"></i>
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Inventory Table -->
+        <div class="card">
+            <div class="card-body p-3">
+                {% if inventory_items %}
+                    <div class="table-responsive">
+                        <table class="table table-hover table-sm">
+                            <thead>
+                                <tr>
+                                    <th style="width: 25%">Item</th>
+                                    <th style="width: 12%">Category</th>
+                                    <th style="width: 15%">Quantity</th>
+                                    <th style="width: 12%">Unit Price</th>
+                                    <th style="width: 15%">Value</th>
+                                    <th style="width: 10%">Status</th>
+                                    <th style="width: 11%">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in inventory_items %}
+                                    <tr>
+                                        <td>
+                                            <strong>{{ item.name }}</strong>
+                                            {% if item.description %}
+                                                <span class="d-block small text-muted text-truncate" style="max-width: 200px;" title="{{ item.description }}">{{ item.description|truncatechars:40 }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="small">{{ item.category.name|default:"-" }}</td>
+                                        <td>{{ item.quantity }} {{ item.get_unit_display }}</td>
+                                        <td>₹{{ item.unit_price|floatformat:2 }}</td>
+                                        <td>₹{{ item.quantity|floatformat:2|multiply:item.unit_price }}</td>
+                                        <td>
+                                            {% if item.status == 'in_stock' %}
+                                                <span class="badge badge-status in-stock">In Stock</span>
+                                            {% elif item.status == 'low_stock' %}
+                                                <span class="badge badge-status low-stock">Low Stock</span>
+                                            {% else %}
+                                                <span class="badge badge-status out-of-stock">Out</span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="action-buttons">
+                                            <div class="btn-group btn-group-sm">
+                                                <button type="button" class="btn btn-outline-info edit-item" 
+                                                        data-id="{{ item.id }}"
+                                                        data-name="{{ item.name }}"
+                                                        data-description="{{ item.description }}"
+                                                        data-quantity="{{ item.quantity }}"
+                                                        data-unit="{{ item.unit }}"
+                                                        data-unit-price="{{ item.unit_price }}"
+                                                        data-reorder-level="{{ item.reorder_level }}"
+                                                        data-category="{{ item.category.id|default:'' }}"
+                                                        data-bs-toggle="modal" data-bs-target="#editItemModal"
+                                                        title="Edit">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-outline-primary transaction-item"
+                                                        data-id="{{ item.id }}"
+                                                        data-name="{{ item.name }}"
+                                                        data-unit="{{ item.get_unit_display }}"
+                                                        data-bs-toggle="modal" data-bs-target="#transactionModal"
+                                                        title="Transaction">
+                                                    <i class="fas fa-exchange-alt"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-outline-danger delete-item"
+                                                        data-id="{{ item.id }}"
+                                                        data-name="{{ item.name }}"
+                                                        data-bs-toggle="modal" data-bs-target="#deleteItemModal"
+                                                        title="Delete">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-3">
+                        <i class="fas fa-box-open fa-3x mb-2 text-muted"></i>
+                        <h5>No inventory items found</h5>
+                        <p class="text-muted small">Add your first inventory item to get started!</p>
+                        <button type="button" class="btn btn-primary btn-sm mt-2" data-bs-toggle="modal" data-bs-target="#addItemModal">
+                            <i class="fas fa-plus me-1"></i>Add Item
+                        </button>
+                    </div>
+                {% endif %}
+
+                <!-- Pagination -->
+                {% if is_paginated %}
+                <nav aria-label="Page navigation" class="mt-3">
+                    <ul class="pagination pagination-sm justify-content-center">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1{% if status_filter %}&status={{ status_filter }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}" aria-label="First">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" aria-label="First">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                        {% endif %}
+
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                                <li class="page-item active"><a class="page-link" href="#">{{ num }}</a></li>
+                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ num }}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}">{{ num }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Item Modal -->
+    <div class="modal fade" id="addItemModal" tabindex="-1" aria-labelledby="addItemModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header py-2">
+                    <h5 class="modal-title" id="addItemModalLabel">Add New Item</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="post" action="{% url 'add_inventory_item' %}">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="name" class="form-label">Item Name</label>
+                                <input type="text" class="form-control form-control-sm" id="name" name="name" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="category" class="form-label">Category</label>
+                                <select class="form-select form-select-sm" id="category" name="category">
+                                    <option value="">-- No Category --</option>
+                                    {% for category in categories %}
+                                        <option value="{{ category.id }}">{{ category.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="quantity" class="form-label">Quantity</label>
+                                <input type="number" class="form-control form-control-sm" id="quantity" name="quantity" min="0" step="0.01" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="unit" class="form-label">Unit</label>
+                                <select class="form-select form-select-sm" id="unit" name="unit" required>
+                                    <option value="kg">Kilograms (kg)</option>
+                                    <option value="g">Grams (g)</option>
+                                    <option value="l">Liters (l)</option>
+                                    <option value="ml">Milliliters (ml)</option>
+                                    <option value="pcs" selected>Pieces (pcs)</option>
+                                    <option value="pkg">Packages (pkg)</option>
+                                    <option value="box">Boxes (box)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="unit_price" class="form-label">Unit Price (₹)</label>
+                                <input type="number" class="form-control form-control-sm" id="unit_price" name="unit_price" min="0" step="0.01" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="reorder_level" class="form-label">Reorder Level</label>
+                                <input type="number" class="form-control form-control-sm" id="reorder_level" name="reorder_level" min="0" step="0.01" value="10">
+                                <div class="form-text small">The quantity at which the item should be restocked.</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="description" class="form-label">Description</label>
+                                <textarea class="form-control form-control-sm" id="description" name="description" rows="2"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer py-2">
+                        <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-sm btn-primary">Add Item</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Item Modal -->
+    <div class="modal fade" id="editItemModal" tabindex="-1" aria-labelledby="editItemModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header py-2">
+                    <h5 class="modal-title" id="editItemModalLabel">Edit Item</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="post" action="{% url 'edit_inventory_item' %}">
+                    {% csrf_token %}
+                    <input type="hidden" id="edit_item_id" name="item_id">
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="edit_name" class="form-label">Item Name</label>
+                                <input type="text" class="form-control form-control-sm" id="edit_name" name="name" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="edit_category" class="form-label">Category</label>
+                                <select class="form-select form-select-sm" id="edit_category" name="category">
+                                    <option value="">-- No Category --</option>
+                                    {% for category in categories %}
+                                        <option value="{{ category.id }}">{{ category.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="edit_quantity" class="form-label">Quantity</label>
+                                <input type="number" class="form-control form-control-sm" id="edit_quantity" name="quantity" min="0" step="0.01" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="edit_unit" class="form-label">Unit</label>
+                                <select class="form-select form-select-sm" id="edit_unit" name="unit" required>
+                                    <option value="kg">Kilograms (kg)</option>
+                                    <option value="g">Grams (g)</option>
+                                    <option value="l">Liters (l)</option>
+                                    <option value="ml">Milliliters (ml)</option>
+                                    <option value="pcs">Pieces (pcs)</option>
+                                    <option value="pkg">Packages (pkg)</option>
+                                    <option value="box">Boxes (box)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="edit_unit_price" class="form-label">Unit Price (₹)</label>
+                                <input type="number" class="form-control form-control-sm" id="edit_unit_price" name="unit_price" min="0" step="0.01" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="edit_reorder_level" class="form-label">Reorder Level</label>
+                                <input type="number" class="form-control form-control-sm" id="edit_reorder_level" name="reorder_level" min="0" step="0.01">
+                                <div class="form-text small">The quantity at which the item should be restocked.</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="edit_description" class="form-label">Description</label>
+                                <textarea class="form-control form-control-sm" id="edit_description" name="description" rows="2"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer py-2">
+                        <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-sm btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transaction Modal -->
+    <div class="modal fade" id="transactionModal" tabindex="-1" aria-labelledby="transactionModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header py-2">
+                    <h5 class="modal-title" id="transactionModalLabel">Record Transaction</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="post" action="{% url 'inventory_transaction' %}">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label for="transaction_item" class="form-label">Select Item</label>
+                                <select class="form-select form-select-sm" id="transaction_item" name="item_id" required>
+                                    <option value="">-- Select Item --</option>
+                                    {% for item in inventory_items %}
+                                        <option value="{{ item.id }}">{{ item.name }} ({{ item.quantity }} {{ item.get_unit_display }})</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label for="transaction_type" class="form-label">Transaction Type</label>
+                                <select class="form-select form-select-sm" id="transaction_type" name="transaction_type" required>
+                                    <option value="purchase">Purchase (Add to Inventory)</option>
+                                    <option value="usage">Usage (Remove from Inventory)</option>
+                                    <option value="adjustment">Adjustment</option>
+                                </select>
+                            </div>
+                            <div class="col-12 adjustment-type" style="display: none;">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="adjustment_type" id="adjustment_add" value="add" checked>
+                                    <label class="form-check-label small" for="adjustment_add">Add to Inventory</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="adjustment_type" id="adjustment_subtract" value="subtract">
+                                    <label class="form-check-label small" for="adjustment_subtract">Subtract from Inventory</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="transaction_quantity" class="form-label">Quantity</label>
+                                <input type="number" class="form-control form-control-sm" id="transaction_quantity" name="quantity" min="0.01" step="0.01" required>
+                            </div>
+                            <div class="col-md-6 purchase-only">
+                                <label for="transaction_price" class="form-label">Unit Price (₹)</label>
+                                <input type="number" class="form-control form-control-sm" id="transaction_price" name="unit_price" min="0" step="0.01">
+                                <div class="form-text small">Leave empty to keep current price.</div>
+                            </div>
+                            <div class="col-12">
+                                <label for="transaction_notes" class="form-label">Notes</label>
+                                <textarea class="form-control form-control-sm" id="transaction_notes" name="notes" rows="2"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer py-2">
+                        <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-sm btn-primary">Record Transaction</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Item Modal -->
+    <div class="modal fade" id="deleteItemModal" tabindex="-1" aria-labelledby="deleteItemModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header py-2">
+                    <h5 class="modal-title" id="deleteItemModalLabel">Delete Item</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body py-3">
+                    <p>Are you sure you want to delete <strong id="delete_item_name"></strong>?</p>
+                    <p class="text-danger small">This action cannot be undone.</p>
+                </div>
+                <div class="modal-footer py-2">
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <form method="post" id="delete_item_form">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Edit item functionality
+            document.querySelectorAll('.edit-item').forEach(function(button) {
+                button.addEventListener('click', function() {
+                    document.getElementById('edit_item_id').value = this.getAttribute('data-id');
+                    document.getElementById('edit_name').value = this.getAttribute('data-name');
+                    document.getElementById('edit_description').value = this.getAttribute('data-description');
+                    document.getElementById('edit_quantity').value = this.getAttribute('data-quantity');
+                    document.getElementById('edit_unit').value = this.getAttribute('data-unit');
+                    document.getElementById('edit_unit_price').value = this.getAttribute('data-unit-price');
+                    document.getElementById('edit_reorder_level').value = this.getAttribute('data-reorder-level');
+                    
+                    const categoryId = this.getAttribute('data-category');
+                    document.getElementById('edit_category').value = categoryId;
+                });
+            });
+
+            // Delete item functionality
+            document.querySelectorAll('.delete-item').forEach(function(button) {
+                button.addEventListener('click', function() {
+                    const itemId = this.getAttribute('data-id');
+                    const itemName = this.getAttribute('data-name');
+                    
+                    document.getElementById('delete_item_name').textContent = itemName;
+                    document.getElementById('delete_item_form').action = `/owner/settings/reports/inventory/delete/${itemId}/`;
+                });
+            });
+
+            // Transaction item functionality
+            document.querySelectorAll('.transaction-item').forEach(function(button) {
+                button.addEventListener('click', function() {
+                    const itemId = this.getAttribute('data-id');
+                    document.getElementById('transaction_item').value = itemId;
+                });
+            });
+
+            // Show/hide appropriate fields based on transaction type
+            document.getElementById('transaction_type').addEventListener('change', function() {
+                const purchaseOnly = document.querySelector('.purchase-only');
+                const adjustmentType = document.querySelector('.adjustment-type');
+                
+                if (this.value === 'purchase') {
+                    purchaseOnly.style.display = 'block';
+                    adjustmentType.style.display = 'none';
+                } else if (this.value === 'adjustment') {
+                    purchaseOnly.style.display = 'none';
+                    adjustmentType.style.display = 'block';
+                } else {
+                    purchaseOnly.style.display = 'none';
+                    adjustmentType.style.display = 'none';
+                }
+            });
+
+            // Initialize transaction form display
+            const transactionType = document.getElementById('transaction_type');
+            if (transactionType) {
+                transactionType.dispatchEvent(new Event('change'));
+            }
+        });
+    </script>
+</body>
+</html>

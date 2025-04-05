@@ -49,6 +49,12 @@ urlpatterns = [
     
     path('owner/settings/reports/revenue', views.revenue, name='revenue'),
     path('owner/settings/reports/inventory', views.inventory, name='inventory'),
+    path('owner/settings/reports/inventory/add', views.add_inventory_item, name='add_inventory_item'),
+    path('owner/settings/reports/inventory/edit', views.edit_inventory_item, name='edit_inventory_item'),
+    path('owner/settings/reports/inventory/delete/<int:item_id>/', views.delete_inventory_item, name='delete_inventory_item'),
+    path('owner/settings/reports/inventory/transaction', views.inventory_transaction, name='inventory_transaction'),
+    path('owner/settings/reports/inventory/history', views.inventory_history, name='inventory_history'),
+    
     path('owner/settings/reports/timeanalysis', views.timeanalysis, name='timeanalysis'),
 
     path('settings/categories/', views.category, name='category'),
