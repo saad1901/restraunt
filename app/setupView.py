@@ -7,11 +7,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib import messages
 User = get_user_model()
 
-
 def owner_register(request):
-    # if request.user.role not in ['superadmin', 'agent']:
-    #     return redirect('owner_login')
-    
     if request.method == 'POST':
         form = OwnerRegistrationForm(request.POST)
         if form.is_valid():
@@ -22,10 +18,9 @@ def owner_register(request):
         form = OwnerRegistrationForm()
     return render(request, 'registration/owner_register.html', {'form': form})
 
+
 def hotel_register(request):
-    # if request.user.role not in ['superadmin', 'agent']:
-    #     return redirect('owner_login')
-    # Ensure we have the owner_id stored in the session.
+
     owner_id = request.session.get('owner_id')
     if not owner_id:
         return redirect('owner_register')
@@ -43,12 +38,8 @@ def hotel_register(request):
             user.save()
             # Clear the session key after use.
             del request.session['owner_id']
-            # Redirect to login page or a success page.
-
-            print(1)
 
             if not request.user.is_authenticated:
-                print(2.2)
                 print(owner.username)
                 print(owner.password)
                 user = authenticate(request, username=owner.username, password=owner.hint)
@@ -56,7 +47,6 @@ def hotel_register(request):
                     login(request, user)
                     return redirect('owner')
                 else:
-                    print(2.3)
                     messages.error(request, "Authentication failed. Please check your credentials.")
                     return redirect('owner_register')
             print(3)

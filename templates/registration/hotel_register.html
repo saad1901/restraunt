@@ -4,82 +4,243 @@
   <meta charset="UTF-8">
   <title>Hotel Registration</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- Bootstrap CSS for mobile-friendly styling -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
     body {
-      background: #f8f9fa;
+      background-color: #f8f9fa;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
+    
     .card {
       border: none;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 12px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+      margin-top: 2rem;
+      margin-bottom: 2rem;
     }
+    
     .card-header {
-      background-color: #28a745;
-      color: #fff;
+      background: #38b2ac;
+      color: white;
       border-bottom: none;
-      border-top-left-radius: 10px;
-      border-top-right-radius: 10px;
-      text-align: center;
+      padding: 1rem;
+      border-radius: 12px 12px 0 0;
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+    
+    .card-body {
+      padding: 1.5rem;
+    }
+    
+    .step-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 25px;
+      height: 25px;
+      background-color: white;
+      color: #38b2ac;
+      border-radius: 50%;
+      margin-right: 8px;
+      font-size: 0.8rem;
       font-weight: bold;
-      font-size: 1.25rem;
     }
+    
+    .form-control, .form-select {
+      padding: 0.6rem 0.75rem;
+      border: 1px solid #dee2e6;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+    
+    .form-control:focus, .form-select:focus {
+      border-color: #38b2ac;
+      box-shadow: 0 0 0 0.2rem rgba(56, 178, 172, 0.15);
+    }
+    
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    
+    label {
+      font-size: 0.9rem;
+      font-weight: 500;
+      margin-bottom: 0.4rem;
+      color: #495057;
+    }
+    
     .btn-primary {
-      background-color: #28a745;
-      border: none;
-      transition: background-color 0.3s ease;
+      background-color: #38b2ac;
+      border-color: #38b2ac;
+      padding: 0.6rem 1.25rem;
+      font-size: 0.95rem;
+      border-radius: 6px;
+      font-weight: 500;
+      transition: all 0.15s ease-in-out;
     }
+    
     .btn-primary:hover {
-      background-color: #1e7e34;
+      background-color: #2c9d96;
+      border-color: #2c9d96;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 5px rgba(56, 178, 172, 0.2);
+    }
+    
+    .btn-outline-secondary {
+      color: #6c757d;
+      border-color: #dee2e6;
+      background-color: #fff;
+      transition: all 0.15s ease-in-out;
+    }
+    
+    .btn-outline-secondary:hover {
+      background-color: #f8f9fa;
+      border-color: #c1c9d0;
+      transform: translateY(-1px);
+    }
+    
+    .input-group {
+      position: relative;
+    }
+    
+    .input-icon {
+      position: absolute;
+      left: 10px;
+      top: 11px;
+      color: #6c757d;
+      z-index: 10;
+    }
+    
+    .input-with-icon {
+      padding-left: 35px;
+    }
+    
+    .text-danger {
+      font-size: 0.8rem;
+      margin-top: 0.25rem;
+    }
+    
+    .step-progress {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+    }
+    
+    .step-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin: 0 4px;
+      background-color: #dee2e6;
+    }
+    
+    .step-dot.active {
+      background-color: #38b2ac;
+      width: 12px;
+      height: 12px;
+    }
+    
+    .step-dot.completed {
+      background-color: #38b2ac;
+    }
+    
+    .step-line {
+      height: 2px;
+      width: 30px;
+      background-color: #dee2e6;
+      margin: 0 2px;
+    }
+    
+    .step-line.completed {
+      background-color: #38b2ac;
+    }
+    
+    @media (max-width: 576px) {
+      .card {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+      }
+      
+      .card-body {
+        padding: 1.25rem;
+      }
     }
   </style>
 </head>
 <body>
-<div class="container d-flex align-items-center justify-content-center" style="min-height: 100vh;">
-  <div class="card w-100" style="max-width: 400px;">
-    <div class="card-header">
-      2 Hotel Registration Form
-    </div>
-    <div class="card-body">
-      <form method="post">
-        {% csrf_token %}
-
-        <!-- Hotel Name Field -->
-        <div class="form-group">
-          <label for="id_name">Hotel Name</label>
-          {{ form.name }}
-          {% if form.name.errors %}
-            <small class="text-danger">{{ form.name.errors }}</small>
-          {% endif %}
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8 col-sm-12">
+      <div class="card">
+        <div class="card-header d-flex align-items-center">
+          <span class="step-badge">2</span> Hotel Registration
         </div>
+        <div class="card-body">
+          <div class="step-progress">
+            <div class="step-dot completed"></div>
+            <div class="step-line completed"></div>
+            <div class="step-dot active"></div>
+          </div>
+          
+          <form method="post">
+            {% csrf_token %}
 
-        <!-- Agent Field -->
-        <div class="form-group">
-          <label for="id_agent">Agent</label>
-          {{ form.agent }}
-          {% if form.agent.errors %}
-            <small class="text-danger">{{ form.agent.errors }}</small>
-          {% endif %}
+            <div class="form-group">
+              <label for="id_name">Hotel Name</label>
+              <div class="input-group">
+                <span class="input-icon"><i class="fas fa-hotel fa-sm"></i></span>
+                <input type="text" class="form-control input-with-icon" id="id_name" name="name" placeholder="Enter hotel name" {% if form.name.value %}value="{{ form.name.value }}"{% endif %}>
+              </div>
+              {% if form.name.errors %}
+                <small class="text-danger">{{ form.name.errors }}</small>
+              {% endif %}
+            </div>
+
+            <div class="form-group">
+              <label for="id_agent">Select Agent</label>
+              <div class="input-group">
+                <span class="input-icon"><i class="fas fa-user-tie fa-sm"></i></span>
+                <select class="form-select input-with-icon" id="id_agent" name="agent">
+                  <option value="" selected disabled>Select an agent</option>
+                  {% for choice in form.agent.field.choices %}
+                    <option value="{{ choice.0 }}" {% if form.agent.value|stringformat:"s" == choice.0|stringformat:"s" %}selected{% endif %}>{{ choice.1 }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              {% if form.agent.errors %}
+                <small class="text-danger">{{ form.agent.errors }}</small>
+              {% endif %}
+            </div>
+
+            <div class="form-group">
+              <label for="id_address">Hotel Address</label>
+              <div class="input-group">
+                <span class="input-icon"><i class="fas fa-map-marker-alt fa-sm"></i></span>
+                <input type="text" class="form-control input-with-icon" id="id_address" name="address" placeholder="Enter hotel address" {% if form.address.value %}value="{{ form.address.value }}"{% endif %}>
+              </div>
+              {% if form.address.errors %}
+                <small class="text-danger">{{ form.address.errors }}</small>
+              {% endif %}
+            </div>
+
+            <div class="d-grid gap-2 d-md-flex justify-content-md-between mt-4">
+              <a href="{% url 'owner_register' %}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-1"></i> Back
+              </a>
+              <button type="submit" class="btn btn-primary">
+                Complete Registration <i class="fas fa-check ms-1"></i>
+              </button>
+            </div>
+          </form>
         </div>
-
-        <!-- Address Field -->
-        <div class="form-group">
-          <label for="id_address">Address</label>
-          {{ form.address }}
-          {% if form.address.errors %}
-            <small class="text-danger">{{ form.address.errors }}</small>
-          {% endif %}
-        </div>
-
-        <button type="submit" class="btn btn-primary btn-block mt-3">Register Hotel</button>
-      </form>
+      </div>
     </div>
   </div>
 </div>
-<!-- Optional: Bootstrap JS and dependencies -->
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
