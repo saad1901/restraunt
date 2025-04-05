@@ -318,7 +318,7 @@
                             {% for day in transactions %}
                             <tr>
                                 <td>{{ day.date }}</td>
-                                <td>₹{{ day.total_revenue|floatformat:2 }}</td>
+                                <td><strong>₹{{ day.total_revenue|floatformat:2 }}</strong></td>
                                 <td>
                                     {% if day.trend > 0 %}
                                     <span class="trend-up"><i class="fas fa-arrow-up"></i> {{ day.trend_percent }}%</span>

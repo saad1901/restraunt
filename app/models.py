@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.conf import settings
+from decimal import Decimal
 
 
 class Hotel(models.Model):
@@ -81,4 +82,83 @@ class PaymentDetails(models.Model):
     upiid = models.CharField(max_length=100)
     name = models.CharField(max_length=100, null=True, blank=True)
     hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE)
+
+class InventoryItem(models.Model):
+    UNIT_CHOICES = [
+        ('kg', 'Kilograms'),
+        ('g', 'Grams'),
+        ('l', 'Liters'),
+        ('ml', 'Milliliters'),
+        ('pcs', 'Pieces'),
+        ('pkg', 'Packages'),
+        ('box', 'Boxes'),
+    ]
+    
+    STATUS_CHOICES = [
+        ('in_stock', 'In Stock'),
+        ('low_stock', 'Low Stock'),
+        ('out_of_stock', 'Out of Stock'),
+    ]
+    
+    hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
+    quantity = models.DecimalField(max_digits=10, decimal_places=2)
+    unit = models.CharField(max_length=3, choices=UNIT_CHOICES, default='pcs')
+    unit_price = models.DecimalField(max_digits=10, decimal_places=2)
+    reorder_level = models.DecimalField(max_digits=10, decimal_places=2, default=10)
+    status = models.CharField(max_length=15, choices=STATUS_CHOICES, default='in_stock')
+    category = models.ForeignKey(MenuCategory, on_delete=models.SET_NULL, null=True, blank=True)
+    last_updated = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def save(self, *args, **kwargs):
+        # Automatically update status based on quantity and reorder level
+        # Convert to Decimal objects for safe comparison
+        qty = Decimal(str(self.quantity))
+        zero = Decimal('0')
+        reorder = Decimal(str(self.reorder_level))
+        
+        # Update status based on safe decimal comparisons
+        if qty <= zero:
+            self.status = 'out_of_stock'
+        elif qty < reorder:
+            self.status = 'low_stock'
+        else:
+            self.status = 'in_stock'
+        
+        super().save(*args, **kwargs)
+    
+    def __str__(self):
+        return f"{self.name} ({self.quantity} {self.unit})"
+    
+    class Meta:
+        ordering = ['name']
+        verbose_name = 'Inventory Item'
+        verbose_name_plural = 'Inventory Items'
+
+class InventoryTransaction(models.Model):
+    TRANSACTION_TYPES = [
+        ('purchase', 'Purchase'),
+        ('usage', 'Usage'),
+        ('adjustment', 'Adjustment'),
+        ('writeoff', 'Write-off'),
+    ]
+    
+    hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE)
+    item = models.ForeignKey(InventoryItem, on_delete=models.CASCADE, related_name='transactions')
+    transaction_type = models.CharField(max_length=10, choices=TRANSACTION_TYPES)
+    quantity = models.DecimalField(max_digits=10, decimal_places=2)
+    transaction_date = models.DateTimeField(auto_now_add=True)
+    notes = models.TextField(blank=True)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
+    unit_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    
+    def __str__(self):
+        return f"{self.get_transaction_type_display()} - {self.item.name} ({self.quantity})"
+    
+    class Meta:
+        ordering = ['-transaction_date']
+        verbose_name = 'Inventory Transaction'
+        verbose_name_plural = 'Inventory Transactions'
      

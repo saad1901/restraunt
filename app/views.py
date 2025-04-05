@@ -17,6 +17,10 @@ from django.contrib.auth.hashers import make_password
 from django.db.models import Count
 from django.db.models.functions import ExtractHour
 from django.contrib.auth import get_user_model
+from .inventory_views import (
+    inventory, add_inventory_item, edit_inventory_item, 
+    delete_inventory_item, inventory_transaction, inventory_history
+)
 
 #THis is for waiters
 @login_required
@@ -284,16 +288,16 @@ def payment(request):
         if not upiid:
             messages.error(request, "UPI ID is required")
             return render(request, 'paymentsetting.html', {'upi': None})
-            
+
         # Update or create payment details
         try:
             PaymentDetails.objects.update_or_create(
-                hotel=hotel,
-                defaults={
-                    'upiid': upiid,
-                    'name': name
-                }
-            )
+            hotel=hotel,
+            defaults={
+                'upiid': upiid,
+                'name': name
+            }
+        )
             return redirect("/payment/?success")   # Redirect to prevent duplicate submissions
         except Exception as e:
             messages.error(request, f"An error occurred: {str(e)}")
@@ -345,7 +349,7 @@ def edit_category(request):
         messages.success(request, 'Category updated successfully!')
         return redirect('category')
     
-    return redirect('category')
+        return redirect('category')
 
 # @login_required
 def delete_category(request, category_id):
@@ -394,7 +398,7 @@ def edit_menu_item(request):
         messages.success(request, 'Menu item updated successfully!')
         return redirect('item')
     
-    return redirect('item')
+        return redirect('item')
 
 # @login_required
 def delete_menu_item(request, item_id):
@@ -456,9 +460,6 @@ def item(request):
 def reports(request):
     # items = MenuItem.objects.all()
     return render(request, 'reports/reports.html')
-
-def inventory(request):
-    return render(request, 'reports/inventory.html')
 
 def sales(request):
     return render(request, 'reports/sales/sales.html')
@@ -670,7 +671,7 @@ def delete_staff(request):
             
         staff.delete()
         messages.success(request, "Staff member deleted successfully.")
-    
+
     return redirect('staff')
 
 @login_required
