@@ -32,6 +32,7 @@ urlpatterns = [
     path('owner/staff/', views.staff, name='staff'),
     path('owner/staff/addstaff', views.add_staff, name='add_staff'),
     path('owner/staff/editstaff', views.edit_staff, name='edit_staff'),
+    path('owner/staff/deletestaff', views.delete_staff, name='delete_staff'),
 
     path('submit-order/', views.submit_order, name='submit_order'),
     path('complete_order/', views.complete_order, name='complete_order'),
@@ -44,6 +45,7 @@ urlpatterns = [
     path('owner/settings/reports/sales', views.sales, name='sales'),
     path('owner/settings/reports/sales/dailytransc', views.dailytransc, name='dailytransc'),
     path('owner/settings/reports/sales/monthlytransac', views.monthly_report, name='monthlytransac'),
+    path('owner/settings/reports/sales/custom_period', views.custom_period, name='custom_period'),
     
     path('owner/settings/reports/revenue', views.revenue, name='revenue'),
     path('owner/settings/reports/inventory', views.inventory, name='inventory'),

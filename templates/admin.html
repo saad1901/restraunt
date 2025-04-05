@@ -1302,6 +1302,42 @@
             
             // Optimistically update the UI
             quantityElement.textContent = quantity;
+            
+            // If quantity becomes zero, immediately apply visual indication
+            if (quantity === 0) {
+                // Add fading effect
+                item.style.opacity = "0.5";
+                item.style.pointerEvents = "none";
+                
+                // Add a transition for smooth fade out
+                item.style.transition = "opacity 0.3s ease";
+                
+                // Prepare for removal after a short delay
+                setTimeout(() => {
+                    item.style.height = item.offsetHeight + 'px';
+                    item.style.overflow = 'hidden';
+                    
+                    setTimeout(() => {
+                        item.style.height = '0';
+                        item.style.padding = '0';
+                        item.style.margin = '0';
+                        item.style.border = 'none';
+                        
+                        // Remove from DOM after animation completes
+                        setTimeout(() => {
+                            item.remove();
+                            // Recalculate the order total after removal
+                            calculateOrderTotal(orderId);
+                        }, 300);
+                    }, 50);
+                }, 300);
+            } else {
+                // Ensure item is fully visible and interactive
+                item.style.opacity = "1";
+                item.style.pointerEvents = "auto";
+            }
+            
+            // Update total immediately for better UX
             calculateOrderTotal(orderId);
             
             // Process the update on the server
@@ -1317,6 +1353,14 @@
                     menu_id: menuId,
                     action: action
                 })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Handle possible edge cases or server-side changes
+                if (!data.success) {
+                    console.error('Error updating quantity:', data.message);
+                    location.reload(); // Fallback to refresh if server update fails
+                }
             })
             .catch(error => {
                 console.error('Error updating quantity:', error);

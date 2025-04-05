@@ -145,11 +145,13 @@
         <p class="login-subtitle">Access your restaurant dashboard</p>
 
         {% if messages %}
-        <div class="alert">
             {% for message in messages %}
-            {{ message }}
+                {% if message.level_tag == 'error' or 'Invalid' in message|stringformat:'s' or 'invalid' in message|stringformat:'s' or 'Authentication' in message|stringformat:'s' %}
+                <div class="alert">
+                    {{ message }}
+                </div>
+                {% endif %}
             {% endfor %}
-        </div>
         {% endif %}
 
         <form method="post">

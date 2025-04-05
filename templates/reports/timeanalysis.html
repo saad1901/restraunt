@@ -1,91 +1,263 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Hotel Busy Times by Hour</title>
+  <title>Restaurant Analytics Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
   <style>
+    :root {
+      --bg-light: #f8fafc;
+      --card-light: #ffffff;
+      --text-primary: #2d3748;
+      --text-secondary: #64748b;
+      --accent: #5046e5;
+      --accent-secondary: #ef4444;
+      --accent-info: #0ea5e9;
+      --accent-success: #10b981;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+      --shadow-md: 0 4px 6px rgba(0,0,0,0.05), 0 2px 4px rgba(0,0,0,0.05);
+      --shadow-lg: 0 10px 15px rgba(0,0,0,0.03), 0 5px 10px rgba(0,0,0,0.05);
+      --border-color: #e2e8f0;
+      --border-radius: 12px;
+    }
+
     body {
+      background-color: var(--bg-light);
+      color: var(--text-primary);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      padding-bottom: 2rem;
       margin: 0;
-      padding: 20px;
-      font-family: Arial, sans-serif;
     }
+
     .navbar {
-      background: #4CAF50;
-      padding: 10px;
-      color: white;
-      text-align: center;
-      font-size: 20px;
-      font-weight: bold;
+      background-color: var(--accent);
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--shadow-md);
     }
-    .back-button {
-      margin: 10px;
-      padding: 8px 16px;
-      background: #f44336;
+
+    .navbar-brand {
+      font-size: 1.4rem;
+      font-weight: 700;
       color: white;
+      margin-left: 0.5rem;
+    }
+
+    .btn-back {
+      background: rgba(255, 255, 255, 0.2);
       border: none;
-      border-radius: 4px;
-      cursor: pointer;
+      color: white;
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      margin-right: 0.75rem;
     }
+
+    .btn-back:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateX(-3px);
+    }
+
+    .btn-back i {
+      margin-right: 0.5rem;
+    }
+
+    .chart-card {
+      background: var(--card-light);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-md);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .chart-card:hover {
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-2px);
+    }
+
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .chart-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 0;
+    }
+
+    .chart-subtitle {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      margin-top: 0.25rem;
+    }
+
     .chart-container {
       position: relative;
+      height: 350px;
       width: 100%;
-      height: 300px;
     }
-    .time-filter {
-      margin: 20px 0;
-      text-align: center;
+
+    .filter-buttons {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 1.5rem;
     }
-    .time-filter button {
-      padding: 8px 16px;
-      margin: 0 5px;
-      border: 1px solid #4CAF50;
-      border-radius: 4px;
-      background: white;
+
+    .filter-btn {
+      background: var(--card-light);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      margin: 0 0.25rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
       cursor: pointer;
     }
-    .time-filter button.active {
-      background: #4CAF50;
-      color: white;
+
+    .filter-btn:hover {
+      background-color: rgba(80, 70, 229, 0.05);
+      color: var(--accent);
     }
-    a {
-      text-decoration: none;
-      color: inherit;
+
+    .filter-btn.active {
+      background-color: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
+    .page-header {
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+      font-weight: 700;
+      font-size: 1.75rem;
+      padding-left: 0.5rem;
+      border-left: 4px solid var(--accent);
+    }
+
+    .page-subtitle {
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+      font-size: 1rem;
+      padding-left: 0.5rem;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .chart-container {
+        height: 300px;
+      }
+
+      .chart-title {
+        font-size: 1.1rem;
+      }
+
+      .filter-buttons {
+        flex-wrap: wrap;
+      }
+
+      .filter-btn {
+        margin-bottom: 0.5rem;
+      }
     }
   </style>
 </head>
 <body>
-  <a class="back-button" href="{% url 'reports'%}">Back</a>
-  
-  <h1>Hotel Busy Times by Hour</h1>
-  
-  <div class="time-filter">
-    <button 
-      onclick="window.location.href='?days=1'" 
-      class="{% if selected_days == 1 %}active{% endif %}"
-    >
-      Today
-    </button>
-    <button 
-      onclick="window.location.href='?days=7'" 
-      class="{% if selected_days == 7 %}active{% endif %}"
-    >
-      7 Days
-    </button>
-    <button 
-      onclick="window.location.href='?days=30'" 
-      class="{% if selected_days == 30 %}active{% endif %}"
-    >
-      Month
-    </button>
-  </div>
+  <nav class="navbar">
+    <div class="container">
+      <div class="d-flex align-items-center">
+        <a class="btn-back" href="{% url 'reports'%}">
+          <i class="fas fa-arrow-left"></i> Back
+        </a>
+        <span class="navbar-brand">Time Analysis</span>
+      </div>
+    </div>
+  </nav>
 
-  <div class="chart-container">
-    <canvas id="busyChart"></canvas>
+  <div class="container">
+    <h1 class="page-header">Business Analytics</h1>
+
+    <div class="chart-card">
+      <div class="chart-header">
+        <div>
+          <h2 class="chart-title">Order Volume by Hour</h2>
+          <p class="chart-subtitle">
+            {% if selected_days == 1 %}
+              Today's order patterns
+            {% elif selected_days == 7 %}
+              Last 7 days of order patterns
+            {% elif selected_days == 30 %}
+              Last 30 days of order patterns
+            {% else %}
+              Identify your busiest hours and optimize staffing
+            {% endif %}
+          </p>
+        </div>
+      </div>
+      <div class="filter-buttons">
+        <button 
+          onclick="window.location.href='?days=1'" 
+          class="filter-btn {% if selected_days == 1 %}active{% endif %}"
+        >
+          Today
+        </button>
+        <button 
+          onclick="window.location.href='?days=7'" 
+          class="filter-btn {% if selected_days == 7 %}active{% endif %}"
+        >
+          Last 7 Days
+        </button>
+        <button 
+          onclick="window.location.href='?days=30'" 
+          class="filter-btn {% if selected_days == 30 %}active{% endif %}"
+        >
+          Last 30 Days
+        </button>
+      </div>
+      <div class="chart-container">
+        <canvas id="hourlyOrdersChart"></canvas>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-header">
+        <div>
+          <h2 class="chart-title">Most Popular Menu Items</h2>
+          <p class="chart-subtitle">
+            {% if selected_days == 1 %}
+              Today's top sellers
+            {% elif selected_days == 7 %}
+              Best sellers in the last 7 days
+            {% elif selected_days == 30 %}
+              Best sellers in the last 30 days  
+            {% else %}
+              Track your best-selling items over time
+            {% endif %}
+          </p>
+        </div>
+      </div>
+      <div class="chart-container">
+        <canvas id="topItemsChart"></canvas>
+      </div>
+    </div>
   </div>
 
   <script>
+    // ====== HOURLY ORDERS CHART ======
     const hours = JSON.parse('{{ hours|escapejs }}');
     const totals = JSON.parse('{{ totals|escapejs }}');
 
@@ -97,51 +269,200 @@
              `${h - 12} PM`;
     });
 
-    const ctx = document.getElementById('busyChart').getContext('2d');
-    const busyChart = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: formattedHours,
-        datasets: [{
-          label: 'Number of Orders',
-          data: totals,
-          backgroundColor: 'rgba(75, 192, 192, 0.5)',
-          borderColor: 'rgba(75, 192, 192, 1)',
-          borderWidth: 1
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-          x: {
-            title: {
-              display: true,
-              text: 'Hour of the Day'
+    // Check if we have any orders
+    const hasOrders = totals.some(total => total > 0);
+    
+    if (!hasOrders) {
+      document.getElementById('hourlyOrdersChart').style.display = 'none';
+      const noDataMessage = document.createElement('div');
+      noDataMessage.className = 'text-center py-5 text-secondary';
+      noDataMessage.innerHTML = '<i class="fas fa-clock fa-3x mb-3"></i><p>No order data for the selected period</p>';
+      document.getElementById('hourlyOrdersChart').parentNode.appendChild(noDataMessage);
+    } else {
+      // Find the peak hour (for highlighting)
+      const peakHourIndex = totals.indexOf(Math.max(...totals));
+      
+      // Generate colors array with highlight for peak hour
+      const backgroundColors = totals.map((value, index) => 
+        index === peakHourIndex ? 'rgba(80, 70, 229, 0.8)' : 'rgba(80, 70, 229, 0.5)'
+      );
+      
+      const borderColors = totals.map((value, index) => 
+        index === peakHourIndex ? 'rgba(80, 70, 229, 1)' : 'rgba(80, 70, 229, 0.8)'
+      );
+
+      const ctx = document.getElementById('hourlyOrdersChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: formattedHours,
+          datasets: [{
+            label: 'Number of Orders',
+            data: totals,
+            backgroundColor: backgroundColors,
+            borderColor: borderColors,
+            borderWidth: 1,
+            borderRadius: 4,
+            barPercentage: 0.6,
+            categoryPercentage: 0.8
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: {
+              title: {
+                display: true,
+                text: 'Hour of the Day',
+                font: {
+                  weight: 'bold'
+                }
+              },
+              grid: {
+                display: false
+              }
+            },
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Order Volume',
+                font: {
+                  weight: 'bold'
+                }
+              },
+              ticks: {
+                precision: 0
+              },
+              grid: {
+                borderDash: [2, 4]
+              }
             }
           },
-          y: {
-            beginAtZero: true,
-            title: {
-              display: true,
-              text: 'Number of Orders'
+          plugins: {
+            legend: {
+              display: false
             },
-            ticks: {
-              stepSize: 1,
-              precision: 0
-            }
-          }
-        },
-        plugins: {
-          tooltip: {
-            callbacks: {
-              title: (context) => `Hour: ${formattedHours[context[0].dataIndex]}`,
-              label: (context) => `Orders: ${context.formattedValue}`
+            tooltip: {
+              backgroundColor: 'rgba(0, 0, 0, 0.7)',
+              padding: 10,
+              titleFont: {
+                size: 14,
+                weight: 'bold'
+              },
+              callbacks: {
+                title: (context) => `${formattedHours[context[0].dataIndex]}`,
+                label: (context) => {
+                  const value = context.parsed.y;
+                  return `Orders: ${value} ${value === 1 ? 'order' : 'orders'}`;
+                },
+                afterLabel: (context) => {
+                  const percent = (context.parsed.y / totals.reduce((a, b) => a + b, 0) * 100).toFixed(1);
+                  return `${percent}% of daily total`;
+                }
+              }
             }
           }
         }
-      }
-    });
+      });
+    }
+
+    // ====== TOP ITEMS CHART ======
+    // Use real data from backend
+    const topItemNames = JSON.parse('{{ top_item_names|escapejs }}');
+    const topItemCounts = JSON.parse('{{ top_item_counts|escapejs }}');
+    
+    // Create a horizontal bar chart for top items
+    const itemsCtx = document.getElementById('topItemsChart').getContext('2d');
+    
+    // If we have no data, show a message
+    if (topItemNames.length === 0) {
+      document.getElementById('topItemsChart').style.display = 'none';
+      const noDataMessage = document.createElement('div');
+      noDataMessage.className = 'text-center py-5 text-secondary';
+      noDataMessage.innerHTML = '<i class="fas fa-chart-bar fa-3x mb-3"></i><p>No item sales data for the selected period</p>';
+      document.getElementById('topItemsChart').parentNode.appendChild(noDataMessage);
+    } else {
+      // Generate gradient colors based on order count
+      const gradientColors = topItemCounts.map((count, index) => {
+        const opacity = 0.8 - (index * 0.1);
+        return `rgba(14, 165, 233, ${opacity > 0.3 ? opacity : 0.3})`;
+      });
+      
+      const borderColors = topItemCounts.map((count, index) => {
+        const opacity = 1 - (index * 0.1);
+        return `rgba(14, 165, 233, ${opacity > 0.6 ? opacity : 0.6})`;
+      });
+    
+      new Chart(itemsCtx, {
+        type: 'bar',
+        data: {
+          labels: topItemNames,
+          datasets: [{
+            axis: 'y',
+            label: 'Orders',
+            data: topItemCounts,
+            backgroundColor: gradientColors,
+            borderColor: borderColors,
+            borderWidth: 1,
+            borderRadius: 4
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Number of Orders',
+                font: {
+                  weight: 'bold'
+                }
+              },
+              ticks: {
+                precision: 0
+              },
+              grid: {
+                borderDash: [2, 4]
+              }
+            },
+            y: {
+              grid: {
+                display: false
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              display: false
+            },
+            tooltip: {
+              backgroundColor: 'rgba(0, 0, 0, 0.7)',
+              padding: 10,
+              titleFont: {
+                size: 14,
+                weight: 'bold'
+              },
+              callbacks: {
+                title: (context) => context[0].label,
+                label: (context) => {
+                  const value = context.parsed.x;
+                  return `Sold: ${value} ${value === 1 ? 'order' : 'orders'}`;
+                },
+                afterLabel: (context) => {
+                  const percent = (context.parsed.x / topItemCounts.reduce((a, b) => a + b, 0) * 100).toFixed(1);
+                  return `${percent}% of total orders`;
+                }
+              }
+            }
+          }
+        }
+      });
+    }
   </script>
 </body>
 </html>

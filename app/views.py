@@ -516,6 +516,9 @@ def monthly_report(request):
         return suffix
 
     grand_total = 0
+    highest_day_revenue = 0
+    highest_day_date = ""
+    days_with_sales = 0
 
     for day in range(1, num_days + 1):
         current_date = date(selected_year, selected_month, day)
@@ -526,6 +529,14 @@ def monthly_report(request):
         )
         # Aggregate the total revenue for the day
         total_revenue = orders.aggregate(total=Sum('total'))['total'] or 0
+        
+        # Track statistics
+        if total_revenue > 0:
+            days_with_sales += 1
+            
+        if total_revenue > highest_day_revenue:
+            highest_day_revenue = total_revenue
+            highest_day_date = current_date.strftime('%d %b')
         
         # Format the date as "2nd Mar" or "10th Dec"
         day_suffix = get_day_suffix(day)
@@ -540,13 +551,19 @@ def monthly_report(request):
         })
         grand_total+=total_revenue
 
+    # Calculate average daily revenue
+    avg_daily_revenue = grand_total / num_days if num_days > 0 else 0
+
     return render(request, 'reports/sales/monthlytransac.html', {
         'selected_year': selected_year,
         'selected_month': calendar.month_name[selected_month],
         'day_data': day_data,
         'month_str': month_str,
         'grand_total': grand_total,
-
+        'highest_day_revenue': highest_day_revenue,
+        'highest_day_date': highest_day_date,
+        'days_with_sales': days_with_sales,
+        'avg_daily_revenue': avg_daily_revenue,
     })
 
 
@@ -562,7 +579,7 @@ def timeanalysis(request):
     # Filter orders based on time range and annotate hours
     orders = (
         Order.objects
-        .filter(created_at__gte=start_date)
+        .filter(created_at__gte=start_date, hotel=request.user.staffof)
         .annotate(hour=ExtractHour('created_at'))
         .values('hour')
         .annotate(total=Count('id'))
@@ -577,11 +594,26 @@ def timeanalysis(request):
     for hour in range(24):
         full_hours.append(hour)
         full_totals.append(hour_dict.get(hour, 0))
+    
+    # Get the most ordered items for this time period
+    most_ordered_items = (
+        OrderItems.objects
+        .filter(order__created_at__gte=start_date, order__hotel=request.user.staffof, order__completed=True)
+        .values('item__name')
+        .annotate(total_ordered=Sum('quantity'))
+        .order_by('-total_ordered')[:5]  # Get top 5 items
+    )
+    
+    # Prepare data for chart
+    top_item_names = [item['item__name'] for item in most_ordered_items]
+    top_item_counts = [item['total_ordered'] for item in most_ordered_items]
 
     context = {
         'hours': json.dumps(full_hours),
         'totals': json.dumps(full_totals),
-        'selected_days': days
+        'selected_days': days,
+        'top_item_names': json.dumps(top_item_names),
+        'top_item_counts': json.dumps(top_item_counts)
     }
     return render(request, 'reports/timeanalysis.html', context)
 
@@ -624,6 +656,23 @@ def edit_staff(request):
 
     return redirect('staff')
 
+# Add the delete_staff function
+@login_required
+def delete_staff(request):
+    if request.method == 'POST':
+        staff_id = request.POST.get('id')
+        staff = get_object_or_404(User, id=staff_id)
+        
+        # Don't allow deleting owners
+        if staff.role == 'owner':
+            messages.error(request, "Cannot delete an owner account.")
+            return redirect('staff')
+            
+        staff.delete()
+        messages.success(request, "Staff member deleted successfully.")
+    
+    return redirect('staff')
+
 @login_required
 def toggle_hotel_status(request, hotel_id):
     if request.user.role != 'superadmin':
@@ -638,3 +687,108 @@ def toggle_hotel_status(request, hotel_id):
         hotel.save()
         messages.success(request, 'Hotel status updated successfully.')
     return redirect('home')  # Adjust with your portal URL name
+
+@login_required
+def custom_period(request):
+    # Get date parameters from request with defaults
+    start_date_str = request.GET.get('start_date')
+    end_date_str = request.GET.get('end_date')
+    
+    # Set default dates if not provided (last 30 days)
+    if not start_date_str or not end_date_str:
+        end_date = timezone.now().date()
+        start_date = end_date - timedelta(days=30)
+    else:
+        try:
+            start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date()
+            end_date = datetime.strptime(end_date_str, '%Y-%m-%d').date()
+        except ValueError:
+            # Handle invalid date format
+            end_date = timezone.now().date()
+            start_date = end_date - timedelta(days=30)
+    
+    # Calculate date range
+    date_range = (end_date - start_date).days + 1
+    
+    # Initialize stats
+    transactions = []
+    total_revenue = 0
+    highest_day_revenue = 0
+    highest_day_date = ""
+    days_with_sales = 0
+    
+    # Function to get day suffix (1st, 2nd, 3rd, etc.)
+    def get_day_suffix(day):
+        if 4 <= day <= 20 or 24 <= day <= 30:
+            suffix = "th"
+        else:
+            suffix = ["st", "nd", "rd"][day % 10 - 1]
+        return suffix
+    
+    # Generate date range
+    current_date = start_date
+    previous_revenue = 0
+    
+    while current_date <= end_date:
+        # Get orders for the current date
+        orders = Order.objects.filter(
+            hotel=request.user.staffof,
+            created_at__date=current_date
+        )
+        
+        # Calculate total revenue for the day
+        day_revenue = orders.aggregate(total=Sum('total'))['total'] or 0
+        
+        # Calculate trend compared to previous day
+        trend = day_revenue - previous_revenue
+        if previous_revenue > 0:
+            trend_percent = abs(int((trend / previous_revenue) * 100))
+        else:
+            trend_percent = 0
+        
+        # Track statistics
+        if day_revenue > 0:
+            days_with_sales += 1
+            
+        if day_revenue > highest_day_revenue:
+            highest_day_revenue = day_revenue
+            highest_day_date = current_date.strftime('%d %b')
+        
+        # Format date
+        day = current_date.day
+        day_suffix = get_day_suffix(day)
+        formatted_date = f"{day}{day_suffix} {current_date.strftime('%b')}"
+        
+        # Add data to transactions list
+        transactions.append({
+            'date': formatted_date,
+            'total_revenue': day_revenue,
+            'trend': trend,
+            'trend_percent': trend_percent,
+            'org_date': current_date.strftime('%Y-%m-%d'),
+            'whichday': current_date.weekday()
+        })
+        
+        # Save revenue for trend calculation
+        previous_revenue = day_revenue
+        total_revenue += day_revenue
+        
+        # Increment date
+        current_date += timedelta(days=1)
+    
+    # Calculate average daily revenue
+    avg_daily_revenue = total_revenue / date_range if date_range > 0 else 0
+    
+    context = {
+        'start_date': start_date,
+        'end_date': end_date,
+        'transactions': transactions,
+        'total_revenue': total_revenue,
+        'highest_day_revenue': highest_day_revenue,
+        'highest_day_date': highest_day_date,
+        'days_with_sales': days_with_sales,
+        'avg_daily_revenue': avg_daily_revenue,
+        'total_days': date_range
+    }
+    
+    return render(request, 'reports/sales/custom_period.html', context)

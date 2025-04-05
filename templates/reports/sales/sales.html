@@ -7,69 +7,244 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        body { background-color: #f4f7f6; }
-        .navbar { background-color: #343a40; }
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --accent-color: #e74c3c;
+            --light-bg: #f8f9fa;
+            --dark-bg: #343a40;
+            --text-dark: #2c3e50;
+            --text-light: #ecf0f1;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --hover-shadow: 0 10px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        body { 
+            background-color: var(--light-bg); 
+            color: var(--text-dark);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .navbar { 
+            background-color: var(--dark-bg); 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .page-header {
+            padding: 1.5rem 0;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .page-header h2 {
+            margin: 0;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
         .report-card {
             border: none;
             border-radius: 15px;
-            transition: transform 0.3s ease;
-            /* text-align: center; */
+            transition: all 0.3s ease;
             padding: 2rem;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
         }
+        
         .report-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            box-shadow: var(--hover-shadow);
         }
+        
         .card-icon {
             font-size: 2.5rem;
-            margin-bottom: 1rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            color: white;
+            margin-bottom: 1.5rem;
         }
-        a:hover { text-decoration: none; }
-
-        .atag {
+        
+        .daily-icon {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        
+        .monthly-icon {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+        
+        .custom-icon {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+        
+        .report-card h3 {
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            font-size: 1.5rem;
+        }
+        
+        .report-card .btn {
+            width: 100%;
+            border-radius: 10px;
+            padding: 0.75rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            font-size: 1.1rem;
+        }
+        
+        .card-decoration {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+        }
+        
+        .daily-decoration {
+            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+        }
+        
+        .monthly-decoration {
+            background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
+        }
+        
+        .custom-decoration {
+            background: linear-gradient(90deg, #fa709a 0%, #fee140 100%);
+        }
+        
+        .btn-daily {
+            color: white;
+            background-color: #4facfe;
+            border-color: #4facfe;
+        }
+        
+        .btn-daily:hover {
+            background-color: #00f2fe;
+            border-color: #00f2fe;
+        }
+        
+        .btn-monthly {
+            color: white;
+            background-color: #43e97b;
+            border-color: #43e97b;
+        }
+        
+        .btn-monthly:hover {
+            background-color: #38f9d7;
+            border-color: #38f9d7;
+        }
+        
+        .btn-custom {
+            color: white;
+            background-color: #fa709a;
+            border-color: #fa709a;
+        }
+        
+        .btn-custom:hover {
+            background-color: #fee140;
+            border-color: #fee140;
+            color: var(--text-dark);
+        }
+        
+        a { 
             text-decoration: none;
-            color: black;
+        }
+        
+        @media (max-width: 768px) {
+            .page-header {
+                padding: 1rem 0;
+                margin-bottom: 1.5rem;
+            }
+            
+            .report-card {
+                padding: 1.5rem;
+                margin-bottom: 1rem;
+            }
+            
+            .card-icon {
+                width: 70px;
+                height: 70px;
+                font-size: 2rem;
+                margin-bottom: 1rem;
+            }
         }
     </style>
 </head>
 <body>
     <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg">
-        <div class="container-fluid">
-            <a class="btn btn-link text-white me-2" href="{% url 'reports'%}">
-                <i class="fas fa-arrow-left"></i>
+    <nav class="navbar">
+        <div class="container">
+            <div class="d-flex align-items-center">
+                <a class="btn btn-link text-white me-2" href="{% url 'reports'%}">
+                    <i class="fas fa-arrow-left"></i> Back
+                </a>
+                <span class="navbar-brand text-white mb-0">Sales Reports</span>
+            </div>
+            <a href="{% url 'owner' %}" class="btn btn-link text-white">
+                <i class="fas fa-home"></i> Home
             </a>
-            <span class="navbar-brand text-white">Sales Reports</span>
         </div>
     </nav>
 
-    <div class="container mt-5">
+    <div class="container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h2>Choose Sales Report</h2>
+        </div>
+
         <div class="row g-4">
-            <!-- Daily Report Button -->
-            <div class="col-md-4">
-                <a href="{% url 'dailytransc'%}" class="text-dark atag">
-                    <div class="report-card bg-white shadow-sm">
-                        <h4>Daily Report</h4>
+            <!-- Daily Report Card -->
+            <div class="col-md-4 mb-4">
+                <div class="report-card bg-white">
+                    <div class="card-decoration daily-decoration"></div>
+                    <div class="card-icon daily-icon">
+                        <i class="fas fa-calendar-day"></i>
                     </div>
-                </a>
+                    <h3>Daily Report</h3>
+                    <a href="{% url 'dailytransc'%}" class="btn btn-daily">
+                        <i class="fas fa-chart-line me-2"></i>View Daily Sales
+                    </a>
+                </div>
             </div>
 
-            <!-- Monthly Report Button -->
-            <div class="col-md-4">
-                <a href="{% url 'monthlytransac'%}" class="text-dark atag">
-                    <div class="report-card bg-white shadow-sm">
-                        <h4>Monthly Report</h4>
+            <!-- Monthly Report Card -->
+            <div class="col-md-4 mb-4">
+                <div class="report-card bg-white">
+                    <div class="card-decoration monthly-decoration"></div>
+                    <div class="card-icon monthly-icon">
+                        <i class="fas fa-calendar-alt"></i>
                     </div>
-                </a>
+                    <h3>Monthly Report</h3>
+                    <a href="{% url 'monthlytransac'%}" class="btn btn-monthly">
+                        <i class="fas fa-chart-bar me-2"></i>View Monthly Sales
+                    </a>
+                </div>
             </div>
 
-            <!-- Custom Period Button -->
-            <div class="col-md-4">
-                <a href="custom_period.html" class="text-dark atag">
-                    <div class="report-card bg-white shadow-sm">
-                        <h4>Custom Period</h4>
+            <!-- Custom Period Card -->
+            <div class="col-md-4 mb-4">
+                <div class="report-card bg-white">
+                    <div class="card-decoration custom-decoration"></div>
+                    <div class="card-icon custom-icon">
+                        <i class="fas fa-calendar-week"></i>
                     </div>
-                </a>
+                    <h3>Custom Dates</h3>
+                    <a href="{% url 'custom_period' %}" class="btn btn-custom">
+                        <i class="fas fa-calendar-check me-2"></i>Pick Your Dates
+                    </a>
+                </div>
             </div>
         </div>
     </div>
