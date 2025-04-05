@@ -678,16 +678,23 @@ def delete_staff(request):
 def toggle_hotel_status(request, hotel_id):
     if request.user.role != 'superadmin':
         return JsonResponse({"success": False, "message": "You are not authorized to perform this action"})
+    
     hotel = get_object_or_404(Hotel, pk=hotel_id)
-    if request.method == 'POST':
-        # Toggle the allowed status
-        if hotel.status == 1:
-            hotel.status = 0
-        else:
-            hotel.status = 1
-        hotel.save()
-        messages.success(request, 'Hotel status updated successfully.')
-    return redirect('home')  # Adjust with your portal URL name
+    
+    # Toggle the status regardless of request method
+    hotel.status = not hotel.status
+    hotel.save()
+    
+    status_text = "activated" if hotel.status else "deactivated"
+    messages.success(request, f'Hotel "{hotel.name}" {status_text} successfully.')
+    
+    # Check if we should return to a specific page
+    return_to = request.GET.get('return_to')
+    if return_to == 'restaurant_details':
+        return redirect('view_restaurant', hotel_id=hotel_id)
+    
+    # Default return to home
+    return redirect('home')
 
 @login_required
 def custom_period(request):
