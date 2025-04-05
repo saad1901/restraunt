@@ -6,24 +6,28 @@
     .stats-card {
         border-radius: 10px;
         transition: all 0.3s;
-        padding: 1.5rem;
+        padding: 1rem;
         display: flex;
         align-items: center;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
     }
 
     .stats-card:hover {
-        transform: translateY(-5px);
+        transform: translateY(-3px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
     }
 
     .stats-icon {
-        width: 60px;
-        height: 60px;
+        width: 45px;
+        height: 45px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-right: 1rem;
-        font-size: 1.5rem;
+        margin-right: 0.75rem;
+        font-size: 1.25rem;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
 
     .stats-data {
@@ -31,14 +35,14 @@
     }
 
     .stats-value {
-        font-size: 1.8rem;
+        font-size: 1.5rem;
         font-weight: 600;
         margin: 0;
         line-height: 1.2;
     }
 
     .stats-label {
-        font-size: 0.9rem;
+        font-size: 0.8rem;
         color: rgba(255, 255, 255, 0.8);
         margin: 0;
     }
@@ -46,14 +50,17 @@
     .hotel-card {
         height: 100%;
         transition: all 0.3s;
-        border: none;
+        border: 1px solid rgba(0, 0, 0, 0.1);
         border-radius: 10px;
         overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        background-color: white;
     }
 
     .hotel-card:hover {
         transform: translateY(-5px);
         box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        border-color: var(--primary);
     }
 
     .hotel-header {
@@ -61,6 +68,8 @@
         font-weight: 600;
         font-size: 1.1rem;
         border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        background-color: #f8f9fa;
+        color: var(--dark);
     }
 
     .hotel-content {
@@ -76,13 +85,15 @@
     .hotel-info i {
         margin-right: 0.75rem;
         width: 18px;
-        color: var(--gray);
+        color: var(--primary);
     }
 
     .hotel-actions {
         display: flex;
         justify-content: space-between;
         margin-top: 1.25rem;
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
+        padding-top: 1.25rem;
     }
 
     .status-badge {
@@ -107,6 +118,8 @@
         border-radius: 50px;
         padding-left: 3rem;
         height: 50px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
     }
 
     .search-icon {
@@ -121,6 +134,12 @@
         border-radius: 50px;
         font-weight: 500;
         padding: 0.5rem 1rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .btn-action:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
     .pagination-container {
@@ -133,21 +152,65 @@
         background-color: var(--primary);
         border-color: var(--primary);
     }
+    
+    .dashboard-header {
+        background-color: white;
+        padding: 1.5rem;
+        border-radius: 10px;
+        margin-bottom: 1.5rem;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+    
+    .btn-filter {
+        border-radius: 8px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        background-color: white;
+        color: var(--dark);
+        padding: 0.5rem 1rem;
+        font-weight: 500;
+        transition: all 0.3s;
+    }
+    
+    .btn-filter:hover {
+        background-color: #f8f9fa;
+    }
 </style>
 {% endblock %}
 
 {% block myblock %}
+<!-- Django template does not have built-in filter for status=True, doing it in Python -->
+{% with active_hotels_count=0 %}
+    {% for hotel in hotels %}
+        {% if hotel.status %}
+            {% with active_hotels_count=active_hotels_count|add:1 %}
+            {% endwith %}
+        {% endif %}
+    {% endfor %}
+
 <!-- Dashboard Header -->
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
-    <a href="{% url 'owner_register' %}" class="btn btn-primary">
-        <i class="fas fa-plus-circle me-2"></i>Add New Hotel
-    </a>
+<div class="dashboard-header d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+    </div>
 </div>
 
+<!-- Display messages -->
+{% if messages %}
+<div class="mb-4">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' or message.tags == 'danger' %}exclamation-circle{% else %}info-circle{% endif %} me-2"></i>
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
 <!-- Stats Cards -->
-<div class="row mb-4">
-    <div class="col-xl-3 col-md-6 mb-4">
+<div class="row g-3 mb-4">
+    <div class="col-xl-3 col-md-6">
         <div class="stats-card bg-primary text-white">
             <div class="stats-icon bg-white text-primary">
                 <i class="fas fa-hotel"></i>
@@ -158,29 +221,29 @@
             </div>
         </div>
     </div>
-    <div class="col-xl-3 col-md-6 mb-4">
+    <div class="col-xl-3 col-md-6">
         <div class="stats-card bg-success text-white">
             <div class="stats-icon bg-white text-success">
                 <i class="fas fa-check-circle"></i>
             </div>
             <div class="stats-data">
-                <h2 class="stats-value">{{ hotels|dictsort:"status"|last }}</h2>
+                <h2 class="stats-value">{{ active_hotels_count }}</h2>
                 <p class="stats-label">Active Hotels</p>
             </div>
         </div>
     </div>
-    <div class="col-xl-3 col-md-6 mb-4">
+    <div class="col-xl-3 col-md-6">
         <div class="stats-card bg-warning text-white">
             <div class="stats-icon bg-white text-warning">
                 <i class="fas fa-users"></i>
             </div>
             <div class="stats-data">
-                <h2 class="stats-value">{{ owners_count|default:"0" }}</h2>
+                <h2 class="stats-value">{{ owners_count }}</h2>
                 <p class="stats-label">Restaurant Owners</p>
             </div>
         </div>
     </div>
-    <div class="col-xl-3 col-md-6 mb-4">
+    <div class="col-xl-3 col-md-6">
         <div class="stats-card bg-info text-white">
             <div class="stats-icon bg-white text-info">
                 <i class="fas fa-user-tie"></i>
@@ -212,8 +275,12 @@
             </div>
             <div class="col-lg-6 text-end">
                 <div class="btn-group">
-                    <button type="button" class="btn btn-outline-secondary">Filter</button>
-                    <button type="button" class="btn btn-outline-secondary">Sort By</button>
+                    <button type="button" class="btn btn-filter me-2">
+                        <i class="fas fa-filter me-1"></i>Filter
+                    </button>
+                    <button type="button" class="btn btn-filter">
+                        <i class="fas fa-sort me-1"></i>Sort By
+                    </button>
                 </div>
             </div>
         </div>
@@ -230,7 +297,7 @@
                     <div class="hotel-content">
                         <div class="hotel-info">
                             <i class="fas fa-user"></i>
-                            <span>{{ hotel.owner.first_name }} {{ hotel.owner.last_name }}</span>
+                            <span><strong>{{ hotel.owner.first_name }} {{ hotel.owner.last_name }}</strong></span>
                         </div>
                         <div class="hotel-info">
                             <i class="fas fa-phone"></i>
@@ -252,16 +319,13 @@
                             </span>
                             
                             <div>
-                                <form method="post" action="{% url 'toggle_hotel_status' hotel.id %}" class="d-inline">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-sm btn-outline-{% if hotel.status %}danger{% else %}success{% endif %} btn-action"
-                                        onclick="return confirm('Are you sure you want to {% if hotel.status %}deactivate{% else %}activate{% endif %} {{ hotel.name }}?');">
-                                        <i class="fas fa-toggle-{% if hotel.status %}on{% else %}off{% endif %} me-1"></i>
-                                        {% if hotel.status %}Deactivate{% else %}Activate{% endif %}
-                                    </button>
-                                </form>
-                                <a href="#" class="btn btn-sm btn-outline-info btn-action ms-1">
-                                    <i class="fas fa-info-circle me-1"></i>Details
+                                <a href="{% url 'view_restaurant' hotel.id %}" class="btn btn-sm btn-outline-primary btn-action">
+                                    <i class="fas fa-eye me-1"></i>View
+                                </a>
+                                <a href="{% url 'toggle_hotel_status' hotel.id %}" class="btn btn-sm btn-outline-{% if hotel.status %}danger{% else %}success{% endif %} btn-action"
+                                    onclick="return confirm('Are you sure you want to {% if hotel.status %}deactivate{% else %}activate{% endif %} {{ hotel.name }}?');">
+                                    <i class="fas fa-toggle-{% if hotel.status %}on{% else %}off{% endif %} me-1"></i>
+                                    {% if hotel.status %}Deactivate{% else %}Activate{% endif %}
                                 </a>
                             </div>
                         </div>
@@ -299,6 +363,7 @@
         {% endif %}
     </div>
 </div>
+{% endwith %}
 {% endblock %}
 
 {% block script %}

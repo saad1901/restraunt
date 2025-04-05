@@ -5,28 +5,28 @@
 <style>
     .stats-card {
         transition: all 0.3s;
-        padding: 1.25rem;
+        padding: 1rem;
         height: 100%;
         border-radius: 10px;
     }
 
     .stats-card:hover {
-        transform: translateY(-5px);
+        transform: translateY(-3px);
     }
 
     .stats-card .icon {
-        width: 50px;
-        height: 50px;
+        width: 40px;
+        height: 40px;
         display: flex;
         align-items: center;
         justify-content: center;
-        border-radius: 10px;
-        font-size: 1.5rem;
-        margin-bottom: 1rem;
+        border-radius: 8px;
+        font-size: 1.25rem;
+        margin-bottom: 0.75rem;
     }
 
     .stats-card .count {
-        font-size: 1.75rem;
+        font-size: 1.5rem;
         font-weight: 600;
         line-height: 1.2;
         margin-bottom: 0.25rem;
@@ -34,7 +34,7 @@
 
     .stats-card .label {
         color: rgba(255, 255, 255, 0.8);
-        font-size: 0.9rem;
+        font-size: 0.8rem;
     }
 
     .user-table td, .user-table th {
@@ -173,9 +173,22 @@
     </a>
 </div>
 
+<!-- Display messages -->
+{% if messages %}
+<div class="mb-4">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' or message.tags == 'danger' %}exclamation-circle{% else %}info-circle{% endif %} me-2"></i>
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
 <!-- Statistics Cards -->
-<div class="row mb-4">
-    <div class="col-xl-3 col-md-6 mb-4">
+<div class="row g-3 mb-4">
+    <div class="col-xl-3 col-md-6">
         <div class="stats-card bg-primary text-white">
             <div class="icon bg-white text-primary">
                 <i class="fas fa-users"></i>
@@ -184,30 +197,30 @@
             <div class="label">Total Users</div>
         </div>
     </div>
-    <div class="col-xl-3 col-md-6 mb-4">
+    <div class="col-xl-3 col-md-6">
         <div class="stats-card bg-success text-white">
             <div class="icon bg-white text-success">
                 <i class="fas fa-user-check"></i>
             </div>
-            <div class="count">{{ users.count }}</div>
+            <div class="count">{{ active_users }}</div>
             <div class="label">Active Users</div>
         </div>
     </div>
-    <div class="col-xl-3 col-md-6 mb-4">
+    <div class="col-xl-3 col-md-6">
         <div class="stats-card bg-info text-white">
             <div class="icon bg-white text-info">
                 <i class="fas fa-user-tie"></i>
             </div>
-            <div class="count">{{ agent_count|default:"0" }}</div>
+            <div class="count">{{ agent_count }}</div>
             <div class="label">Agents</div>
         </div>
     </div>
-    <div class="col-xl-3 col-md-6 mb-4">
+    <div class="col-xl-3 col-md-6">
         <div class="stats-card bg-warning text-white">
             <div class="icon bg-white text-warning">
                 <i class="fas fa-user-shield"></i>
             </div>
-            <div class="count">{{ superadmin_count|default:"1" }}</div>
+            <div class="count">{{ superadmin_count }}</div>
             <div class="label">Admins</div>
         </div>
     </div>
@@ -309,17 +322,36 @@
                             </span>
                         </td>
                         <td>
-                            {% if user.role == 'owner' and user.hotel %}
-                                <span class="hotel-badge bg-light">
-                                    <i class="fas fa-hotel me-1 text-primary"></i>{{ user.hotel.name|default:"—" }}
-                                </span>
-                            {% elif user.role == 'agent' and user.assigned_hotels.count > 0 %}
-                                <div class="d-flex align-items-center">
-                                    <span class="badge bg-light text-dark">{{ user.assigned_hotels.count }} hotels</span>
-                                    <button class="btn btn-sm ms-2 p-0 text-primary" data-bs-toggle="tooltip" title="View Hotels">
-                                        <i class="fas fa-eye small"></i>
-                                    </button>
-                                </div>
+                            {% if user.role == 'owner' %}
+                                {% for hotel in hotels %}
+                                    {% if hotel.owner.id == user.id %}
+                                        <span class="hotel-badge bg-light">
+                                            <i class="fas fa-hotel me-1 text-primary"></i>{{ hotel.name }}
+                                        </span>
+                                        
+                                    {% endif %}
+                                {% empty %}
+                                    <span class="text-muted">—</span>
+                                {% endfor %}
+                            {% elif user.role == 'agent' %}
+                                {% with agent_hotel_count=0 %}
+                                    {% for hotel in hotels %}
+                                        {% if hotel.agent and hotel.agent.id == user.id %}
+                                            {% with agent_hotel_count=agent_hotel_count|add:1 %}{% endwith %}
+                                        {% endif %}
+                                    {% endfor %}
+                                    
+                                    {% if agent_hotel_count > 0 %}
+                                        <div class="d-flex align-items-center">
+                                            <span class="badge bg-light text-dark">{{ agent_hotel_count }} hotels</span>
+                                            <button class="btn btn-sm ms-2 p-0 text-primary" data-bs-toggle="tooltip" title="View Hotels">
+                                                <i class="fas fa-eye small"></i>
+                                            </button>
+                                        </div>
+                                    {% else %}
+                                        <span class="text-muted">—</span>
+                                    {% endif %}
+                                {% endwith %}
                             {% else %}
                                 <span class="text-muted">—</span>
                             {% endif %}
@@ -327,16 +359,16 @@
                         <td>{{ user.date_joined|date:"M d, Y" }}</td>
                         <td>
                             <div class="d-flex">
-                                <a href="#" class="btn btn-sm btn-outline-primary action-btn" title="View Details">
+                                <a href="{% url 'view_user' user.id %}" class="btn btn-sm btn-outline-primary action-btn" title="View Details">
                                     <i class="fas fa-eye"></i>
                                 </a>
-                                <a href="#" class="btn btn-sm btn-outline-secondary action-btn" title="Edit">
+                                <a href="{% url 'edit_user' user.id %}" class="btn btn-sm btn-outline-secondary action-btn" title="Edit">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <button class="btn btn-sm btn-outline-{{ user.is_active|yesno:'danger,success' }} action-btn" title="{{ user.is_active|yesno:'Deactivate,Activate' }}">
-                                    <i class="fas fa-{{ user.is_active|yesno:'user-slash,user-check' }}"></i>
-                                </button>
                                 {% if user.role != 'superadmin' %}
+                                <a href="{% url 'toggle_user_status' user.id %}" class="btn btn-sm btn-outline-{{ user.is_active|yesno:'danger,success' }} action-btn" title="{{ user.is_active|yesno:'Deactivate,Activate' }}" onclick="return confirm('Are you sure you want to {{ user.is_active|yesno:'deactivate,activate' }} user: {{ user.username }}?');">
+                                    <i class="fas fa-{{ user.is_active|yesno:'user-slash,user-check' }}"></i>
+                                </a>
                                 <button class="btn btn-sm btn-outline-danger action-btn" data-bs-toggle="modal" data-bs-target="#deleteModal{{ user.id }}" title="Delete">
                                     <i class="fas fa-trash-alt"></i>
                                 </button>
@@ -344,28 +376,6 @@
                             </div>
                         </td>
                     </tr>
-
-                    <!-- Delete Modal -->
-                    <div class="modal fade" id="deleteModal{{ user.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ user.id }}" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="deleteModalLabel{{ user.id }}">Confirm Delete</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <p class="mb-0">Are you sure you want to delete user: <strong>{{ user.username }}</strong>?</p>
-                                    <p class="text-danger mt-3 mb-0"><i class="fas fa-exclamation-triangle me-2"></i>This action cannot be undone.</p>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                                    <a href="#" class="btn btn-danger">
-                                        <i class="fas fa-trash-alt me-2"></i>Delete User
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                     {% endfor %}
                 </tbody>
             </table>
@@ -401,6 +411,33 @@
         {% endif %}
     </div>
 </div>
+
+<!-- Modal container outside of the table for better DOM handling -->
+<div class="user-modals">
+    {% for user in users %}
+    <!-- Delete Modal -->
+    <div class="modal fade" id="deleteModal{{ user.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ user.id }}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel{{ user.id }}">Confirm Delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-0">Are you sure you want to delete user: <strong>{{ user.username }}</strong>?</p>
+                    <p class="text-danger mt-3 mb-0"><i class="fas fa-exclamation-triangle me-2"></i>This action cannot be undone.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <a href="{% url 'delete_user' user.id %}" class="btn btn-danger">
+                        <i class="fas fa-trash-alt me-2"></i>Delete User
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
 {% endblock %}
 
 {% block script %}
@@ -410,6 +447,18 @@
         const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
         tooltipTriggerList.map(function (tooltipTriggerEl) {
             return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+        
+        // Properly handle modal triggers
+        const deleteButtons = document.querySelectorAll('[data-bs-toggle="modal"]');
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = this.getAttribute('data-bs-target');
+                const modalElement = document.querySelector(target);
+                const modal = new bootstrap.Modal(modalElement);
+                modal.show();
+            });
         });
         
         // Filter functionality
