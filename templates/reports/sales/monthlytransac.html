@@ -3,100 +3,432 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Monthly Orders Report</title>
+  <title>Monthly Orders Report | {{ request.user.staffof.name }}</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
+    :root {
+      --primary-color: #4f46e5;
+      --primary-dark: #4338ca;
+      --success-color: #10b981;
+      --danger-color: #ef4444;
+      --warning-color: #f59e0b;
+      --info-color: #0ea5e9;
+      --background: #f8fafc;
+      --card-bg: #ffffff;
+      --border-color: #e2e8f0;
+      --secondary-color: #334155;
+      --light-text: #f8fafc;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+      --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --border-radius: 0.5rem;
+    }
+
     body {
-      background-color: #f4f7f6;
+      background-color: var(--background);
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Oxygen, Ubuntu, sans-serif;
+      color: var(--secondary-color);
+      line-height: 1.5;
+      font-size: 0.95rem;
     }
+
     .navbar {
-      background-color: #343a40;
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+      color: var(--light-text);
+      box-shadow: var(--shadow-md);
+      padding: 0.75rem 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
     }
+
+    .navbar-brand {
+      font-weight: 600;
+    }
+
+    .month-filter {
+      padding: 1.5rem;
+      border-radius: var(--border-radius);
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    .month-filter:hover {
+      box-shadow: var(--shadow-md);
+    }
+
+    .orders-table {
+      background: var(--card-bg);
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
     .table thead th {
-      background: #343a40;
-      color: white;
+      background: rgba(79, 70, 229, 0.1);
+      color: var(--primary-color);
+      font-weight: 600;
+      border-bottom: none;
+      padding: 0.65rem 0.75rem;
+      font-size: 0.9rem;
+    }
+
+    .table tbody td {
+      padding: 0.65rem 0.75rem;
+      vertical-align: middle;
+      font-size: 0.9rem;
+    }
+
+    .table tr:not(:last-child) {
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .btn-primary {
+      background: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      border-color: var(--primary-dark);
+    }
+
+    .grand-total-row {
+      background-color: rgba(79, 70, 229, 0.05);
+      font-weight: bold;
+    }
+
+    .grand-total-value {
+      color: var(--primary-color);
+      font-size: 1.1rem;
+    }
+
+    .empty-state {
+      padding: 3rem 1rem;
+      text-align: center;
+    }
+
+    .empty-state-icon {
+      font-size: 3rem;
+      color: #cbd5e1;
+      margin-bottom: 1rem;
+    }
+
+    .no-data-message {
+      font-size: 1.25rem;
+      color: #64748b;
+      font-weight: 500;
+    }
+
+    .date-normal {
+      font-weight: 600;
+    }
+
+    .date-weekend {
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+
+    .revenue-zero {
+      color: var(--danger-color);
+      font-weight: 600;
+    }
+
+    .revenue-positive {
+      color: var(--success-color);
+      font-weight: 600;
+    }
+
+    .card-header {
+      background: rgba(79, 70, 229, 0.1);
+      border-bottom: 1px solid var(--border-color);
+      padding: 1rem 1.25rem;
+    }
+
+    .card-title {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-bottom: 0;
+    }
+
+    /* New styles for the visual indicator */
+    .sales-indicator {
+      height: 6px;
+      background-color: #e2e8f0;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 4px;
+      width: 80px;
+    }
+    
+    .sales-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--success-color) 0%, var(--primary-color) 100%);
+      border-radius: 3px;
+    }
+    
+    .stat-card {
+      transition: transform 0.2s ease;
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-3px);
+    }
+    
+    .card-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      background-color: rgba(79, 70, 229, 0.1);
+      color: var(--primary-color);
+      border-radius: 50%;
+      margin-bottom: 0.5rem;
+    }
+
+    /* Sales trend indicators */
+    .sales-0 { width: 0%; }
+    .sales-10 { width: 10%; }
+    .sales-25 { width: 25%; }
+    .sales-50 { width: 50%; }
+    .sales-75 { width: 75%; }
+    .sales-100 { width: 100%; }
+    
+    /* Summary dropdown styles */
+    .summary-header {
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+    
+    .summary-header:hover {
+      background-color: rgba(79, 70, 229, 0.15);
+    }
+    
+    .chevron-icon {
+      transition: transform 0.3s ease;
+    }
+    
+    .summary-header[aria-expanded="true"] .chevron-icon {
+      transform: rotate(-180deg);
+    }
+    
+    .stat-item {
+      padding: 0.75rem;
+      border-radius: var(--border-radius);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    .stat-item:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    @media (max-width: 768px) {
+      .month-filter {
+        padding: 1rem;
+      }
+      
+      .table thead th, 
+      .table tbody td {
+        padding: 0.75rem 0.5rem;
+      }
+      
+      .sales-indicator {
+        width: 60px;
+      }
     }
   </style>
 </head>
 <body>
   <!-- Navigation Bar -->
-  <nav class="navbar navbar-expand-lg">
-    <div class="container-fluid">
-      <a class="btn btn-link text-white me-2" href="{% url 'sales' %}">
-        <i class="fas fa-arrow-left"></i>
-      </a>
-      <span class="navbar-brand text-white">Monthly Orders Report</span>
+  <nav class="navbar">
+    <div class="container">
+      <div class="d-flex align-items-center justify-content-between w-100">
+        <div class="d-flex align-items-center">
+          <button class="btn btn-link text-white me-2" onclick="history.back()">
+            <i class="fas fa-arrow-left"></i>
+          </button>
+          <span class="navbar-brand text-white mb-0">Monthly Transactions</span>
+        </div>
+        <a href="{% url 'owner' %}" class="btn btn-link text-white">
+          <i class="fas fa-home"></i>
+        </a>
+      </div>
     </div>
   </nav>
 
-  <div class="container mt-4">
+  <div class="container py-4">
     <!-- Month Selection -->
     <div class="row mb-4">
-      <div class="col-md-6">
-        <div class="card shadow-sm">
-          <div class="card-body">
-            <form method="GET">
-              {% csrf_token %}
-              <label class="form-label"><strong>Select Month</strong></label>
-              <!-- input type="month" returns a value in YYYY-MM format -->
+      <div class="col-md-6 mx-auto">
+        <div class="month-filter">
+          <form method="GET" class="row g-3 align-items-end">
+            {% csrf_token %}
+            <div class="col-md-8">
+              <label class="form-label fw-medium">Select Month & Year</label>
               <input type="month" class="form-control" name="month" value="{{ month_str }}">
-              <button type="submit" class="btn btn-primary mt-2">Load Report</button>
-            </form>
-          </div>
+            </div>
+            <div class="col-md-4">
+              <button type="submit" class="btn btn-primary w-100">
+                <i class="fas fa-filter me-1"></i>Apply
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
 
-    <!-- Datewise Revenue Table -->
-    <div class="card shadow-sm">
-      <div class="card-body">
-        <h5 class="card-title">Report for {{ selected_year }}-{{ selected_month}}</h5>
-        <div class="table-responsive">
-          <table class="table table-hover mb-0">
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Total Revenue</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for day in day_data %}
-              <tr>
-                {% if day.whichday != 6 %}
-                <td style="font-weight: bold;">{{ day.date }}</td>
-                {% else%}
-                <td style="font-weight: bold;color: rgb(27, 16, 179);">{{ day.date }}</td>
-                {% endif %}
-                {% if day.total_revenue == 0 %}
-                <td style="color: red; font-weight: bold;">₹{{ day.total_revenue|floatformat:2 }}</td>
-                {% else%}
-                <td style="color: rgb(22, 167, 9); font-weight: bold;">₹{{ day.total_revenue|floatformat:2 }}</td>
-                {% endif %}
-                <td>
-                  <a href="{% url 'dailytransc' %}?date={{ day.org_date }}" class="btn btn-sm btn-outline-primary">
-                    <i class="fas fa-eye"></i>
-                  </a>
-                </td>
-              </tr>
-              {% empty %}
-              <tr>
-                <td colspan="3">
-                  <div class="text-center py-3">
-                    <i class="fas fa-box-open fa-2x text-muted mb-2"></i>
-                    <h5 class="text-muted">No data found for this month</h5>
+    <!-- Monthly Statistics Summary Dropdown -->
+    {% if grand_total > 0 %}
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="orders-table">
+          <div class="card-header d-flex justify-content-between align-items-center summary-header" data-bs-toggle="collapse" data-bs-target="#monthlySummary" aria-expanded="false" aria-controls="monthlySummary">
+            <h5 class="card-title mb-0">
+              <i class="fas fa-chart-pie me-2"></i>
+              Monthly Summary
+            </h5>
+            <span><i class="fas fa-chevron-down chevron-icon"></i></span>
+          </div>
+          <div class="collapse" id="monthlySummary">
+            <div class="p-3 border-top">
+              <div class="row g-3">
+                <!-- Revenue Overview -->
+                <div class="col-md-6">
+                  <div class="d-flex justify-content-between align-items-center mb-3 stat-item bg-primary bg-opacity-10">
+                    <div class="d-flex align-items-center">
+                      <div class="me-2 rounded-circle bg-primary bg-opacity-25 p-2">
+                        <i class="fas fa-coins text-primary"></i>
+                      </div>
+                      <span class="fw-medium">Total Revenue</span>
+                    </div>
+                    <span class="fs-5 fw-bold text-primary">₹{{ grand_total|floatformat:2 }}</span>
                   </div>
-                </td>
-              </tr>
-              {% endfor %}
-              <tr>
-                <td style="color: blue; font-weight: bold;">Total:</td>
-                <td style="color: rgb(231, 14, 220); font-weight: bold;">₹{{grand_total|floatformat:2 }}</td>
-              </tr>
-            </tbody>
-          </table>
+                  <div class="d-flex justify-content-between align-items-center stat-item bg-info bg-opacity-10">
+                    <div class="d-flex align-items-center">
+                      <div class="me-2 rounded-circle bg-info bg-opacity-25 p-2">
+                        <i class="fas fa-chart-line text-info"></i>
+                      </div>
+                      <span class="fw-medium">Average Daily</span>
+                    </div>
+                    <span class="fs-5 fw-bold text-info">₹{{ avg_daily_revenue|floatformat:2 }}</span>
+                  </div>
+                </div>
+                
+                <!-- Performance Insights -->
+                <div class="col-md-6">
+                  <div class="d-flex justify-content-between align-items-center mb-3 stat-item bg-success bg-opacity-10">
+                    <div class="d-flex align-items-center">
+                      <div class="me-2 rounded-circle bg-success bg-opacity-25 p-2">
+                        <i class="fas fa-calendar-check text-success"></i>
+                      </div>
+                      <span class="fw-medium">Active Days</span>
+                    </div>
+                    <span class="fs-5 fw-bold text-success">
+                      {% with total_days=day_data|length %}
+                        {% if total_days > 0 %}
+                          {{ days_with_sales }}/{{ total_days }}
+                        {% else %}
+                          0/0
+                        {% endif %}
+                      {% endwith %}
+                    </span>
+                  </div>
+                  <div class="d-flex justify-content-between align-items-center stat-item bg-warning bg-opacity-10">
+                    <div class="d-flex align-items-center">
+                      <div class="me-2 rounded-circle bg-warning bg-opacity-25 p-2">
+                        <i class="fas fa-trophy text-warning"></i>
+                      </div>
+                      <span class="fw-medium">Best Day ({{ highest_day_date }})</span>
+                    </div>
+                    <span class="fs-5 fw-bold text-warning">₹{{ highest_day_revenue|floatformat:2 }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Datewise Revenue Table -->
+    <div class="orders-table">
+      <div class="card-header">
+        <h5 class="card-title">
+          <i class="fas fa-calendar-alt me-2"></i>
+          {{ selected_month }} {{ selected_year }} Revenue Report
+        </h5>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Total</th>
+              <th>Trend</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for day in day_data %}
+            <tr>
+              {% if day.whichday != 6 %}
+                <td class="date-normal">{{ day.date }}</td>
+              {% else %}
+                <td class="date-weekend">{{ day.date }}</td>
+              {% endif %}
+              
+              {% if day.total_revenue == 0 %}
+                <td class="revenue-zero">₹{{ day.total_revenue|floatformat:2 }}</td>
+              {% else %}
+                <td class="revenue-positive">₹{{ day.total_revenue|floatformat:2 }}</td>
+              {% endif %}
+              
+              <td>
+                <div class="sales-indicator">
+                  {% if day.total_revenue == 0 %}
+                    <div class="sales-bar sales-0"></div>
+                  {% elif day.total_revenue == highest_day_revenue %}
+                    <div class="sales-bar sales-100"></div>
+                  {% elif day.total_revenue > 5000 %}
+                    <div class="sales-bar sales-75"></div>
+                  {% elif day.total_revenue > 2500 %}
+                    <div class="sales-bar sales-50"></div>
+                  {% elif day.total_revenue > 1000 %}
+                    <div class="sales-bar sales-25"></div>
+                  {% else %}
+                    <div class="sales-bar sales-10"></div>
+                  {% endif %}
+                </div>
+              </td>
+              
+              <td>
+                <a href="{% url 'dailytransc' %}?date={{ day.org_date }}" class="btn btn-sm btn-outline-primary">
+                  <i class="fas fa-eye"></i>
+                </a>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="4">
+                <div class="empty-state">
+                  <i class="fas fa-receipt empty-state-icon"></i>
+                  <h5 class="no-data-message">No orders found for this month</h5>
+                  <p class="text-muted">Try selecting a different month or creating new orders</p>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+            <tr class="grand-total-row">
+              <td class="fw-bold">Monthly Total:</td>
+              <td colspan="3" class="grand-total-value">₹{{ grand_total|floatformat:2 }}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
