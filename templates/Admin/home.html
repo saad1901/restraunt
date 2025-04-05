@@ -179,19 +179,11 @@
 {% endblock %}
 
 {% block myblock %}
-<!-- Django template does not have built-in filter for status=True, doing it in Python -->
-{% with active_hotels_count=0 %}
-    {% for hotel in hotels %}
-        {% if hotel.status %}
-            {% with active_hotels_count=active_hotels_count|add:1 %}
-            {% endwith %}
-        {% endif %}
-    {% endfor %}
-
 <!-- Dashboard Header -->
 <div class="dashboard-header d-flex justify-content-between align-items-center">
     <div>
         <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+        <p class="text-muted mb-0">Welcome to your admin dashboard</p>
     </div>
 </div>
 
@@ -363,7 +355,6 @@
         {% endif %}
     </div>
 </div>
-{% endwith %}
 {% endblock %}
 
 {% block script %}

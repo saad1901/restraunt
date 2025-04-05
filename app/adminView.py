@@ -8,6 +8,10 @@ from app.sendmail import sendemail
 import subprocess
 from django.http import JsonResponse
 from django.db.models import Count, Sum
+import os
+import sys
+import django
+import platform
 
 @login_required
 def home(request):
@@ -19,6 +23,9 @@ def home(request):
     owners_count = User.objects.filter(role='owner').count()
     agents_count = User.objects.filter(role='agent').count()
     
+    # Calculate active hotels count directly in the view
+    active_hotels_count = hotels.filter(status=True).count()
+    
     if request.method == 'POST' and 'q' in request.POST:
         query = request.POST.get('q', '').strip()
         if query:
@@ -28,6 +35,7 @@ def home(request):
         'hotels': hotels,
         'owners_count': owners_count,
         'agents_count': agents_count,
+        'active_hotels_count': active_hotels_count,
     }
     return render(request, 'Admin/home.html', context)
 
@@ -93,31 +101,141 @@ def delete_user(request, user_id):
     return redirect('users')
 
 
-# from django.contrib.admin.views.decorators import staff_member_required
-@login_required  # Restrict access to admin users
+@login_required
+def system_operations(request):
+    if request.user.role != 'superadmin':
+        return redirect('owner_login')
+    
+    # To store the results of operations
+    results = {
+        'has_result': False,
+        'operation': None,
+        'status': None,
+        'output': None,
+        'error': None
+    }
+    
+    # Get the current project path
+    project_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    
+    # Get system information
+    user_count = User.objects.count()
+    hotel_count = Hotel.objects.count()
+    active_hotel_count = Hotel.objects.filter(status=True).count()
+    
+    # Get the last deployment time (simple placeholder approach)
+    try:
+        from datetime import datetime
+        git_dir = os.path.join(project_path, '.git')
+        if os.path.exists(git_dir):
+            head_file = os.path.join(git_dir, 'FETCH_HEAD')
+            if os.path.exists(head_file):
+                last_deployment = datetime.fromtimestamp(os.path.getmtime(head_file)).strftime('%Y-%m-%d %H:%M:%S')
+            else:
+                last_deployment = "Unknown"
+        else:
+            last_deployment = "Git not initialized"
+    except:
+        last_deployment = "Could not determine"
+    
+    if request.method == 'POST':
+        operation = request.POST.get('operation')
+        results['operation'] = operation
+        results['has_result'] = True
+        
+        try:
+            if operation == 'git_pull':
+                # Run git pull command
+                result = subprocess.run(
+                    ["git", "pull"],
+                    cwd=project_path,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    text=True
+                )
+                
+                results['status'] = "success" if result.returncode == 0 else "error"
+                results['output'] = result.stdout
+                results['error'] = result.stderr
+                
+            elif operation == 'migrations':
+                # Run makemigrations command
+                result = subprocess.run(
+                    ["python", "manage.py", "makemigrations"],
+                    cwd=project_path,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    text=True
+                )
+                
+                results['status'] = "success" if result.returncode == 0 else "error"
+                results['output'] = result.stdout
+                results['error'] = result.stderr
+                
+            elif operation == 'migrate':
+                # Run migrate command
+                result = subprocess.run(
+                    ["python", "manage.py", "migrate"],
+                    cwd=project_path,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    text=True
+                )
+                
+                results['status'] = "success" if result.returncode == 0 else "error"
+                results['output'] = result.stdout
+                results['error'] = result.stderr
+                
+            elif operation == 'collectstatic':
+                # Run collectstatic command
+                result = subprocess.run(
+                    ["python", "manage.py", "collectstatic", "--noinput"],
+                    cwd=project_path,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    text=True
+                )
+                
+                results['status'] = "success" if result.returncode == 0 else "error"
+                results['output'] = result.stdout
+                results['error'] = result.stderr
+                
+            elif operation == 'restart_server':
+                # This is a placeholder - actual server restart depends on your deployment
+                results['status'] = "info"
+                results['output'] = "Server restart command would be executed here in production."
+                results['error'] = "Note: In development, you'll need to restart the server manually."
+        
+        except Exception as e:
+            results['status'] = "error"
+            results['error'] = str(e)
+    
+    # Create system information for context
+    system_info = {
+        'python_version': platform.python_version(),
+        'django_version': django.get_version(),
+        'os': platform.platform(),
+    }
+    
+    context = {
+        'results': results,
+        'user_count': user_count,
+        'hotel_count': hotel_count,
+        'active_hotel_count': active_hotel_count,
+        'last_deployment': last_deployment,
+        'system_info': system_info
+    }
+    
+    return render(request, 'Admin/system_operations.html', context)
+
+
+@login_required
 def git_pull(request):
     if request.user.role != 'superadmin':
-        return JsonResponse('F**k off')
-    try:
-        project_path = "/home/hotelsoftware/restraunt"  # Your project directory
-        
-        # Run git pull command
-        result = subprocess.run(
-            ["git", "pull"],
-            cwd=project_path,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True
-        )
-
-        return JsonResponse({
-            "status": "success" if result.returncode == 0 else "error",
-            "output": result.stdout,
-            "error": result.stderr
-        })
-
-    except Exception as e:
-        return JsonResponse({"status": "error", "error": str(e)})
+        return redirect('owner_login')
+    
+    # Redirect to the system operations page
+    return redirect('system_operations')
 
 
 @login_required
