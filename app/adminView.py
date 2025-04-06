@@ -13,6 +13,7 @@ import sys
 import django
 import platform
 import requests
+from django.conf import settings
 
 @login_required
 def home(request):
@@ -204,9 +205,9 @@ def system_operations(request):
             elif operation == 'restart_server':
                 # PythonAnywhere-specific restart using their API
                 try:
-                    # Get the PythonAnywhere username from environment or settings
-                    username = os.environ.get('PYTHONANYWHERE_USERNAME', '')
-                    api_token = os.environ.get('PYTHONANYWHERE_API_TOKEN', '')
+                    # Get the PythonAnywhere username from settings
+                    username = getattr(settings, 'PYTHONANYWHERE_USERNAME', '')
+                    api_token = getattr(settings, 'PYTHONANYWHERE_API_TOKEN', '')
                     
                     if username and api_token:
                         # Construct the API URL for reloading the web app
@@ -226,7 +227,7 @@ def system_operations(request):
                             results['error'] = f"Failed to restart application. API Response: {response.status_code} - {response.text}"
                     else:
                         results['status'] = "error"
-                        results['error'] = "PythonAnywhere credentials not configured. Please set PYTHONANYWHERE_USERNAME and PYTHONANYWHERE_API_TOKEN environment variables."
+                        results['error'] = "PythonAnywhere credentials not configured. Please add PYTHONANYWHERE_USERNAME and PYTHONANYWHERE_API_TOKEN to your settings."
                 except ImportError:
                     results['status'] = "error"
                     results['error'] = "The 'requests' library is required but not installed. Run 'pip install requests' to install it."
