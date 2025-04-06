@@ -38,7 +38,15 @@ def home(request):
 def submit_order(request):
     if request.method == "POST":
         try:
-            # hotel = Hotel.objects.get(owner=request.user)
+            hotel = Hotel.objects.get(id=request.user.staffof.id)
+            
+            # Check if hotel subscription is active
+            if not hotel.status:
+                return JsonResponse({
+                    "success": False, 
+                    "message": "Your hotel subscription has expired. Please contact support to enable ordering."
+                })
+                
             data = json.loads(request.body)
             table_id = data.get("table")
             items = data.get("items", [])
@@ -97,10 +105,6 @@ def owner(request):
     if request.user.role != 'owner':
         return JsonResponse({"success": False, "message": "You are not authorized to view this page. Please login as an owner."})
     hotel = Hotel.objects.get(id=request.user.staffof.id)
-    if not hotel.status:
-        agent_cell = hotel.agent.phone if hotel.agent else "NOAGENT"
-        agent_name = hotel.agent.first_name if hotel.agent else "NOAGENT"
-        return render(request, 'notallowed.html', {'agent_cell':agent_cell, 'agent_name':agent_name})
     
     # Get current date in Indian timezone
     india_tz = timezone.get_current_timezone()
@@ -137,16 +141,41 @@ def owner(request):
     except:
         upi = []
     
+    # Get subscription status and agent contact info
+    subscription_active = hotel.status
+    agent_name = hotel.agent.first_name if hotel.agent else "NOAGENT"
+    agent_cell = hotel.agent.phone if hotel.agent else "NOAGENT"
     
-    return render(request, 'admin.html', {'hotel':hotel, 'tables':tables, 'orders':orders, 'tid':total_income_today, 
-                                          'tiy':total_income_yesterday, 'tot':total_orders_today,
-                                          'upi':upi, 'categories':categories, 'items':items})
+    context = {
+        'hotel': hotel,
+        'tables': tables,
+        'orders': orders,
+        'tid': total_income_today,
+        'tiy': total_income_yesterday,
+        'tot': total_orders_today,
+        'upi': upi,
+        'categories': categories,
+        'items': items,
+        'subscription_active': subscription_active,
+        'agent_name': agent_name,
+        'agent_cell': agent_cell
+    }
+    
+    return render(request, 'admin.html', context)
 
 
 @require_POST
 def complete_order(request):
     try:
-        # hotel = Hotel.objects.get(id=request.user.staffof.id)
+        hotel = Hotel.objects.get(id=request.user.staffof.id)
+        
+        # Check if hotel subscription is active
+        if not hotel.status:
+            return JsonResponse({
+                "success": False, 
+                "message": "Your hotel subscription has expired. Please contact support to enable ordering."
+            })
+            
         data = json.loads(request.body)
         order_id = data.get("order_id")
         discount = float(data.get("discount", 0))
@@ -180,7 +209,15 @@ def complete_order(request):
 @require_POST
 def delete_order(request):
     try:
-        # hotel = Hotel.objects.get(id=request.user.staffof.id)
+        hotel = Hotel.objects.get(id=request.user.staffof.id)
+        
+        # Check if hotel subscription is active
+        if not hotel.status:
+            return JsonResponse({
+                "success": False, 
+                "message": "Your hotel subscription has expired. Please contact support to enable ordering."
+            })
+            
         data = json.loads(request.body)
         order_id = data.get("order_id")
         if not order_id:
@@ -204,6 +241,15 @@ def delete_order(request):
 @require_POST
 def update_quantity(request):
     try:
+        hotel = Hotel.objects.get(id=request.user.staffof.id)
+        
+        # Check if hotel subscription is active
+        if not hotel.status:
+            return JsonResponse({
+                "success": False, 
+                "message": "Your hotel subscription has expired. Please contact support to enable ordering."
+            })
+            
         data = json.loads(request.body)
         
         # Support both methods of identifying the order item
@@ -800,3 +846,67 @@ def custom_period(request):
     }
     
     return render(request, 'reports/sales/custom_period.html', context)
+
+# AJAX endpoint to get current orders data
+@login_required
+def ajax_get_orders(request):
+    """
+    AJAX endpoint that returns the current active orders and stats data as JSON.
+    Used for live updates on the admin dashboard.
+    """
+    if request.user.role != 'owner':
+        return JsonResponse({"success": False, "message": "Unauthorized"})
+    
+    hotel = Hotel.objects.get(id=request.user.staffof.id)
+    
+    # Get active orders
+    orders = Order.objects.filter(completed=False, hotel=hotel)
+    
+    # Format orders data
+    orders_data = []
+    for order in orders:
+        items_data = []
+        for item in order.orderitems.all():
+            items_data.append({
+                'id': item.item.id,
+                'name': item.item.name,
+                'price': float(item.item.price),
+                'quantity': item.quantity
+            })
+        
+        orders_data.append({
+            'id': order.id,
+            'table_name': order.table.name,
+            'total': float(order.total),
+            'items': items_data,
+            'created_time': order.created_at.strftime('%I:%M %p'),
+            'attended_by': str(order.completedby) if order.completedby else None
+        })
+    
+    # Get stats data
+    india_tz = timezone.get_current_timezone()
+    current_date = timezone.now().astimezone(india_tz).date()
+    
+    total_income_today = Order.objects.filter(
+        completed=True, 
+        created_at__date=current_date, 
+        hotel=hotel
+    ).aggregate(total=Sum('total'))['total'] or 0
+    
+    total_orders_today = Order.objects.filter(
+        created_at__date=current_date, 
+        completed=True, 
+        hotel=hotel
+    ).count()
+    
+    # Prepare response data
+    response_data = {
+        'success': True,
+        'orders': orders_data,
+        'stats': {
+            'income_today': float(total_income_today),
+            'orders_today': total_orders_today
+        }
+    }
+    
+    return JsonResponse(response_data)
