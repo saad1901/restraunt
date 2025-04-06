@@ -12,6 +12,7 @@ import os
 import sys
 import django
 import platform
+import requests
 
 @login_required
 def home(request):
@@ -201,10 +202,37 @@ def system_operations(request):
                 results['error'] = result.stderr
                 
             elif operation == 'restart_server':
-                # This is a placeholder - actual server restart depends on your deployment
-                results['status'] = "info"
-                results['output'] = "Server restart command would be executed here in production."
-                results['error'] = "Note: In development, you'll need to restart the server manually."
+                # PythonAnywhere-specific restart using their API
+                try:
+                    # Get the PythonAnywhere username from environment or settings
+                    username = os.environ.get('PYTHONANYWHERE_USERNAME', '')
+                    api_token = os.environ.get('PYTHONANYWHERE_API_TOKEN', '')
+                    
+                    if username and api_token:
+                        # Construct the API URL for reloading the web app
+                        api_url = f"https://www.pythonanywhere.com/api/v0/user/{username}/webapps/{username}.pythonanywhere.com/reload/"
+                        
+                        # Make the API request to reload the web app
+                        response = requests.post(
+                            api_url,
+                            headers={"Authorization": f"Token {api_token}"}
+                        )
+                        
+                        if response.status_code == 200:
+                            results['status'] = "success"
+                            results['output'] = "PythonAnywhere application successfully restarted."
+                        else:
+                            results['status'] = "error"
+                            results['error'] = f"Failed to restart application. API Response: {response.status_code} - {response.text}"
+                    else:
+                        results['status'] = "error"
+                        results['error'] = "PythonAnywhere credentials not configured. Please set PYTHONANYWHERE_USERNAME and PYTHONANYWHERE_API_TOKEN environment variables."
+                except ImportError:
+                    results['status'] = "error"
+                    results['error'] = "The 'requests' library is required but not installed. Run 'pip install requests' to install it."
+                except Exception as e:
+                    results['status'] = "error"
+                    results['error'] = f"Error restarting PythonAnywhere application: {str(e)}"
         
         except Exception as e:
             results['status'] = "error"

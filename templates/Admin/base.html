@@ -331,6 +331,60 @@
             background-color: var(--primary);
             color: white;
         }
+        
+        /* Dark mode styles */
+        .dark-mode {
+            background-color: #1a1a1a;
+            color: #f1f1f1;
+        }
+        
+        .dark-mode .topbar {
+            background-color: #2c2c2c;
+            color: #f1f1f1;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .dark-mode .card {
+            background-color: #2c2c2c;
+            color: #f1f1f1;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .dark-mode .card-header {
+            background-color: #333;
+            color: #f1f1f1;
+            border-bottom-color: #444;
+        }
+        
+        .dark-mode .table th {
+            background-color: #333;
+            color: #f1f1f1;
+        }
+        
+        .dark-mode .form-control {
+            background-color: #333;
+            color: #f1f1f1;
+            border-color: #444;
+        }
+        
+        .dark-mode .dropdown-menu {
+            background-color: #2c2c2c;
+            color: #f1f1f1;
+            border-color: #444;
+        }
+        
+        .dark-mode .dropdown-item {
+            color: #f1f1f1;
+        }
+        
+        .dark-mode .dropdown-item:hover {
+            background-color: #444;
+            color: #fff;
+        }
+        
+        .dark-mode .dropdown-divider {
+            border-top-color: #444;
+        }
     </style>
     {% block style %}
     {% endblock %}
@@ -402,6 +456,11 @@
         </div>
 
         <div class="topbar-actions">
+            <!-- Dark Mode Toggle -->
+            <div class="me-3" style="cursor: pointer; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background-color: #f5f7fb; color: var(--dark); transition: all 0.3s ease;" id="darkModeToggle" title="Toggle Dark Mode" onmouseover="this.style.backgroundColor=getComputedStyle(document.documentElement).getPropertyValue('--primary'); this.style.color='white';" onmouseout="this.style.backgroundColor='#f5f7fb'; this.style.color=getComputedStyle(document.documentElement).getPropertyValue('--dark');">
+                <i class="fas fa-moon"></i>
+            </div>
+            
             <div class="dropdown ms-3">
                 <div class="user-dropdown" id="userDropdown" data-bs-toggle="dropdown">
                     <div class="user-avatar">
@@ -491,6 +550,34 @@
                     sidebar.classList.remove('show');
                     mainContent.classList.remove('shift');
                     topbar.classList.remove('shift');
+                }
+            });
+            
+            // Dark mode toggle functionality
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            const body = document.body;
+            const icon = darkModeToggle.querySelector('i');
+            
+            // Check for saved preference
+            if (localStorage.getItem('darkMode') === 'enabled') {
+                body.classList.add('dark-mode');
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            }
+            
+            darkModeToggle.addEventListener('click', () => {
+                // Toggle dark mode
+                body.classList.toggle('dark-mode');
+                
+                // Update icon
+                if (body.classList.contains('dark-mode')) {
+                    icon.classList.remove('fa-moon');
+                    icon.classList.add('fa-sun');
+                    localStorage.setItem('darkMode', 'enabled');
+                } else {
+                    icon.classList.remove('fa-sun');
+                    icon.classList.add('fa-moon');
+                    localStorage.setItem('darkMode', 'disabled');
                 }
             });
         });

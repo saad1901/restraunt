@@ -188,12 +188,12 @@
                 <div class="description">Collect static files in one location</div>
             </form>
             
-            <form method="post" action="{% url 'system_operations' %}" class="operation-btn" onsubmit="return confirm('Are you sure you want to restart the server?');">
+            <form method="post" action="{% url 'system_operations' %}" class="operation-btn" onsubmit="return confirm('Are you sure you want to restart the server? This will temporarily disconnect all users.');">
                 {% csrf_token %}
                 <input type="hidden" name="operation" value="restart_server">
                 <i class="fas fa-power-off"></i>
                 <div class="title">Restart Server</div>
-                <div class="description">Restart the application server</div>
+                <div class="description">Reload the PythonAnywhere web application</div>
             </form>
         </div>
         
