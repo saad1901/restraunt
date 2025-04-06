@@ -583,6 +583,170 @@
             height: 100%;
             margin: 0;
         }
+
+        /* Subscription Warning Overlay - Side version */
+        .subscription-warning {
+            position: fixed;
+            top: 70px;
+            right: 0;
+            bottom: 70px;
+            width: 320px;
+            max-width: 90vw;
+            background: rgba(220, 53, 69, 0.97);
+            color: white;
+            z-index: 1050;
+            padding: 1.25rem;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+            border-radius: 12px 0 0 12px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .subscription-warning.collapsed {
+            transform: translateX(calc(100% - 32px));
+        }
+        
+        .subscription-warning .toggle-btn {
+            position: absolute;
+            top: 50%;
+            left: -16px;
+            transform: translateY(-50%);
+            width: 32px;
+            height: 50px;
+            background: #dc3545;
+            border-radius: 8px 0 0 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Pulse animation for the toggle button */
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(220, 53, 69, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); }
+        }
+        
+        .subscription-warning.collapsed .toggle-btn {
+            animation: pulse 2s infinite;
+        }
+        
+        /* Indicator dot for collapsed state */
+        .subscription-warning.collapsed .toggle-btn::after {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            width: 8px;
+            height: 8px;
+            background: #fff;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .warning-content {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .warning-icon {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+            text-align: center;
+        }
+        
+        .warning-message {
+            margin-bottom: 1rem;
+        }
+        
+        .warning-message h4 {
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+        
+        .warning-message p {
+            font-size: 0.9rem;
+            margin-bottom: 0;
+            line-height: 1.4;
+        }
+        
+        .phone-contact {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            padding: 0.625rem;
+            margin-bottom: 0.5rem;
+            transition: all 0.2s ease;
+        }
+        
+        .phone-contact:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+        }
+        
+        .phone-contact-title {
+            font-weight: 600;
+            font-size: 0.8rem;
+            margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .phone-number {
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .phone-number i {
+            color: #ffc107;
+        }
+
+        .phone-label {
+            font-size: 0.8rem;
+            opacity: 0.9;
+            margin-left: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .subscription-warning {
+                width: 280px;
+            }
+        }
+
+        .disabled-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            border-radius: inherit;
+        }
+        
+        .locked-message {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
     </style>
 </head>
 
@@ -598,6 +762,56 @@
             </span>
         </div>
     </nav>
+
+    <!-- Subscription Warning - Shows when subscription is not active -->
+    {% if not subscription_active %}
+    <div class="subscription-warning collapsed" id="subscriptionWarning">
+        <div class="toggle-btn" onclick="toggleWarning()">
+            <i class="fas fa-chevron-left" id="warningToggleIcon"></i>
+            </div>
+        <div class="warning-content">
+            <div class="warning-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+            <div class="warning-message">
+                <h4>Subscription Expired</h4>
+                <p class="mb-3">Your hotel subscription has expired or is awaiting approval. You can view statistics and settings, but ordering functions are disabled until your subscription is renewed.</p>
+                        </div>
+            
+            {% if agent_cell %}
+            <a href="tel:+91{{agent_cell}}" class="phone-contact text-white text-decoration-none">
+                <div class="phone-contact-title">
+                    <i class="fas fa-user-tie"></i> Your Agent
+                            </div>
+                <div class="phone-number">
+                    <i class="fas fa-phone-alt"></i> +91 {{agent_cell}}
+                        </div>
+                <div class="d-flex align-items-center mt-1">
+                    <small class="me-2">{{agent_name}}</small>
+                    <span class="badge bg-light text-danger ms-auto">Call Now</span>
+                            </div>
+            </a>
+            {% endif %}
+            
+            <a href="tel:+918799878583" class="phone-contact text-white text-decoration-none {% if agent_cell != 'NOAGENT' %}mt-2{% endif %}">
+                <div class="phone-contact-title">
+                    <i class="fas fa-headset"></i> Admin Support
+                        </div>
+                <div class="phone-number">
+                    <i class="fas fa-phone-alt"></i> +91 8799 878 583
+                    </div>
+                <div class="d-flex align-items-center mt-1">
+                    <small class="me-2">Mon-Sat, 9AM-6PM</small>
+                    <span class="badge bg-light text-danger ms-auto">Call Now</span>
+                </div>
+            </a>
+            
+            <button class="btn btn-outline-light w-100 mt-3" onclick="toggleWarning()">
+                <i class="fas fa-times me-2"></i> Hide Warning
+            </button>
+            </div>
+        </div>
+    {% endif %}
 
     <!-- CSRF Token -->
     <input type="hidden" id="csrfToken" value="{{ csrf_token }}">
@@ -630,7 +844,16 @@
         <div class="row g-3">
                     {% for order in orders %}
             <div class="col-md-6 col-lg-4 mb-3">
-                <div id="order-{{ order.id }}" class="card h-100 {% if order.completed %}border-success{% else %}border-primary{% endif %}" style="border-left-width: 4px;">
+                <div id="order-{{ order.id }}" class="card h-100 {% if order.completed %}border-success{% else %}border-primary{% endif %}" style="border-left-width: 4px; position: relative;">
+                    <!-- Add disabled overlay if subscription is not active -->
+                    {% if not subscription_active %}
+                    <div class="disabled-overlay">
+                        <div class="locked-message">
+                            <i class="fas fa-lock"></i> Subscription Required
+                        </div>
+                    </div>
+                    {% endif %}
+                    
                     <div class="card-header d-flex justify-content-between align-items-center bg-white py-2">
                         <div>
                             <h5 class="mb-0 fw-bold text-primary">{{ order.table.name }}</h5>
@@ -814,22 +1037,6 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="card h-100">
-                                <div class="card-body p-3">
-                                    <div class="d-flex align-items-center">
-                                        <div class="me-3 d-flex align-items-center justify-content-center rounded-circle bg-danger bg-opacity-10 p-2" 
-                                            style="width: 48px; height: 48px;">
-                                            <i class="fas fa-users text-danger fs-4"></i>
-                                        </div>
-                                        <div>
-                                            <div class="text-muted small">Total Customers</div>
-                                            <h4 class="mb-0 fw-bold">{{ orders.count }}</h4>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -882,8 +1089,8 @@
 
     <!-- Bottom Action Bar -->
     <div class="bottom-action-bar">
-        <button class="bottom-action" data-bs-toggle="modal" data-bs-target="#newOrderModal">
-            <i class="fas fa-plus-circle"></i>
+        <button class="bottom-action" {% if subscription_active %}data-bs-toggle="modal" data-bs-target="#newOrderModal"{% else %}onclick="showSubscriptionAlert()"{% endif %}>
+            <i class="fas {% if subscription_active %}fa-plus-circle{% else %}fa-lock{% endif %}"></i>
             <span>New Order</span>
         </button>
         <button class="bottom-action" data-bs-toggle="modal" data-bs-target="#statsModal">
@@ -1000,24 +1207,442 @@
         let currentOrderId = null;
         let currentOrderTotal = 0;
         let holdRefresh = false;
-        let refreshInterval = 100000; // 100 seconds
+        let refreshInterval = 10000; // 10 seconds
+        let refreshTimer = null;
+        let subscriptionActive = {% if subscription_active %}true{% else %}false{% endif %};
         
         // Initialize everything when document is ready
         document.addEventListener('DOMContentLoaded', function() {
-            setupRefreshTimer();
+            setupLiveUpdates();
             setupModalEvents();
             setupNewOrderSubmit();
+            
+            // Disable order functions if subscription is inactive
+            if (!subscriptionActive) {
+                disableOrderFunctions();
+            }
         });
-
-        // Set up the auto-refresh timer
-        function setupRefreshTimer() {
-            setTimeout(function refreshPage() {
-                if (!holdRefresh) {
-                    location.reload();
-                } else {
-                    setTimeout(refreshPage, refreshInterval);
+        
+        // Set up live updates with AJAX instead of full page refresh
+        function setupLiveUpdates() {
+            // Start the update cycle
+            startOrdersRefresh();
+            
+            // Add event listeners for when updates should be paused
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                modal.addEventListener('shown.bs.modal', pauseOrdersRefresh);
+                modal.addEventListener('hidden.bs.modal', startOrdersRefresh);
+            });
+            
+        }
+        
+        // Pause the automatic order updates
+        function pauseOrdersRefresh() {
+            holdRefresh = true;
+            if (refreshTimer) {
+                clearTimeout(refreshTimer);
+                refreshTimer = null;
+            }
+        }
+        
+        // Start or resume the automatic order updates
+        function startOrdersRefresh() {
+            holdRefresh = false;
+            if (!refreshTimer) {
+                fetchUpdatedOrders();
+            }
+        }
+        
+        // Fetch updated order data using AJAX
+        function fetchUpdatedOrders() {
+            if (holdRefresh) return;
+            
+            const csrfToken = document.getElementById('csrfToken').value;
+            
+            // Create a timestamp to prevent caching
+            const timestamp = new Date().getTime();
+            
+            fetch('/ajax/get_orders/?t=' + timestamp, {
+                method: 'GET',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Content-Type': 'application/json'
                 }
-            }, refreshInterval);
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    updateOrdersDisplay(data.orders);
+                    updateStatsDisplay(data.stats);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching orders:', error);
+            })
+            .finally(() => {
+                // Schedule next update
+                refreshTimer = setTimeout(fetchUpdatedOrders, refreshInterval);
+            });
+        }
+        
+        // Update the orders section with new data
+        function updateOrdersDisplay(orders) {
+            const ordersContainer = document.querySelector('.row.g-3');
+            if (!ordersContainer) return;
+            
+            // Get current orders to check for changes
+            const currentOrderCards = ordersContainer.querySelectorAll('[id^="order-"]');
+            const currentOrderIds = Array.from(currentOrderCards).map(card => 
+                parseInt(card.id.replace('order-', ''))
+            );
+            
+            // Check for new orders or updates
+            orders.forEach(order => {
+                const orderId = order.id;
+                const existingCard = document.getElementById(`order-${orderId}`);
+                
+                if (existingCard) {
+                    // Update existing order card
+                    updateOrderCard(existingCard, order);
+                } else {
+                    // Add new order card
+                    addOrderCard(ordersContainer, order);
+                }
+            });
+            
+            // Remove orders that no longer exist
+            currentOrderCards.forEach(card => {
+                const cardId = parseInt(card.id.replace('order-', ''));
+                if (!orders.some(order => order.id === cardId)) {
+                    // Add fade-out animation
+                    card.parentElement.style.transition = 'opacity 0.5s ease';
+                    card.parentElement.style.opacity = '0';
+                    
+                    // Remove after animation completes
+                    setTimeout(() => {
+                        card.parentElement.remove();
+                    }, 500);
+                }
+            });
+        }
+        
+        // Update an existing order card with new data
+        function updateOrderCard(card, orderData) {
+            // Update order total
+            const totalElement = card.querySelector(`#orderTotal${orderData.id} span`);
+            if (totalElement && totalElement.textContent !== `₹${orderData.total}`) {
+                // Highlight the change with a brief animation
+                totalElement.style.transition = 'background-color 1s ease';
+                totalElement.style.backgroundColor = 'rgba(16, 185, 129, 0.2)';
+                totalElement.textContent = `₹${orderData.total}`;
+                
+                setTimeout(() => {
+                    totalElement.style.backgroundColor = 'transparent';
+                }, 1000);
+            }
+            
+            // Update items list
+            const itemsList = card.querySelector('.list-group');
+            if (itemsList) {
+                updateOrderItems(itemsList, orderData.items, orderData.id);
+            }
+        }
+        
+        // Update the items in an order
+        function updateOrderItems(itemsList, items, orderId) {
+            // Get current items
+            const currentItems = itemsList.querySelectorAll('.order-item');
+            const currentItemIds = Array.from(currentItems).map(item => 
+                parseInt(item.getAttribute('data-menu-id'))
+            );
+            
+            // Check for new items
+            items.forEach(item => {
+                const itemId = item.id;
+                const existingItem = itemsList.querySelector(`.order-item[data-menu-id="${itemId}"]`);
+                
+                if (existingItem) {
+                    // Update quantity if changed
+                    const quantityElement = existingItem.querySelector('.item-quantity');
+                    if (quantityElement && parseInt(quantityElement.textContent) !== item.quantity) {
+                        // Highlight the change
+                        quantityElement.style.transition = 'background-color 1s ease';
+                        quantityElement.style.backgroundColor = 'rgba(16, 185, 129, 0.2)';
+                        quantityElement.textContent = item.quantity;
+                        
+                        setTimeout(() => {
+                            quantityElement.style.backgroundColor = 'transparent';
+                        }, 1000);
+                    }
+                } else {
+                    // Add new item with a fade-in effect
+                    const newItem = createOrderItemElement(item, orderId);
+                    newItem.style.opacity = '0';
+                    newItem.style.transition = 'opacity 0.5s ease';
+                    itemsList.appendChild(newItem);
+                    
+                    // Trigger reflow to ensure animation works
+                    newItem.offsetHeight;
+                    newItem.style.opacity = '1';
+                }
+            });
+            
+            // Remove items that no longer exist
+            currentItems.forEach(itemElement => {
+                const itemId = parseInt(itemElement.getAttribute('data-menu-id'));
+                if (!items.some(item => item.id === itemId)) {
+                    // Add fade-out animation
+                    itemElement.style.transition = 'opacity 0.5s ease, height 0.3s ease, padding 0.3s ease, margin 0.3s ease';
+                    itemElement.style.opacity = '0';
+                    
+                    // Collapse height after fade out starts
+                    setTimeout(() => {
+                        itemElement.style.height = '0';
+                        itemElement.style.padding = '0';
+                        itemElement.style.margin = '0';
+                        itemElement.style.overflow = 'hidden';
+                        
+                        // Remove after animation completes
+                        setTimeout(() => {
+                            itemElement.remove();
+                        }, 300);
+                    }, 200);
+                }
+            });
+        }
+        
+        // Create a new order item element
+        function createOrderItemElement(item, orderId) {
+            const li = document.createElement('li');
+            li.className = 'list-group-item d-flex justify-content-between align-items-center p-3 order-item';
+            li.setAttribute('data-menu-id', item.id);
+            li.setAttribute('data-price', item.price);
+            
+            li.innerHTML = `
+                <div>
+                    <p class="mb-0 fw-medium">${item.name}</p>
+                    <small class="text-muted">₹${item.price} each</small>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <button class="btn btn-sm btn-danger rounded-circle p-1" 
+                        style="width: 32px; height: 32px;" onclick="updateQuantity(${orderId}, ${item.id}, 'decrease')">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <span class="fw-bold item-quantity" style="min-width: 24px; text-align: center;">
+                        ${item.quantity}
+                    </span>
+                    <button class="btn btn-sm btn-success rounded-circle p-1" 
+                        style="width: 32px; height: 32px;" onclick="updateQuantity(${orderId}, ${item.id}, 'increase')">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+            `;
+            
+            return li;
+        }
+        
+        // Add a new order card to the container
+        function addOrderCard(container, orderData) {
+            // Create column for the card
+            const col = document.createElement('div');
+            col.className = 'col-md-6 col-lg-4 mb-3';
+            col.style.opacity = '0';
+            col.style.transition = 'opacity 0.5s ease';
+            
+            // Create the card HTML
+            col.innerHTML = `
+                <div id="order-${orderData.id}" class="card h-100 border-primary" style="border-left-width: 4px; position: relative;">
+                    ${!subscriptionActive ? `
+                    <div class="disabled-overlay">
+                        <div class="locked-message">
+                            <i class="fas fa-lock"></i> Subscription Required
+                        </div>
+                    </div>
+                    ` : ''}
+                    
+                    <div class="card-header d-flex justify-content-between align-items-center bg-white py-2">
+                        <div>
+                            <h5 class="mb-0 fw-bold text-primary">${orderData.table_name}</h5>
+                            ${orderData.attended_by ? `<small class="text-muted">Attended by: ${orderData.attended_by}</small>` : ''}
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-sm btn-danger" onclick="haltRefresher(); deleteOrder(${orderData.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                            <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#completeModal" 
+                                onclick="haltRefresher(); prepareCompleteModal(${orderData.id}, ${orderData.total})">
+                                <i class="fas fa-check"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <ul class="list-group list-group-flush">
+                            ${orderData.items.map(item => `
+                            <li class="list-group-item d-flex justify-content-between align-items-center p-3 order-item" data-menu-id="${item.id}" data-price="${item.price}">
+                                <div>
+                                    <p class="mb-0 fw-medium">${item.name}</p>
+                                    <small class="text-muted">₹${item.price} each</small>
+                                </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <button class="btn btn-sm btn-danger rounded-circle p-1" 
+                                        style="width: 32px; height: 32px;" onclick="updateQuantity(${orderData.id}, ${item.id}, 'decrease')">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                    <span class="fw-bold item-quantity" style="min-width: 24px; text-align: center;">
+                                        ${item.quantity}
+                                    </span>
+                                    <button class="btn btn-sm btn-success rounded-circle p-1" 
+                                        style="width: 32px; height: 32px;" onclick="updateQuantity(${orderData.id}, ${item.id}, 'increase')">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                            </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                    <div class="card-footer bg-white d-flex justify-content-between align-items-center py-2">
+                        <small class="text-muted">
+                            <i class="far fa-clock me-1"></i>${orderData.created_time}
+                        </small>
+                        <h5 class="mb-0 text-success fw-bold" id="orderTotal${orderData.id}">
+                            <span>₹${orderData.total}</span>
+                        </h5>
+                    </div>
+                </div>
+            `;
+            
+            // Append the new card to the container
+            container.prepend(col);
+            
+            // Trigger reflow to ensure animation works
+            col.offsetHeight;
+            col.style.opacity = '1';
+            
+            // If subscription is inactive, disable buttons in the new card
+            if (!subscriptionActive) {
+                const btns = col.querySelectorAll('.btn-success, .btn-danger');
+                btns.forEach(btn => {
+                    btn.classList.add('disabled');
+                    btn.setAttribute('disabled', 'disabled');
+                    btn.setAttribute('title', 'Subscription expired');
+                });
+            }
+        }
+        
+        // Update stats display with latest data
+        function updateStatsDisplay(stats) {
+            if (!stats) return;
+            
+            // Update today's income
+            const tidElement = document.querySelector('.stats-item .value.success');
+            if (tidElement && tidElement.textContent !== `₹${stats.income_today}`) {
+                updateStatWithAnimation(tidElement, `₹${stats.income_today}`);
+            }
+            
+            // Update orders count
+            const ordersElement = document.querySelector('.stats-item .value.warning');
+            if (ordersElement && ordersElement.textContent !== stats.orders_today.toString()) {
+                updateStatWithAnimation(ordersElement, stats.orders_today.toString());
+            }
+            
+            // Update stats in modal if it exists
+            const modalTodayIncome = document.querySelector('#statsModal .text-success.mb-0');
+            if (modalTodayIncome) {
+                modalTodayIncome.textContent = `₹${stats.income_today}`;
+            }
+            
+            const modalOrdersToday = document.querySelector('#statsModal .text-warning.mb-0');
+            if (modalOrdersToday) {
+                modalOrdersToday.textContent = stats.orders_today.toString();
+            }
+        }
+        
+        // Add animation when updating stats
+        function updateStatWithAnimation(element, newValue) {
+            // Save current position
+            const rect = element.getBoundingClientRect();
+            const oldValue = element.textContent;
+            
+            // Create animation overlay
+            const overlay = document.createElement('div');
+            overlay.style.position = 'fixed';
+            overlay.style.left = `${rect.left}px`;
+            overlay.style.top = `${rect.top}px`;
+            overlay.style.width = `${rect.width}px`;
+            overlay.style.height = `${rect.height}px`;
+            overlay.style.zIndex = '9999';
+            overlay.style.pointerEvents = 'none';
+            overlay.style.display = 'flex';
+            overlay.style.alignItems = 'center';
+            overlay.style.justifyContent = 'center';
+            overlay.style.fontSize = window.getComputedStyle(element).fontSize;
+            overlay.style.fontWeight = window.getComputedStyle(element).fontWeight;
+            overlay.style.color = window.getComputedStyle(element).color;
+            overlay.textContent = oldValue;
+            
+            document.body.appendChild(overlay);
+            
+            // Update the actual element
+            element.textContent = newValue;
+            
+            // Animate the overlay
+            overlay.animate([
+                { transform: 'translateY(0)', opacity: 1 },
+                { transform: 'translateY(-20px)', opacity: 0 }
+            ], {
+                duration: 500,
+                easing: 'ease-out'
+            }).onfinish = () => overlay.remove();
+            
+            // Highlight the new value
+            element.style.transition = 'background-color 1s ease';
+            element.style.backgroundColor = 'rgba(16, 185, 129, 0.2)';
+            
+            setTimeout(() => {
+                element.style.backgroundColor = 'transparent';
+            }, 1000);
+        }
+
+        // Toggle the subscription warning panel
+        function toggleWarning() {
+            const warning = document.getElementById('subscriptionWarning');
+            const icon = document.getElementById('warningToggleIcon');
+            
+            if (warning.classList.contains('collapsed')) {
+                // Expand the warning
+                warning.classList.remove('collapsed');
+                icon.className = 'fas fa-chevron-right';
+            } else {
+                // Collapse the warning
+                warning.classList.add('collapsed');
+                icon.className = 'fas fa-chevron-left';
+            }
+        }
+        
+        // Show subscription alert when trying to create a new order
+        function showSubscriptionAlert() {
+            alert('Your subscription has expired. Please contact support to renew your subscription and enable ordering.');
+            
+            // Expand warning if it's collapsed
+            const warning = document.getElementById('subscriptionWarning');
+            if (warning && warning.classList.contains('collapsed')) {
+                toggleWarning();
+            }
+        }
+        
+        // Disable order creation and modification when subscription is inactive
+        function disableOrderFunctions() {
+            // Disable all order action buttons
+            document.querySelectorAll('.btn-success, .btn-danger').forEach(btn => {
+                btn.classList.add('disabled');
+                btn.setAttribute('disabled', 'disabled');
+                btn.setAttribute('title', 'Subscription expired');
+                
+                // Remove event listeners by cloning and replacing
+                const newBtn = btn.cloneNode(true);
+                btn.parentNode.replaceChild(newBtn, btn);
+            });
         }
 
         // Configure modal events
@@ -1025,7 +1650,7 @@
             const completeModal = document.getElementById('completeModal');
             if (completeModal) {
                 completeModal.addEventListener('hidden.bs.modal', function() {
-                    holdRefresh = false;
+                    startOrdersRefresh();
                 });
             }
         }
@@ -1034,7 +1659,15 @@
         function setupNewOrderSubmit() {
             const submitBtn = document.getElementById('submitNewOrder');
             if (submitBtn) {
-                submitBtn.addEventListener('click', createNewOrder);
+                submitBtn.addEventListener('click', function(e) {
+                    // Check subscription status before proceeding
+                    if (!subscriptionActive) {
+                        e.preventDefault();
+                        showSubscriptionAlert();
+                        return false;
+                    }
+                    createNewOrder();
+                });
             }
         }
 
@@ -1109,8 +1742,14 @@
             updateOrderSummary();
         }
 
-        // Create a new order
+        // Create a new order - now checks subscription status
         async function createNewOrder() {
+            // Prevent order creation if subscription is inactive
+            if (!subscriptionActive) {
+                showSubscriptionAlert();
+                return;
+            }
+            
             const tableSelect = document.getElementById('orderTable');
             const tableId = tableSelect.value;
             
@@ -1213,9 +1852,9 @@
             }
         }
 
-        // Pause auto-refresh
+        // Alias for pause function to maintain backward compatibility
         function haltRefresher() {
-            holdRefresh = true;
+            pauseOrdersRefresh();
         }
 
         // Apply preset discount
@@ -1411,8 +2050,14 @@
             qrModal.show();
         }
 
-        // Complete order process - optimized
+        // Complete order process - now checks subscription status
         async function completeOrder() {
+            // Prevent completion if subscription is inactive
+            if (!subscriptionActive) {
+                showSubscriptionAlert();
+                return;
+            }
+            
             const discount = parseFloat(document.getElementById('discountInput').value) || 0;
             const finalTotal = parseFloat(document.getElementById('finalAmount').textContent.replace(/[^0-9.]/g, ''));
             const phone = document.getElementById('modalPhone').value.trim();
@@ -1448,8 +2093,14 @@
             }
         }
 
-        // Delete order function - optimized
+        // Delete order function - now checks subscription status
         async function deleteOrder(orderId) {
+            // Prevent deletion if subscription is inactive
+            if (!subscriptionActive) {
+                showSubscriptionAlert();
+                return;
+            }
+            
             if (!confirm('Are you sure you want to delete this order?')) return;
             
             toggleLoader(true);

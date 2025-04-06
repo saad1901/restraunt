@@ -47,6 +47,7 @@ urlpatterns = [
     path('complete_order/', views.complete_order, name='complete_order'),
     path('delete_order/', views.delete_order, name='delete_order'),
     path('update_quantity/', views.update_quantity, name='update_quantity'),
+    path('ajax/get_orders/', views.ajax_get_orders, name='ajax_get_orders'),
 
     path('owner/settings', views.button, name='button'),
     path('owner/settings/reports', views.reports, name='reports'),
