@@ -747,6 +747,96 @@
             align-items: center;
             gap: 0.5rem;
         }
+        
+        /* Dark mode styles */
+        .dark-mode {
+            --background: #121212;
+            --card-bg: #1e1e1e;
+            --secondary-color: #e2e8f0;
+            --border-color: #444;
+        }
+        
+        .dark-mode body {
+            background-color: #121212;
+            color: #e2e8f0;
+        }
+        
+        .dark-mode .navbar {
+            background: linear-gradient(135deg, #3730a3 0%, #312e81 100%);
+        }
+        
+        .dark-mode .stats-bar {
+            background: #1e1e1e;
+            border-color: #444;
+        }
+        
+        .dark-mode .card {
+            background-color: #1e1e1e;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .dark-mode .card-header {
+            background-color: #2d2d2d !important;
+            border-bottom-color: #444;
+        }
+        
+        .dark-mode .list-group-item {
+            background-color: #1e1e1e;
+            border-color: #444;
+            color: #e2e8f0;
+        }
+        
+        .dark-mode .text-muted {
+            color: #aaa !important;
+        }
+        
+        .dark-mode .bottom-action-bar {
+            background-color: #1e1e1e !important;
+            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .dark-mode .bottom-action {
+            color: #e2e8f0 !important;
+            background-color: #2d2d2d;
+        }
+        
+        .dark-mode .bottom-action:hover {
+            color: var(--primary-color) !important;
+            background-color: rgba(79, 70, 229, 0.2);
+        }
+        
+        .dark-mode .bottom-action.primary {
+            background-color: var(--primary-dark);
+        }
+        
+        .dark-mode .modal-content {
+            background-color: #1e1e1e;
+            color: #e2e8f0;
+        }
+        
+        .dark-mode .modal-body {
+            color: #e2e8f0;
+        }
+        
+        .dark-mode .form-control,
+        .dark-mode .form-select {
+            background-color: #333;
+            color: #e2e8f0;
+            border-color: #444;
+        }
+        
+        .dark-mode .locked-message {
+            background: rgba(30, 30, 30, 0.9);
+            color: #e2e8f0;
+        }
+        
+        .dark-mode .card-footer {
+            background-color: #1e1e1e !important;
+            border-top-color: #444;
+            color: #e2e8f0;
+        }
+        
+        /* Remove duplicate dark mode styles */
     </style>
 </head>
 
@@ -760,6 +850,10 @@
                 </div>
                 {{ hotel.name }}
             </span>
+            <!-- Dark Mode Toggle -->
+            <div style="cursor: pointer; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: rgba(255, 255, 255, 0.2); color: white; transition: all 0.3s ease;" id="darkModeToggle" title="Toggle Dark Mode">
+                <i class="fas fa-moon"></i>
+            </div>
         </div>
     </nav>
 
@@ -2126,6 +2220,46 @@
                 toggleLoader(false);
             }
         }
+
+        // Function to show subscription alert
+        function showSubscriptionAlert() {
+            const warningPanel = document.querySelector('.subscription-warning');
+            if (warningPanel && warningPanel.classList.contains('collapsed')) {
+                toggleWarning(); // Expand the warning panel
+            }
+            showToast('Subscription expired. Please contact support to renew.', 'danger');
+        }
+
+        // Setup dark mode functionality when document is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add dark mode toggle functionality
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            if (darkModeToggle) {
+                const htmlElement = document.documentElement;
+                
+                // Check for saved user preference
+                if (localStorage.getItem('darkMode') === 'enabled') {
+                    htmlElement.classList.add('dark-mode');
+                    darkModeToggle.querySelector('i').className = 'fas fa-sun';
+                }
+                
+                // Add event listener to toggle button without toast notifications
+                darkModeToggle.addEventListener('click', () => {
+                    // Toggle dark mode class
+                    htmlElement.classList.toggle('dark-mode');
+                    
+                    // Update icon and save preference
+                    const icon = darkModeToggle.querySelector('i');
+                    if (htmlElement.classList.contains('dark-mode')) {
+                        icon.className = 'fas fa-sun';
+                        localStorage.setItem('darkMode', 'enabled');
+                    } else {
+                        icon.className = 'fas fa-moon';
+                        localStorage.setItem('darkMode', 'disabled');
+                    }
+                });
+            }
+        });
     </script>
 </body>
 
