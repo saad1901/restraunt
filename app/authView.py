@@ -13,14 +13,8 @@ def owner_login(request):
 
         if user is not None:
             login(request, user)
-            if user.role == 'owner':
-                return redirect('owner')
-            elif user.role == 'staff':
-                return redirect('waiterhome')
-            elif user.role == 'agent':
-                return redirect('agenthome')
-            elif user.role == 'superadmin':
-                return redirect('home')
+            # Redirect all users to redirection view which will handle proper routing
+            return redirect('redirection')
         else:
             messages.error(request, "Invalid username or password.")
 
