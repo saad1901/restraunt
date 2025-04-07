@@ -1,0 +1,450 @@
+{% extends 'base_public.html' %}
+{% load static %}
+
+{% block title %}CloudBits - Restaurant Management Software{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center min-vh-100">
+            <div class="col-lg-8 mx-auto text-center">
+                <h1 class="display-3 fw-bold mb-4" data-aos="fade-up">Transform Your Restaurant Operations</h1>
+                <p class="lead mb-5" data-aos="fade-up" data-aos-delay="100">
+                    CloudBits is your all-in-one restaurant management solution. Streamline operations, boost efficiency, and delight your customers with our powerful platform.
+                </p>
+                <div class="d-grid gap-2 d-md-flex justify-content-center" data-aos="fade-up" data-aos-delay="200">
+                    <a href="#pricing" class="btn btn-primary btn-lg me-md-3">View Pricing</a>
+                    <a href="#contact" class="btn btn-outline-light btn-lg">Request Demo</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats-section py-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-6 col-md-3 text-center" data-aos="fade-up">
+                <div class="stat-item">
+                    <h3 class="display-4 fw-bold">2,500+</h3>
+                    <p class="text-muted">Restaurants</p>
+                </div>
+            </div>
+            <div class="col-6 col-md-3 text-center" data-aos="fade-up" data-aos-delay="100">
+                <div class="stat-item">
+                    <h3 class="display-4 fw-bold">98%</h3>
+                    <p class="text-muted">Customer Satisfaction</p>
+                </div>
+            </div>
+            <div class="col-6 col-md-3 text-center" data-aos="fade-up" data-aos-delay="200">
+                <div class="stat-item">
+                    <h3 class="display-4 fw-bold">30%</h3>
+                    <p class="text-muted">Revenue Increase</p>
+                </div>
+            </div>
+            <div class="col-6 col-md-3 text-center" data-aos="fade-up" data-aos-delay="300">
+                <div class="stat-item">
+                    <h3 class="display-4 fw-bold">24/7</h3>
+                    <p class="text-muted">Support</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section py-5" id="features">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="section-title" data-aos="fade-up">Powerful Features for Modern Restaurants</h2>
+            <p class="lead" data-aos="fade-up" data-aos-delay="100">Everything you need to run your restaurant efficiently</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4" data-aos="fade-up">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-cash-register"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Point of Sale</h3>
+                        <p>Streamline your ordering process with our intuitive POS system that works on any device</p>
+                    </div>
+                    <div class="feature-hover">
+                        <a href="#" class="btn-link">Learn more <i class="fas fa-arrow-right ms-1"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-boxes"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Inventory Management</h3>
+                        <p>Track ingredients and supplies in real-time with automated alerts and waste reduction</p>
+                    </div>
+                    <div class="feature-hover">
+                        <a href="#" class="btn-link">Learn more <i class="fas fa-arrow-right ms-1"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Staff Management</h3>
+                        <p>Schedule and manage your team efficiently with time tracking and performance analytics</p>
+                    </div>
+                    <div class="feature-hover">
+                        <a href="#" class="btn-link">Learn more <i class="fas fa-arrow-right ms-1"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Mobile Ordering</h3>
+                        <p>Enable customers to order from their phones with a custom branded mobile experience</p>
+                    </div>
+                    <div class="feature-hover">
+                        <a href="#" class="btn-link">Learn more <i class="fas fa-arrow-right ms-1"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="400">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Analytics & Reporting</h3>
+                        <p>Make data-driven decisions with detailed insights on sales, customers, and operations</p>
+                    </div>
+                    <div class="feature-hover">
+                        <a href="#" class="btn-link">Learn more <i class="fas fa-arrow-right ms-1"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="500">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Customer Loyalty</h3>
+                        <p>Build and manage your loyalty program with points, rewards, and personalized offers</p>
+                    </div>
+                    <div class="feature-hover">
+                        <a href="#" class="btn-link">Learn more <i class="fas fa-arrow-right ms-1"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- About Section -->
+<section class="about-section py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6" data-aos="fade-right">
+                <img src="https://images.unsplash.com/photo-1556911220-bff31c812dba?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Restaurant Management" class="img-fluid rounded shadow">
+            </div>
+            <div class="col-lg-6" data-aos="fade-left">
+                <h2 class="section-title mb-4">Why Choose CloudBits?</h2>
+                <p class="lead mb-4">We're revolutionizing restaurant management with cutting-edge technology and unparalleled support.</p>
+                <div class="feature-list">
+                    <div class="feature-item" data-aos="fade-left" data-aos-delay="100">
+                        <i class="fas fa-check-circle text-primary"></i>
+                        <div>
+                            <h5>Cloud-Based Solution</h5>
+                            <p>Access your data from anywhere, anytime</p>
+                        </div>
+                    </div>
+                    <div class="feature-item" data-aos="fade-left" data-aos-delay="200">
+                        <i class="fas fa-check-circle text-primary"></i>
+                        <div>
+                            <h5>Easy Integration</h5>
+                            <p>Works seamlessly with your existing systems</p>
+                        </div>
+                    </div>
+                    <div class="feature-item" data-aos="fade-left" data-aos-delay="300">
+                        <i class="fas fa-check-circle text-primary"></i>
+                        <div>
+                            <h5>24/7 Support</h5>
+                            <p>Our team is always here to help</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Pricing Section -->
+<section class="pricing-section py-5" id="pricing">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="section-title" data-aos="fade-up">Simple, Transparent Pricing</h2>
+            <p class="lead" data-aos="fade-up" data-aos-delay="100">Choose the plan that's right for your restaurant</p>
+            
+            <div class="pricing-switch-container mt-4" data-aos="fade-up" data-aos-delay="200">
+                <span class="pricing-label monthly-label active">Monthly</span>
+                <label class="switch">
+                    <input type="checkbox" id="pricingToggle">
+                    <span class="slider round"></span>
+                </label>
+                <span class="pricing-label yearly-label">Yearly</span>
+                <span class="yearly-discount badge bg-success">Save up to 16%</span>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4" data-aos="fade-up">
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <div class="pricing-tier">Basic</div>
+                        <div class="price-container">
+                            <div class="price">
+                                <span class="currency">₹</span>
+                                <span class="amount monthly">599</span>
+                                <span class="amount yearly" style="display: none;">5,999</span>
+                            </div>
+                            <div class="period">
+                                <span class="period-text">/month</span>
+                            </div>
+                        </div>
+                        <div class="yearly-save" style="display: none;">
+                            <span class="save-badge">Save ₹1,189/year</span>
+                        </div>
+                        <p class="text-muted">Perfect for small restaurants</p>
+                    </div>
+                    <div class="pricing-features">
+                        <ul>
+                            <li><i class="fas fa-check"></i> All Basic Features</li>
+                            <li><i class="fas fa-check"></i> POS System</li>
+                            <li><i class="fas fa-check"></i> Menu Management</li>
+                            <li><i class="fas fa-check"></i> Order Management</li>
+                            <li><i class="fas fa-check"></i> Standard Support</li>
+                        </ul>
+                    </div>
+                    <div class="pricing-footer">
+                        <a href="#contact" class="btn btn-outline-primary w-100">Get Started</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="pricing-card featured">
+                    <div class="pricing-badge">Most Popular</div>
+                    <div class="pricing-header">
+                        <div class="pricing-tier">Professional</div>
+                        <div class="price-container">
+                            <div class="price">
+                                <span class="currency">₹</span>
+                                <span class="amount monthly">999</span>
+                                <span class="amount yearly" style="display: none;">9,999</span>
+                            </div>
+                            <div class="period">
+                                <span class="period-text">/month</span>
+                            </div>
+                        </div>
+                        <div class="yearly-save" style="display: none;">
+                            <span class="save-badge">Save ₹1,989/year</span>
+                        </div>
+                        <p class="text-muted">Ideal for growing restaurants</p>
+                    </div>
+                    <div class="pricing-features">
+                        <ul>
+                            <li><i class="fas fa-check"></i> Everything in Basic</li>
+                            <li><i class="fas fa-check"></i> Inventory Management</li>
+                            <li><i class="fas fa-check"></i> 2 Custom Features</li>
+                            <li><i class="fas fa-check"></i> Staff Management</li>
+                            <li><i class="fas fa-check"></i> 24/7 Priority Support</li>
+                        </ul>
+                    </div>
+                    <div class="pricing-footer">
+                        <a href="#contact" class="btn btn-primary w-100">Get Started</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <div class="pricing-tier">Advanced</div>
+                        <div class="price-container">
+                            <div class="price">
+                                <span class="currency">₹</span>
+                                <span class="amount monthly">1,499</span>
+                                <span class="amount yearly" style="display: none;">14,999</span>
+                            </div>
+                            <div class="period">
+                                <span class="period-text">/month</span>
+                            </div>
+                        </div>
+                        <div class="yearly-save" style="display: none;">
+                            <span class="save-badge">Save ₹2,989/year</span>
+                        </div>
+                        <p class="text-muted">For large restaurant chains</p>
+                    </div>
+                    <div class="pricing-features">
+                        <ul>
+                            <li><i class="fas fa-check"></i> Everything in Professional</li>
+                            <li><i class="fas fa-check"></i> High Performance</li>
+                            <li><i class="fas fa-check"></i> 24/7 Online & Physical Support</li>
+                            <li><i class="fas fa-check"></i> Hotel Website for Advertisement</li>
+                            <li><i class="fas fa-check"></i> Full Contact Details Management</li>
+                        </ul>
+                    </div>
+                    <div class="pricing-footer">
+                        <a href="#contact" class="btn btn-outline-primary w-100">Contact Sales</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <h2 class="mb-4" data-aos="fade-up">Ready to Transform Your Restaurant?</h2>
+                <p class="lead mb-5" data-aos="fade-up" data-aos-delay="100">
+                    Join thousands of restaurants already using CloudBits to streamline their operations and boost their business.
+                </p>
+                <div class="d-grid gap-2 d-md-flex justify-content-center" data-aos="fade-up" data-aos-delay="200">
+                    <a href="#pricing" class="btn btn-primary btn-lg me-md-3">Get Started</a>
+                    <a href="#" class="btn btn-outline-light btn-lg">Schedule Demo</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section class="contact-section py-4" id="contact">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center mb-3">
+                <h2 class="section-title mb-2" data-aos="fade-up">Get in Touch</h2>
+                <p class="lead mb-0" data-aos="fade-up" data-aos-delay="100">We're here to help you transform your restaurant business</p>
+            </div>
+        </div>
+        <div class="row g-3 justify-content-center">
+            <div class="col-12 col-sm-6 col-md-3" data-aos="fade-up">
+                <div class="contact-card text-center h-100">
+                    <div class="contact-icon mb-2">
+                        <i class="fas fa-map-marker-alt fa-2x text-primary"></i>
+                    </div>
+                    <h5 class="mb-2">Our Office</h5>
+                    <p class="small mb-0">123 Business Street, Suite 100<br>Mumbai, MH 400001</p>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-md-3" data-aos="fade-up" data-aos-delay="100">
+                <div class="contact-card text-center h-100">
+                    <div class="contact-icon mb-2">
+                        <i class="fas fa-phone-alt fa-2x text-primary"></i>
+                    </div>
+                    <h5 class="mb-2">Call Us</h5>
+                    <p class="small mb-2">+91 8799 878 583</p>
+                    <a href="tel:+918799878583" class="btn btn-sm btn-primary w-100">
+                        <i class="fas fa-phone-alt me-1"></i> Call Now
+                    </a>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-md-3" data-aos="fade-up" data-aos-delay="200">
+                <div class="contact-card text-center h-100">
+                    <div class="contact-icon mb-2">
+                        <i class="fas fa-envelope fa-2x text-primary"></i>
+                    </div>
+                    <h5 class="mb-2">Email Us</h5>
+                    <p class="small mb-2">business2saad@gmail.com</p>
+                    <a href="mailto:business2saad@gmail.com" class="btn btn-sm btn-primary w-100">
+                        <i class="fas fa-envelope me-1"></i> Send Email
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-12 text-center">
+                <div class="whatsapp-cta" data-aos="fade-up">
+                    <a href="https://wa.me/918799878583" target="_blank" class="btn btn-success w-100 w-sm-auto">
+                        <i class="fab fa-whatsapp me-2"></i> Chat on WhatsApp
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Map Section -->
+<section class="map-section">
+    <div class="container-fluid p-0">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.2155710122!2d-73.98784492416467!3d40.74844097138967!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25855c6480299%3A0x55194ec5a1ae072e!2sTimes%20Square!5e0!3m2!1sen!2sus!4v1681234567890!5m2!1sen!2sus" 
+                width="100%" 
+                height="400" 
+                style="border:0;" 
+                allowfullscreen="" 
+                loading="lazy" 
+                referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Pricing Toggle
+    document.getElementById('pricingToggle').addEventListener('change', function() {
+        const monthlyPrices = document.querySelectorAll('.amount.monthly');
+        const yearlyPrices = document.querySelectorAll('.amount.yearly');
+        const yearlySaves = document.querySelectorAll('.yearly-save');
+        const periodTexts = document.querySelectorAll('.period-text');
+        const monthlyLabel = document.querySelector('.monthly-label');
+        const yearlyLabel = document.querySelector('.yearly-label');
+        
+        if (this.checked) {
+            // Show yearly pricing
+            monthlyPrices.forEach(el => el.style.display = 'none');
+            yearlyPrices.forEach(el => el.style.display = 'inline');
+            yearlySaves.forEach(el => el.style.display = 'block');
+            periodTexts.forEach(el => el.textContent = '/year');
+            monthlyLabel.classList.remove('active');
+            yearlyLabel.classList.add('active');
+        } else {
+            // Show monthly pricing
+            monthlyPrices.forEach(el => el.style.display = 'inline');
+            yearlyPrices.forEach(el => el.style.display = 'none');
+            yearlySaves.forEach(el => el.style.display = 'none');
+            periodTexts.forEach(el => el.textContent = '/month');
+            monthlyLabel.classList.add('active');
+            yearlyLabel.classList.remove('active');
+        }
+    });
+
+    // Mobile Responsive Adjustments
+    function adjustPricingBadges() {
+        const pricingCards = document.querySelectorAll('.pricing-card');
+        pricingCards.forEach(card => {
+            const badge = card.querySelector('.pricing-badge');
+            if (badge && window.innerWidth < 768) {
+                badge.style.position = 'static';
+                badge.style.marginBottom = '1rem';
+            }
+        });
+    }
+
+    // Initial adjustment
+    adjustPricingBadges();
+
+    // Adjust on window resize
+    window.addEventListener('resize', adjustPricingBadges);
+</script>
+{% endblock %} 

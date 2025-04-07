@@ -10,6 +10,7 @@ from django.views.generic import TemplateView
 from django.contrib.staticfiles.views import serve
 
 urlpatterns = [
+    path('homepage/', views.homepage, name='homepage'),
     path('home/', home, name='home'),
     path('git_pull', git_pull, name='git_pull'),
     path('system/operations/', system_operations, name='system_operations'),
