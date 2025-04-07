@@ -22,6 +22,31 @@ from .inventory_views import (
     delete_inventory_item, inventory_transaction, inventory_history
 )
 
+def homepage(request):
+    """
+    Front-end homepage view for the restaurant.
+    This page is publicly accessible and showcases the restaurant.
+    """
+    # Get some popular menu items to showcase (limit to 6 items)
+    popular_items = MenuItem.objects.order_by('?')[:6]
+    
+    # Get menu categories for the food menu section
+    categories = MenuCategory.objects.all()
+    
+    # Get a sample hotel for demo purposes (or get the first one)
+    try:
+        hotel = Hotel.objects.filter(status=True).first()
+    except:
+        hotel = None
+    
+    context = {
+        'popular_items': popular_items,
+        'categories': categories,
+        'hotel': hotel,
+    }
+    
+    return render(request, 'homepage.html', context)
+
 #THis is for waiters
 @login_required
 def home(request): 
