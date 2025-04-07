@@ -3,7 +3,7 @@ from django.urls import path
 from app import views
 from app.setupView import owner_register, hotel_register, register
 from app.authView import owner_login, logout_user
-from app.adminView import home, addagent, users, git_pull, delete_user, view_user, edit_user, toggle_user_status, view_restaurant, system_operations
+from app.adminView import home, addagent, users, git_pull, delete_user, view_user, edit_user, toggle_user_status, view_restaurant, system_operations, database_management, create_backup, restore_backup, delete_backup, optimize_database
 from app.redirectionView import redirection
 from app.agentView import agenthome
 from django.views.generic import TemplateView
@@ -14,6 +14,19 @@ urlpatterns = [
     path('home/', home, name='home'),
     path('git_pull', git_pull, name='git_pull'),
     path('system/operations/', system_operations, name='system_operations'),
+    
+    # Database Management URLs
+    path('system/database/', database_management, name='database_management'),
+    path('system/database/backup/', create_backup, name='create_backup'),
+    path('system/database/restore/<str:backup_id>/', restore_backup, name='restore_backup'),
+    path('system/database/delete/<str:backup_id>/', delete_backup, name='delete_backup'),
+    path('system/database/optimize/', optimize_database, name='optimize_database'),
+    
+    # Admin Analytics Dashboard routes
+    path('admin/analytics/', views.analytics_dashboard, name='analytics_dashboard'),
+    path('admin/financial-reports/', views.financial_reports, name='financial_reports'),
+    path('admin/user-activity/', views.user_activity, name='user_activity'),
+    
     path('home/users', users, name='users'),
     path('home/users/delete/<int:user_id>/', delete_user, name='delete_user'),
     path('home/users/view/<int:user_id>/', view_user, name='view_user'),
