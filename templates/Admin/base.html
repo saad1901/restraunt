@@ -422,14 +422,57 @@
                 </a>
                 
                 <div class="sidebar-divider"></div>
-                <div class="sidebar-heading">System</div>
-                <a href="{% url 'system_operations' %}" class="nav-link">
+                <div class="sidebar-heading">Analytics & Reports</div>
+                <a href="{% url 'analytics_dashboard' %}" class="nav-link {% if 'analytics' in request.path %}active{% endif %}">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard Analytics</span>
+                </a>
+                <a href="{% url 'financial_reports' %}" class="nav-link {% if 'financial-reports' in request.path %}active{% endif %}">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <span>Financial Reports</span>
+                </a>
+                <a href="{% url 'user_activity' %}" class="nav-link {% if 'user-activity' in request.path %}active{% endif %}">
+                    <i class="fas fa-user-clock"></i>
+                    <span>User Activity</span>
+                </a>
+                
+                <div class="sidebar-divider"></div>
+                <div class="sidebar-heading">System Tools</div>
+                <a href="{% url 'system_operations' %}" class="nav-link {% if 'system_operations' in request.path %}active{% endif %}">
                     <i class="fas fa-cogs"></i>
                     <span>System Operations</span>
                 </a>
+                <a href="{% url 'database_management' %}" class="nav-link {% if 'database' in request.path %}active{% endif %}">
+                    <i class="fas fa-database"></i>
+                    <span>Database Management</span>
+                </a>
+                <a href="{% url 'home' %}" class="nav-link {% if 'logs' in request.path %}active{% endif %}">
+                    <i class="fas fa-file-alt"></i>
+                    <span>System Logs</span>
+                </a>
+                
+                <div class="sidebar-divider"></div>
+                <div class="sidebar-heading">Marketing</div>
+                <a href="{% url 'home' %}" class="nav-link {% if 'promotions' in request.path %}active{% endif %}">
+                    <i class="fas fa-tags"></i>
+                    <span>Promotions</span>
+                </a>
+                <a href="{% url 'home' %}" class="nav-link {% if 'email-campaigns' in request.path %}active{% endif %}">
+                    <i class="fas fa-envelope"></i>
+                    <span>Email Campaigns</span>
+                </a>
+                
+                <div class="sidebar-divider"></div>
+                <div class="sidebar-heading">Account</div>
                 <a href="{% url 'logout' %}" class="nav-link">
                     <i class="fas fa-sign-out-alt"></i>
                     <span>Logout</span>
+                </a>
+                <div class="sidebar-divider"></div>
+                <div class="sidebar-heading">External</div>
+                <a href="{% url 'homepage' %}" class="nav-link" target="_blank">
+                    <i class="fas fa-globe"></i>
+                    <span>View Front Page</span>
                 </a>
             </div>
         </div>

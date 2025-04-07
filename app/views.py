@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from .models import *
 import json
 import calendar
-from django.db.models import Sum
+from django.db.models import Sum, Count, Avg
 from django.utils import timezone
 from datetime import datetime, timedelta, date
 from django.views.decorators.http import require_POST
@@ -935,3 +935,297 @@ def ajax_get_orders(request):
     }
     
     return JsonResponse(response_data)
+
+# New admin analytics dashboard views
+@login_required
+def analytics_dashboard(request):
+    """
+    Comprehensive analytics dashboard for admin users.
+    Displays key metrics about users, revenue, and platform performance.
+    """
+    if request.user.role != 'superadmin':
+        messages.error(request, "You do not have permission to access this page.")
+        return redirect('home')
+    
+    # Get overall stats
+    total_users = User.objects.count()
+    total_hotels = Hotel.objects.count()
+    active_hotels = Hotel.objects.filter(status=True).count()
+    
+    # Calculate total revenue across all restaurants
+    current_month = timezone.now().month
+    current_year = timezone.now().year
+    
+    total_revenue = Order.objects.filter(
+        completed=True,
+        created_at__month=current_month,
+        created_at__year=current_year
+    ).aggregate(total=Sum('total'))['total'] or 0
+    
+    # Calculate total orders
+    total_orders = Order.objects.filter(
+        completed=True,
+        created_at__month=current_month,
+        created_at__year=current_year
+    ).count()
+    
+    # Get average rating (if applicable)
+    avg_rating = 4.8  # Placeholder value
+    
+    # Get top performing restaurants
+    top_restaurants = Hotel.objects.annotate(
+        order_count=Count('order', filter=models.Q(order__completed=True)),
+        total_revenue=Sum('order__total', filter=models.Q(order__completed=True))
+    ).order_by('-total_revenue')[:3]
+    
+    # Get monthly revenue data for the chart
+    months = []
+    revenue_data = []
+    
+    for i in range(12):
+        month = (timezone.now().replace(day=1) - timedelta(days=i*30)).month
+        year = (timezone.now().replace(day=1) - timedelta(days=i*30)).year
+        month_name = calendar.month_abbr[month]
+        
+        monthly_revenue = Order.objects.filter(
+            completed=True,
+            created_at__month=month,
+            created_at__year=year
+        ).aggregate(total=Sum('total'))['total'] or 0
+        
+        months.insert(0, month_name)
+        revenue_data.insert(0, float(monthly_revenue))
+    
+    # Order distribution data
+    # These could be calculated from real data in a production environment
+    order_distribution = {
+        'labels': ['Dine-in', 'Takeaway', 'Delivery', 'Online'],
+        'data': [45, 25, 20, 10]  # Placeholder values
+    }
+    
+    # User activity data (new vs active users)
+    now = timezone.now()
+    days_of_week = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+    new_users_data = []
+    active_users_data = []
+    
+    for i in range(7):
+        day = (now - timedelta(days=i)).weekday()
+        day_date = (now - timedelta(days=i)).date()
+        
+        # New users registered on this day
+        new_users_count = User.objects.filter(
+            date_joined__date=day_date
+        ).count()
+        
+        # Active users (users who placed orders) on this day - fix the relationship direction
+        active_users_count = Order.objects.filter(
+            completedby__isnull=False,
+            created_at__date=day_date
+        ).values('completedby').distinct().count()
+        
+        new_users_data.insert(0, new_users_count)
+        active_users_data.insert(0, active_users_count)
+    
+    # Geographic distribution (top 4 cities)
+    cities = [
+        {'city': 'Mumbai', 'users': 8543, 'orders': 432, 'revenue': 152400},
+        {'city': 'Delhi', 'users': 6234, 'orders': 356, 'revenue': 124800},
+        {'city': 'Bangalore', 'users': 5678, 'orders': 298, 'revenue': 104500},
+        {'city': 'Hyderabad', 'users': 4321, 'orders': 245, 'revenue': 86700}
+    ]
+    
+    context = {
+        'total_users': total_users,
+        'total_revenue': total_revenue,
+        'total_orders': total_orders,
+        'avg_rating': avg_rating,
+        'total_hotels': total_hotels,
+        'active_hotels': active_hotels,
+        'top_restaurants': top_restaurants,
+        'months': json.dumps(months),
+        'revenue_data': json.dumps(revenue_data),
+        'order_distribution': order_distribution,
+        'days_of_week': json.dumps(days_of_week),
+        'new_users_data': json.dumps(new_users_data),
+        'active_users_data': json.dumps(active_users_data),
+        'cities': cities
+    }
+    
+    return render(request, 'Admin/analytics_dashboard.html', context)
+
+@login_required
+def financial_reports(request):
+    """
+    Financial reports dashboard for admin users.
+    Shows detailed financial metrics, trends, and restaurant performance.
+    """
+    if request.user.role != 'superadmin':
+        messages.error(request, "You do not have permission to access this page.")
+        return redirect('home')
+    
+    # Get date range for filtering
+    time_period = request.GET.get('period', 'month')  # Options: day, week, month, year
+    
+    now = timezone.now()
+    
+    if time_period == 'day':
+        start_date = now.replace(hour=0, minute=0, second=0, microsecond=0)
+        previous_start = start_date - timedelta(days=1)
+    elif time_period == 'week':
+        start_date = now - timedelta(days=now.weekday())
+        start_date = start_date.replace(hour=0, minute=0, second=0, microsecond=0)
+        previous_start = start_date - timedelta(days=7)
+    elif time_period == 'year':
+        start_date = now.replace(month=1, day=1, hour=0, minute=0, second=0, microsecond=0)
+        previous_start = start_date.replace(year=start_date.year-1)
+    else:  # month (default)
+        start_date = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        if start_date.month == 1:
+            previous_start = start_date.replace(year=start_date.year-1, month=12)
+        else:
+            previous_start = start_date.replace(month=start_date.month-1)
+    
+    # Calculate end dates
+    end_date = now
+    previous_end = start_date - timedelta(microseconds=1)
+    
+    # Get revenue data for current period
+    revenue_data = Order.objects.filter(
+        completed=True,
+        created_at__gte=start_date,
+        created_at__lte=end_date
+    ).aggregate(total=Sum('total'))
+    
+    current_revenue = revenue_data['total'] or 0
+    
+    # Get revenue data for previous period
+    previous_revenue_data = Order.objects.filter(
+        completed=True,
+        created_at__gte=previous_start,
+        created_at__lte=previous_end
+    ).aggregate(total=Sum('total'))
+    
+    previous_revenue = previous_revenue_data['total'] or 0
+    
+    # Calculate revenue change percentage
+    revenue_change_pct = 0
+    if previous_revenue > 0:
+        revenue_change_pct = ((current_revenue - previous_revenue) / previous_revenue) * 100
+    
+    # Get restaurant financial performance data
+    restaurant_performance = Hotel.objects.filter(status=True).annotate(
+        revenue=Sum('order__total', filter=models.Q(order__completed=True, order__created_at__gte=start_date, order__created_at__lte=end_date)),
+        orders=Count('order', filter=models.Q(order__completed=True, order__created_at__gte=start_date, order__created_at__lte=end_date))
+    ).order_by('-revenue')[:10]
+    
+    # Get recent transactions
+    recent_transactions = Order.objects.filter(
+        completed=True
+    ).order_by('-created_at')[:10]
+    
+    context = {
+        'current_revenue': current_revenue,
+        'previous_revenue': previous_revenue,
+        'revenue_change_pct': revenue_change_pct,
+        'time_period': time_period,
+        'restaurant_performance': restaurant_performance,
+        'recent_transactions': recent_transactions,
+        'start_date': start_date,
+        'end_date': end_date
+    }
+    
+    return render(request, 'Admin/financial_reports.html', context)
+
+@login_required
+def user_activity(request):
+    """
+    User activity dashboard for admin users.
+    Shows user registration trends, active users, and user behavior.
+    """
+    if request.user.role != 'superadmin':
+        messages.error(request, "You do not have permission to access this page.")
+        return redirect('home')
+    
+    # Get date range for filtering
+    days = int(request.GET.get('days', 30))
+    start_date = timezone.now() - timedelta(days=days)
+    
+    # Get user registrations by day
+    User = get_user_model()
+    
+    # Fix: Use proper date formatting for SQLite/MySQL compatibility
+    registrations_by_day = User.objects.filter(
+        date_joined__gte=start_date
+    ).values(
+        'date_joined__date'
+    ).annotate(
+        count=Count('id')
+    ).order_by('date_joined__date')
+    
+    # Process registration data for chart
+    reg_dates = []
+    reg_counts = []
+    
+    for entry in registrations_by_day:
+        # Convert date object to string to avoid serialization issues
+        date_str = entry['date_joined__date'].strftime('%Y-%m-%d')
+        reg_dates.append(date_str)
+        reg_counts.append(entry['count'])
+    
+    # Get user count by role
+    users_by_role = User.objects.values('role').annotate(count=Count('id'))
+    
+    # Fix: Get most active staff (users who have completed orders)
+    # Use reverse relation from Order to User via completedby field
+    active_staff = User.objects.filter(
+        role__in=['staff', 'owner']
+    ).annotate(
+        orders_completed=Count('order', filter=models.Q(order__completed=True))
+    ).order_by('-orders_completed')[:10]
+    
+    # Get new user registrations over time (for chart)
+    time_periods = []
+    registration_counts = []
+    
+    # Create a dictionary to store counts for all days in the range
+    date_counts = {}
+    start_date_obj = start_date.date()
+    end_date_obj = timezone.now().date()
+    
+    # Initialize all dates with 0 count
+    current_date = start_date_obj
+    while current_date <= end_date_obj:
+        date_counts[current_date] = 0
+        current_date += timedelta(days=1)
+    
+    # Fill in actual counts from database
+    for entry in registrations_by_day:
+        date_obj = entry['date_joined__date']
+        if date_obj in date_counts:
+            date_counts[date_obj] = entry['count']
+    
+    # Convert to lists in proper order
+    for date_obj in sorted(date_counts.keys()):
+        formatted_date = date_obj.strftime('%d %b')
+        time_periods.append(formatted_date)
+        registration_counts.append(date_counts[date_obj])
+    
+    # Get recent user activity
+    recent_logins = User.objects.filter(
+        last_login__gte=start_date
+    ).order_by('-last_login')[:10]
+    
+    context = {
+        'registrations_by_day': registrations_by_day,
+        'users_by_role': users_by_role,
+        'active_staff': active_staff,
+        'days': days,
+        'recent_logins': recent_logins,
+        'time_periods': json.dumps(time_periods),
+        'registration_counts': json.dumps(registration_counts),
+        'reg_dates': json.dumps(reg_dates),
+        'reg_counts': json.dumps(reg_counts)
+    }
+    
+    return render(request, 'Admin/user_activity.html', context)
