@@ -885,7 +885,7 @@
                 <p class="mb-3">Your hotel subscription has expired or is awaiting approval. You can view statistics and settings, but ordering functions are disabled until your subscription is renewed.</p>
                         </div>
             
-            {% if agent_cell %}
+            {% if agent_cell and agent_cell != 'NOAGENT' %}
             <a href="tel:+91{{agent_cell}}" class="phone-contact text-white text-decoration-none">
                 <div class="phone-contact-title">
                     <i class="fas fa-user-tie"></i> Your Agent

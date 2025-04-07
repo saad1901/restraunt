@@ -69,12 +69,7 @@ class OwnerRegistrationForm(forms.ModelForm):
 class HotelRegistrationForm(forms.ModelForm):
     class Meta:
         model = Hotel
-        fields = ['name', 'agent', 'address']
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # Filter users with role 'agent' for the agent field
-        self.fields['agent'].queryset = User.objects.filter(role='agent')
+        fields = ['name', 'address']
 
 
 class AgentRegisterForm(forms.ModelForm):

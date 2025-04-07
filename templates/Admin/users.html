@@ -185,10 +185,10 @@
     {% endfor %}
 </div>
 {% endif %}
-
-<!-- Statistics Cards -->
+    
+    <!-- Statistics Cards -->
 <div class="row g-3 mb-4">
-    <div class="col-xl-3 col-md-6">
+        <div class="col-xl-3 col-md-6">
         <div class="stats-card bg-primary text-white">
             <div class="icon bg-white text-primary">
                 <i class="fas fa-users"></i>
@@ -196,7 +196,7 @@
             <div class="count">{{ users.count }}</div>
             <div class="label">Total Users</div>
         </div>
-    </div>
+                </div>
     <div class="col-xl-3 col-md-6">
         <div class="stats-card bg-success text-white">
             <div class="icon bg-white text-success">
@@ -204,30 +204,30 @@
             </div>
             <div class="count">{{ active_users }}</div>
             <div class="label">Active Users</div>
+            </div>
         </div>
-    </div>
-    <div class="col-xl-3 col-md-6">
+        <div class="col-xl-3 col-md-6">
         <div class="stats-card bg-info text-white">
             <div class="icon bg-white text-info">
                 <i class="fas fa-user-tie"></i>
             </div>
             <div class="count">{{ agent_count }}</div>
             <div class="label">Agents</div>
+            </div>
         </div>
-    </div>
-    <div class="col-xl-3 col-md-6">
+        <div class="col-xl-3 col-md-6">
         <div class="stats-card bg-warning text-white">
             <div class="icon bg-white text-warning">
                 <i class="fas fa-user-shield"></i>
             </div>
             <div class="count">{{ superadmin_count }}</div>
             <div class="label">Admins</div>
+            </div>
         </div>
     </div>
-</div>
 
 <!-- Users List -->
-<div class="card mb-4">
+    <div class="card mb-4">
     <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="mb-0">
             <i class="fas fa-user-cog me-2"></i>All Users
@@ -269,25 +269,25 @@
                 </div>
             </div>
         </div>
-
+        
         <!-- Users Table -->
         {% if users %}
-        <div class="table-responsive">
+            <div class="table-responsive">
             <table class="table user-table align-middle">
-                <thead>
-                    <tr>
+                    <thead>
+                        <tr>
                         <th>User</th>
-                        <th>Phone</th>
-                        <th>Role</th>
-                        <th>Status</th>
+                            <th>Phone</th>
+                            <th>Role</th>
+                            <th>Status</th>
                         <th>Hotel</th>
-                        <th>Joined Date</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for user in users %}
-                    <tr>
+                            <th>Joined Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
                         <td>
                             <div class="user-info">
                                 <div class="avatar bg-primary text-white">
@@ -308,19 +308,19 @@
                             {% elif user.role == 'agent' %}
                             <span class="role-badge bg-info-subtle text-info">
                                 <i class="fas fa-user-tie me-1"></i>Agent
-                            </span>
-                            {% else %}
+                                </span>
+                                {% else %}
                             <span class="role-badge bg-primary-subtle text-primary">
                                 <i class="fas fa-user me-1"></i>Owner
-                            </span>
-                            {% endif %}
-                        </td>
-                        <td>
+                                </span>
+                                {% endif %}
+                            </td>
+                            <td>
                             <span class="status-badge bg-{{ user.is_active|yesno:'success,danger' }}-subtle text-{{ user.is_active|yesno:'success,danger' }}">
                                 <i class="fas fa-{{ user.is_active|yesno:'check-circle,times-circle' }} me-1"></i>
-                                {{ user.is_active|yesno:"Active,Inactive" }}
-                            </span>
-                        </td>
+                                    {{ user.is_active|yesno:"Active,Inactive" }}
+                                </span>
+                            </td>
                         <td>
                             {% if user.role == 'owner' %}
                                 {% for hotel in hotels %}
@@ -376,12 +376,12 @@
                             </div>
                         </td>
                     </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
 
-        <!-- Pagination -->
+            <!-- Pagination -->
         <div class="d-flex justify-content-center mt-4">
             <nav aria-label="User pagination">
                 <ul class="pagination">
