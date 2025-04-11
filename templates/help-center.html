@@ -1,0 +1,203 @@
+{% extends 'base_public.html' %}
+{% load static %}
+
+{% block title %}Help Center - TastyBits{% endblock %}
+
+{% block content %}
+<section class="py-5 mt-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="text-center mb-5">
+                    <h1 class="display-5 fw-bold">How can we help you?</h1>
+                    <p class="lead text-muted">Find answers to your questions about TastyBits restaurant management software</p>
+                    
+                    <div class="search-container my-5">
+                        <div class="input-group">
+                            <input type="text" class="form-control form-control-lg" placeholder="Search for answers..." aria-label="Search for answers">
+                            <button class="btn btn-primary" type="button">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row g-4 mb-5">
+                    <div class="col-md-4">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-body text-center p-4">
+                                <div class="icon-wrapper mb-3">
+                                    <i class="fas fa-book fa-3x text-primary"></i>
+                                </div>
+                                <h4>Documentation</h4>
+                                <p class="text-muted">Detailed guides for setting up and using TastyBits</p>
+                                <a href="{% url 'documentation' %}" class="btn btn-outline-primary mt-2">Browse Docs</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-body text-center p-4">
+                                <div class="icon-wrapper mb-3">
+                                    <i class="fas fa-video fa-3x text-primary"></i>
+                                </div>
+                                <h4>Video Tutorials</h4>
+                                <p class="text-muted">Watch step-by-step guides to learn all features</p>
+                                <a href="#" class="btn btn-outline-primary mt-2">Watch Videos</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-body text-center p-4">
+                                <div class="icon-wrapper mb-3">
+                                    <i class="fas fa-headset fa-3x text-primary"></i>
+                                </div>
+                                <h4>Contact Support</h4>
+                                <p class="text-muted">Get personalized help from our team</p>
+                                <a href="#contact-section" class="btn btn-outline-primary mt-2">Contact Us</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card border-0 shadow-sm mb-5">
+                    <div class="card-header bg-primary text-white py-3">
+                        <h4 class="m-0">Frequently Asked Questions</h4>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="accordion" id="faqAccordion">
+                            <div class="accordion-item border-0 mb-3">
+                                <h2 class="accordion-header" id="headingOne">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                        How do I get started with TastyBits?
+                                    </button>
+                                </h2>
+                                <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">
+                                        Getting started with TastyBits is easy! Sign up for an account, select your subscription plan, and follow our step-by-step setup guide. You'll be able to set up your menu, tables, staff accounts, and more in just a few minutes. Check our <a href="{% url 'documentation' %}">documentation</a> for detailed instructions.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item border-0 mb-3">
+                                <h2 class="accordion-header" id="headingTwo">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                        Can I use TastyBits on multiple devices?
+                                    </button>
+                                </h2>
+                                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">
+                                        Yes! TastyBits is a cloud-based solution that works on any device with a web browser. You can access your dashboard from computers, tablets, and smartphones. We also offer a dedicated mobile app for Android devices that allows your staff to take orders tableside.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item border-0 mb-3">
+                                <h2 class="accordion-header" id="headingThree">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                        How does billing work?
+                                    </button>
+                                </h2>
+                                <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">
+                                        We offer monthly and annual subscription plans. You can choose the plan that best fits your restaurant's needs. Billing occurs at the beginning of each billing period. You can upgrade or downgrade your plan at any time, and the changes will be prorated accordingly.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item border-0 mb-3">
+                                <h2 class="accordion-header" id="headingFour">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                        Is my data secure?
+                                    </button>
+                                </h2>
+                                <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">
+                                        Yes, we take data security very seriously. All data is encrypted both in transit and at rest. We perform regular security audits and maintain industry-standard security practices. Your data is backed up daily, and we have disaster recovery plans in place to ensure business continuity.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item border-0">
+                                <h2 class="accordion-header" id="headingFive">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                                        How do I get technical support?
+                                    </button>
+                                </h2>
+                                <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">
+                                        We offer multiple support channels including email, phone, and chat support. Our standard support hours are Monday to Saturday, 9 AM to 6 PM IST. Professional and Advanced plans include priority support with faster response times and extended hours.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="contact-section" class="card border-0 shadow-sm">
+                    <div class="card-header bg-primary text-white py-3">
+                        <h4 class="m-0">Contact Support</h4>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="row">
+                            <div class="col-md-6 mb-4 mb-md-0">
+                                <h5>Get in Touch</h5>
+                                <p>Our support team is here to help you with any questions or issues you may have.</p>
+                                
+                                <div class="contact-info mt-4">
+                                    <div class="d-flex mb-3">
+                                        <div class="icon-wrapper me-3">
+                                            <i class="fas fa-envelope text-primary"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-1">Email</h6>
+                                            <p class="mb-0">business2saad@gmail.com</p>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex mb-3">
+                                        <div class="icon-wrapper me-3">
+                                            <i class="fas fa-phone text-primary"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-1">Phone</h6>
+                                            <p class="mb-0">+91 8799-878-583</p>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex">
+                                        <div class="icon-wrapper me-3">
+                                            <i class="fas fa-clock text-primary"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-1">Business Hours</h6>
+                                            <p class="mb-0">Monday - Saturday: 9 AM - 6 PM IST</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h5>Send a Message</h5>
+                                <form>
+                                    <div class="mb-3">
+                                        <label for="name" class="form-label">Name</label>
+                                        <input type="text" class="form-control" id="name" placeholder="Your Name">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="email" class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="email" placeholder="your@email.com">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="subject" class="form-label">Subject</label>
+                                        <input type="text" class="form-control" id="subject" placeholder="How can we help?">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="message" class="form-label">Message</label>
+                                        <textarea class="form-control" id="message" rows="4" placeholder="Describe your issue or question"></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Send Message</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %} 

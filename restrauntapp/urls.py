@@ -6,6 +6,7 @@ from app.authView import owner_login, logout_user
 from app.adminView import home, addagent, users, git_pull, delete_user, view_user, edit_user, toggle_user_status, view_restaurant, system_operations, database_management, create_backup, restore_backup, delete_backup, optimize_database
 from app.redirectionView import redirection
 from app.agentView import agenthome
+from app.policy_views import terms_view, privacy_view, cookies_view, help_center_view, documentation_view, api_view, status_view
 from django.views.generic import TemplateView
 from django.contrib.staticfiles.views import serve
 
@@ -21,6 +22,15 @@ urlpatterns = [
     path('system/database/restore/<str:backup_id>/', restore_backup, name='restore_backup'),
     path('system/database/delete/<str:backup_id>/', delete_backup, name='delete_backup'),
     path('system/database/optimize/', optimize_database, name='optimize_database'),
+    
+    # Policy and Documentation Pages
+    path('terms/', terms_view, name='terms'),
+    path('privacy/', privacy_view, name='privacy'),
+    path('cookies/', cookies_view, name='cookies'),
+    path('help-center/', help_center_view, name='help-center'),
+    path('documentation/', documentation_view, name='documentation'),
+    path('api/', api_view, name='api'),
+    path('status/', status_view, name='status'),
     
     # Admin Analytics Dashboard routes
     path('admin/analytics/', views.analytics_dashboard, name='analytics_dashboard'),
