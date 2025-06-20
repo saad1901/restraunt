@@ -10,6 +10,9 @@ from app.policy_views import terms_view, privacy_view, cookies_view, help_center
 from django.views.generic import TemplateView
 from django.contrib.staticfiles.views import serve
 
+# USERAPP IMPORTS
+from userApp import views as userview
+
 urlpatterns = [
     path('homepage/', views.homepage, name='homepage'),
     path('home/', home, name='home'),
@@ -105,6 +108,8 @@ urlpatterns = [
     path('settings/table/add/', views.add_table, name='add_table'),
     path('settings/table/edit/', views.edit_table, name='edit_table'),
     path('settings/table/delete/<int:table_id>/', views.delete_table, name='delete_table'),
+
+    path('user/getmenu/<int:hotel>/<int:table>', userview.show_menu, name='user_show_menu'),
 
     path('serviceworker.js', serve, 
          kwargs={'path': 'js/serviceworker.js'}),
