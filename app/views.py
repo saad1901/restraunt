@@ -120,6 +120,29 @@ def submit_order(request):
     return JsonResponse({"success": False, "message": "Invalid request"}, status=400)
 
 @login_required
+def waiter_active_orders(request):
+    hotel = Hotel.objects.get(id=request.user.staffof.id)
+    orders = Order.objects.filter(completed=False, hotel=hotel).order_by('-created_at')
+    orders_data = []
+    for order in orders:
+        items_data = []
+        for item in order.orderitems.all():
+            items_data.append({
+                'name': item.item.name,
+                'quantity': item.quantity,
+                'price': float(item.item.price)
+            })
+        orders_data.append({
+            'id': order.id,
+            'table': order.table.name if order.table else '',
+            'online_source': order.online_source if hasattr(order, 'online_source') and order.online_source else '',
+            'total': float(order.total),
+            'created_at': order.created_at.strftime('%d/%m/%y %I:%M %p'),
+            'items': items_data
+        })
+    return JsonResponse({'orders': orders_data})
+
+@login_required
 def owner(request):
     if request.user.role != 'owner':
         return JsonResponse({"success": False, "message": "You are not authorized to view this page. Please login as an owner."})
