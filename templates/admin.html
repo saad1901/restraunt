@@ -851,6 +851,63 @@
             background-color: rgba(79, 70, 229, 0.2) !important;
         }
     </style>
+
+    <style>
+        .cooking-switch {
+            width: 3rem;
+            height: 1.7rem;
+            background-color: #e0e0e0;
+            border-color: #7c3aed;
+        }
+        .cooking-switch:checked {
+            background-color: #7c3aed !important;
+            border-color: #7c3aed !important;
+        }
+        .cooking-switch:focus {
+            box-shadow: 0 0 0 0.2rem rgba(124,58,237,0.25);
+        }
+    </style>
+
+    <style>
+    .custom-switch {
+        position: relative;
+        display: inline-block;
+        width: 48px;
+        height: 28px;
+        vertical-align: middle;
+    }
+    .custom-switch-input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    .custom-switch-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background-color: #e0e0e0;
+        border-radius: 34px;
+        transition: background 0.3s;
+    }
+    .custom-switch-slider:before {
+        position: absolute;
+        content: "";
+        height: 22px;
+        width: 22px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        border-radius: 50%;
+        transition: transform 0.3s;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+    }
+    .custom-switch-input:checked + .custom-switch-slider {
+        background-color: #7c3aed;
+    }
+    .custom-switch-input:checked + .custom-switch-slider:before {
+        transform: translateX(20px);
+    }
+    </style>
 </head>
 
 <body>
@@ -863,9 +920,16 @@
                 </div>
                 {{ hotel.name }}
             </span>
-            <!-- Dark Mode Toggle -->
-            <div style="cursor: pointer; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: rgba(255, 255, 255, 0.2); color: white; transition: all 0.3s ease;" id="darkModeToggle" title="Toggle Dark Mode">
-                <i class="fas fa-moon"></i>
+            <!-- Menu and Dark Mode Toggle Buttons -->
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <!-- Menu Button Icon -->
+                <a href="/user/getmenu/{{ hotel.id }}" id="menuBtn" style="margin-right: 0; display: flex; align-items: center; color: white; text-decoration: none; font-size: 1.3rem; background: rgba(255,255,255,0.18); width: 40px; height: 40px; border-radius: 50%; justify-content: center; transition: background 0.2s;">
+                    <i class="fas fa-bars"></i>
+                </a>
+                <!-- Dark Mode Toggle -->
+                <div style="cursor: pointer; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: rgba(255, 255, 255, 0.2); color: white; transition: all 0.3s ease;" id="darkModeToggle" title="Toggle Dark Mode">
+                    <i class="fas fa-moon"></i>
+                </div>
             </div>
         </div>
     </nav>
@@ -1011,8 +1075,15 @@
                         </ul>
                                 </div>
                     <div class="card-footer bg-white d-flex justify-content-between align-items-center py-2">
-                        <small class="text-muted">
-                            <i class="far fa-clock me-1"></i>{{ order.created_at|time:"g:i A" }}
+                        <small class="text-muted d-flex align-items-center">
+                            <span><i class="far fa-clock me-1"></i>{{ order.created_at|time:"g:i A" }} | {{ order.created_at|date:"d/m/y" }}</span>
+                            <form method="post" class="d-inline ms-4" onsubmit="return false;">
+                                <input type="hidden" name="order_id" value="{{ order.id }}">
+                                <label class="custom-switch">
+                                    <input class="custom-switch-input" type="checkbox" id="cookingSwitch{{ order.id }}" {% if order.started %}checked{% endif %} onchange="toggleCookingStatus({{ order.id }}, this.checked)">
+                                    <span class="custom-switch-slider"></span>
+                                </label>
+                            </form>
                         </small>
                         <h5 class="mb-0 text-success fw-bold" id="orderTotal{{ order.id }}">
                             <span>₹{{ order.total }}</span>
@@ -1639,8 +1710,15 @@
                         </ul>
                     </div>
                     <div class="card-footer bg-white d-flex justify-content-between align-items-center py-2">
-                        <small class="text-muted">
-                            <i class="far fa-clock me-1"></i>${orderData.created_time}
+                        <small class="text-muted d-flex align-items-center">
+                            <span><i class="far fa-clock me-1"></i>{{ order.created_at|time:"g:i A" }} | {{ order.created_at|date:"d/m/y" }}</span>
+                            <form method="post" class="d-inline ms-4" onsubmit="return false;">
+                                <input type="hidden" name="order_id" value="{{ order.id }}">
+                                <label class="custom-switch">
+                                    <input class="custom-switch-input" type="checkbox" id="cookingSwitch{{ order.id }}" {% if order.started %}checked{% endif %} onchange="toggleCookingStatus({{ order.id }}, this.checked)">
+                                    <span class="custom-switch-slider"></span>
+                                </label>
+                            </form>
                         </small>
                         <h5 class="mb-0 text-success fw-bold" id="orderTotal${orderData.id}">
                             <span>₹${orderData.total}</span>
@@ -2331,6 +2409,25 @@
             radioOnline.addEventListener('change', toggleSelectors);
             // Initial state
             toggleSelectors();
+        }
+
+        function toggleCookingStatus(orderId, started) {
+            fetch('/order/set_started/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.getElementById('csrfToken').value
+                },
+                body: JSON.stringify({ order_id: orderId, started: started })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Optionally handle success/failure, but do not show toast/alert
+                // You could update the UI here if needed
+            })
+            .catch(error => {
+                // Optionally handle error silently
+            });
         }
     </script>
 </body>

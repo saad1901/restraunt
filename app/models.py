@@ -66,6 +66,7 @@ class Order(models.Model):
     total = models.DecimalField(max_digits=6, decimal_places=2, default=0)
     discount = models.DecimalField(max_digits=6, decimal_places=2, default=0)
     completed = models.BooleanField(default=False)
+    started = models.BooleanField(default=False)  # Added field for cooking status
     phone_number = models.CharField(max_length=15, blank=True)
     completedby = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True)
     # New fields for order type and online source
