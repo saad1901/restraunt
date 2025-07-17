@@ -197,7 +197,7 @@
                     <tr>
                         <th>ID</th>
                         <th>Time</th>
-                        <th>Table</th>
+                        <th>Source</th>
                         <th>Total</th>
                         <th></th>
                     </tr>
@@ -208,7 +208,11 @@
                     <tr>
                         <td>{{ order.id }}</td>
                         <td>{{ order.created_at|date:"g:i A" }}</td>
+                        {% if order.table %}
                         <td>{{ order.table.name }}</td>
+                        {%else %}
+                        <td>{{ order.online_source }}</td>
+                        {% endif %}
                         <td class="fw-medium">₹{{ order.total|floatformat:2 }}</td>
                         <td>
                             <button class="btn btn-sm btn-outline-primary view-btn" data-order='{

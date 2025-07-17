@@ -60,69 +60,62 @@ def home(request):
     items = MenuItem.objects.filter(hotel=request.user.staffof)
     return render(request, 'waiter.html',{'hotel':hotel,'tables':tables , 'categories':categories, 'items':items})
 
+# @login_required
 def submit_order(request):
     if request.method == "POST":
         try:
             hotel = Hotel.objects.get(id=request.user.staffof.id)
-            
             # Check if hotel subscription is active
             if not hotel.status:
                 return JsonResponse({
                     "success": False, 
                     "message": "Your hotel subscription has expired. Please contact support to enable ordering."
                 })
-                
             data = json.loads(request.body)
-            table_id = data.get("table")
+            order_type = data.get("order_type", "table")
             items = data.get("items", [])
-
-            if not table_id or not items:
-                return JsonResponse({"success": False, "message": "Invalid order details. Missing table or items."})
-            
-            table = Table.objects.get(id=table_id)
-
-            if not table.occupied:
-                # Create a new order for a free table
-                order = Order.objects.create(table=table, total=0, hotel=request.user.staffof, completedby=request.user)
-                table.occupied = True
-                table.save()
+            if order_type == "table":
+                table_id = data.get("table")
+                if not table_id or not items:
+                    return JsonResponse({"success": False, "message": "Invalid order details. Missing table or items."})
+                table = Table.objects.get(id=table_id)
+                if not table.occupied:
+                    # Create a new order for a free table
+                    order = Order.objects.create(table=table, total=0, hotel=hotel, completedby=request.user, order_type='table')
+                    table.occupied = True
+                    table.save()
+                    total_price = 0
+                else:
+                    try:
+                        order = Order.objects.get(table=table, completed=False, hotel=hotel)
+                        total_price = order.total
+                    except Order.DoesNotExist:
+                        order = Order.objects.create(table=table, total=0, hotel=hotel, completedby=request.user, order_type='table')
+                        total_price = 0
+            elif order_type == "online":
+                online_source = data.get("online_source")
+                if not online_source or not items:
+                    return JsonResponse({"success": False, "message": "Invalid order details. Missing online source or items."})
+                # Create order with no table, set order_type and online_source (assume model has these fields)
+                order = Order.objects.create(table=None, total=0, hotel=hotel, completedby=request.user, order_type='online', online_source=online_source)
                 total_price = 0
             else:
-                # Attempt to retrieve the active order
-                try:
-                    order = Order.objects.get(table=table, completed=False, hotel=request.user.staffof)
-                    total_price = order.total
-                except Order.DoesNotExist:
-                    # Handle the edge case if no active order exists for an occupied table
-                    order = Order.objects.create(table=table, total=0, hotel=request.user.staffof, completedby=request.user)
-                    total_price = 0
-
-            
+                return JsonResponse({"success": False, "message": "Invalid order type."})
             for item_data in items:
                 item = MenuItem.objects.get(id=item_data["item"])
                 quantity = int(item_data["quantity"])
-                
-                # Check if this item already exists in the order
                 existing_item = OrderItems.objects.filter(order=order, item=item).first()
-                
                 if existing_item:
-                    # Update existing item quantity
                     existing_item.quantity += quantity
                     existing_item.save()
                 else:
-                    # Create new order item
-                    OrderItems.objects.create(order=order, item=item, quantity=quantity, hotel=request.user.staffof)
-                
+                    OrderItems.objects.create(order=order, item=item, quantity=quantity, hotel=hotel)
                 total_price += item.price * quantity
-
             order.total = total_price
             order.save()
-
             return JsonResponse({"success": True, "message": "Order placed successfully!"})
-
         except Exception as e:
             return JsonResponse({"success": False, "message": str(e)})
-
     return JsonResponse({"success": False, "message": "Invalid request"}, status=400)
 
 @login_required
@@ -515,7 +508,9 @@ def button(request):
 def table(request):
     # hotel = Hotel.objects.get(id=request.user.staffof.id)
     tables = Table.objects.filter(hotel=request.user.staffof).order_by('name')
-    return render(request, 'table.html', {'tables':tables})
+    hotel = request.user.staffof
+    owner = hotel.owner if hasattr(hotel, 'owner') else None
+    return render(request, 'table.html', {'tables': tables, 'owner': owner})
 
 def category(request):
     # hotel = Hotel.objects.get(id=request.user.staffof.id)
@@ -901,13 +896,12 @@ def ajax_get_orders(request):
         
         orders_data.append({
             'id': order.id,
-            'table_name': order.table.name,
+            'table_name': order.table.name if order.table else (order.online_source if order.order_type == 'online' else None),
             'total': float(order.total),
             'items': items_data,
             'created_time': order.created_at.strftime('%I:%M %p'),
             'attended_by': str(order.completedby) if order.completedby else None
         })
-    
     # Get stats data
     india_tz = timezone.get_current_timezone()
     current_date = timezone.now().astimezone(india_tz).date()
@@ -1229,3 +1223,4 @@ def user_activity(request):
     }
     
     return render(request, 'Admin/user_activity.html', context)
+

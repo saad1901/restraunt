@@ -963,7 +963,12 @@
                     
                     <div class="card-header d-flex justify-content-between align-items-center bg-white py-2">
                         <div>
+                            {% if order.table %}
                             <h5 class="mb-0 fw-bold text-primary">{{ order.table.name }}</h5>
+                            {% else %}
+                            <h5 class="mb-0 fw-bold text-danger">{{ order.order_type }} | {{ order.online_source }}</h5>
+                            {% endif %}
+
                             {% if order.completedby %}
                             <small class="text-muted">Attended by: {{ order.completedby }}</small>
                             {% endif %}
@@ -1221,6 +1226,30 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-4 border-end">
+                            <!-- Order Type Selector -->
+                            <div class="mb-3">
+                                <label class="form-label fw-medium">Order Type</label>
+                                <div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="orderType" id="orderTypeTable" value="table" checked>
+                                        <label class="form-check-label" for="orderTypeTable">Table</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="orderType" id="orderTypeOnline" value="online">
+                                        <label class="form-check-label" for="orderTypeOnline">Other</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Online Source Selector (hidden by default) -->
+                            <div class="mb-3" id="onlineSourceGroup" style="display: none;">
+                                <label class="form-label fw-medium">Online Source</label>
+                                <select class="form-select" id="onlineSource">
+                                    <option value="swiggy">Swiggy</option>
+                                    <option value="zomato">Zomato</option>
+                                    <option value="free">Free</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
                             <div class="mb-3">
                                 <label class="form-label fw-medium">Select Table</label>
                                 <select class="form-select" id="orderTable">
@@ -1328,6 +1357,7 @@
             if (!subscriptionActive) {
                 disableOrderFunctions();
             }
+            setupOrderTypeToggle();
         });
         
         // Set up live updates with AJAX instead of full page refresh
@@ -1856,48 +1886,55 @@
                 showSubscriptionAlert();
                 return;
             }
-            
-            const tableSelect = document.getElementById('orderTable');
-            const tableId = tableSelect.value;
-            
-            if (!tableId) {
-                tableSelect.classList.add('is-invalid');
-                return;
+            const orderType = document.querySelector('input[name="orderType"]:checked').value;
+            let tableId = null;
+            let onlineSource = null;
+            if (orderType === 'table') {
+                tableId = document.getElementById('orderTable').value;
+                if (!tableId) {
+                    document.getElementById('orderTable').classList.add('is-invalid');
+                    return;
+                }
+            } else {
+                onlineSource = document.getElementById('onlineSource').value;
+                if (!onlineSource) {
+                    alert('Please select an online source');
+                    return;
+                }
             }
-            
             if (selectedItems.length === 0) {
                 alert('Please add at least one item to the order');
                 return;
             }
-            
-            tableSelect.classList.remove('is-invalid');
+            if (tableId) document.getElementById('orderTable').classList.remove('is-invalid');
             const csrfToken = document.getElementById('csrfToken').value;
-            
             try {
                 toggleLoader(true);
-                
+                const payload = {
+                    order_type: orderType,
+                    items: selectedItems.map(item => ({
+                        item: item.item,
+                        quantity: item.quantity
+                    }))
+                };
+                if (orderType === 'table') {
+                    payload.table = tableId;
+                } else {
+                    payload.online_source = onlineSource;
+                }
                 const response = await fetch('/submit-order/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'X-CSRFToken': csrfToken
                     },
-                    body: JSON.stringify({
-                        table: tableId,
-                        items: selectedItems.map(item => ({
-                            item: item.item,
-                            quantity: item.quantity
-                        }))
-                    })
+                    body: JSON.stringify(payload)
                 });
-                
                 const data = await response.json();
-                
                 if (data.success) {
                     // Reset the items array
                     selectedItems = [];
                     updateOrderSummary();
-                    
                     // Hide modal and refresh page to show the new/updated order
                     bootstrap.Modal.getInstance(document.getElementById('newOrderModal')).hide();
                     setTimeout(() => location.reload(), 500);
@@ -2273,6 +2310,28 @@
                 });
             }
         });
+
+        // Add event listeners to toggle selectors based on order type
+        function setupOrderTypeToggle() {
+            const tableGroup = document.getElementById('orderTable').closest('.mb-3');
+            const onlineSourceGroup = document.getElementById('onlineSourceGroup');
+            const radioTable = document.getElementById('orderTypeTable');
+            const radioOnline = document.getElementById('orderTypeOnline');
+
+            function toggleSelectors() {
+                if (radioTable.checked) {
+                    tableGroup.style.display = '';
+                    onlineSourceGroup.style.display = 'none';
+                } else {
+                    tableGroup.style.display = 'none';
+                    onlineSourceGroup.style.display = '';
+                }
+            }
+            radioTable.addEventListener('change', toggleSelectors);
+            radioOnline.addEventListener('change', toggleSelectors);
+            // Initial state
+            toggleSelectors();
+        }
     </script>
 </body>
 
