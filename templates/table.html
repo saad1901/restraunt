@@ -315,14 +315,13 @@
       <div class="card-header d-flex justify-content-between align-items-center">
         <div>
           <h5 class="mb-0 fw-semibold">All Tables</h5>
-          <span class="text-muted small">{{ tables|length }} tables available</span>
         </div>
         <div class="d-flex gap-2">
           <button class="btn btn-outline-success" id="generateQRCodesPDF">
-            <i class="fas fa-qrcode me-2"></i>QR Codes
+            <i class="fas fa-qrcode me-2"></i>QR
           </button>
           <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTableModal">
-            <i class="fas fa-plus me-2"></i>Add New Table
+            <i class="fas fa-plus me-2"></i>Add
           </button>
         </div>
       </div>
@@ -472,71 +471,75 @@
           const ownerPhone = `{{ owner.phone|default:'' }}`;
           const qrUrl = `{{ request.scheme }}://{{ request.get_host }}/user/getmenu/{{ request.user.staffof.id }}`;
           const pageWidth = doc.internal.pageSize.getWidth();
+          const pageHeight = doc.internal.pageSize.getHeight();
           const margin = 32;
-          const cardW = 260, cardH = 360;
-          const qrSize = 140;
+          const cardW = 260, cardH = 320;
+          const qrSize = 120;
           const qrBorderPad = 14;
           const cardBg = '#f5f7fa';
-          const cardRadius = 22;
-          const fontSizeTitle = 26;
-          const fontSizeTable = 16;
-          const fontSizePhone = 12;
+          const fontSizeTitle = 22;
+          const fontSizeTable = 15;
+          const fontSizePhone = 11;
           const fontColor = '#22223b';
           const accentColor = '#3f51b5';
           const greyBorder = '#b0b0b0';
-          let y = margin;
-          for (let i = 0; i < tables.length; i += 2) {
-            for (let j = 0; j < 2 && i + j < tables.length; j++) {
-              const table = tables[i + j];
-              const x = margin + j * ((pageWidth - 2 * margin) / 2) + 10;
-              // Card background
-              doc.setFillColor(cardBg);
-              doc.roundedRect(x, y, cardW, cardH, cardRadius, cardRadius, 'F');
-              // Hotel Name (fashioned)
-              doc.setFont('helvetica', 'bold');
-              doc.setFontSize(fontSizeTitle);
-              doc.setTextColor(accentColor);
-              doc.text(hotelName, x + cardW / 2, y + 44, { align: 'center' });
-              // Underline hotel name for style
-              const nameWidth = doc.getTextWidth(hotelName);
-              doc.setDrawColor(accentColor);
-              doc.setLineWidth(1);
-              doc.line(x + (cardW - nameWidth) / 2, y + 48, x + (cardW + nameWidth) / 2, y + 48);
-              // QR code border (slim grey, padded)
-              const qrBorderX = x + (cardW - qrSize - 2 * qrBorderPad) / 2;
-              const qrBorderY = y + 60;
-              doc.setDrawColor(greyBorder);
-              doc.setLineWidth(1.5);
-              doc.roundedRect(qrBorderX, qrBorderY, qrSize + 2 * qrBorderPad, qrSize + 2 * qrBorderPad, 16, 16, 'S');
-              // QR code
-              const qrImgUrl = getQRCodeDataUrl(qrUrl, qrSize);
-              const img = await new Promise(resolve => {
-                const image = new window.Image();
-                image.crossOrigin = 'Anonymous';
-                image.onload = () => resolve(image);
-                image.src = qrImgUrl;
-              });
-              doc.addImage(img, 'PNG', qrBorderX + qrBorderPad, qrBorderY + qrBorderPad, qrSize, qrSize);
-              // Divider
-              doc.setDrawColor(accentColor);
-              doc.setLineWidth(1.2);
-              doc.line(x + 30, qrBorderY + qrSize + 2 * qrBorderPad + 18, x + cardW - 30, qrBorderY + qrSize + 2 * qrBorderPad + 18);
-              // Table Name
-              doc.setFont('helvetica', 'bold');
-              doc.setFontSize(fontSizeTable);
-              doc.setTextColor(fontColor);
-              doc.text(table.name, x + cardW / 2, qrBorderY + qrSize + 2 * qrBorderPad + 44, { align: 'center' });
-              // Owner phone number
-              if (ownerPhone) {
-                doc.setFont('helvetica', 'normal');
-                doc.setFontSize(fontSizePhone);
-                doc.setTextColor('#888888');
-                doc.text('Call Owner: ' + ownerPhone, x + cardW / 2, qrBorderY + qrSize + 2 * qrBorderPad + 64, { align: 'center' });
-              }
-            }
-            if (i + 2 < tables.length) {
+          // 2 columns, 2 rows per page
+          const cols = 2, rows = 2;
+          const xSpacing = (pageWidth - 2 * margin - cols * cardW) / (cols - 1);
+          const ySpacing = (pageHeight - 2 * margin - rows * cardH) / (rows - 1);
+          for (let i = 0; i < tables.length; i++) {
+            const pageIdx = Math.floor(i / (cols * rows));
+            const idxInPage = i % (cols * rows);
+            const row = Math.floor(idxInPage / cols);
+            const col = idxInPage % cols;
+            if (i > 0 && idxInPage === 0) {
               doc.addPage();
-              y = margin;
+            }
+            const x = margin + col * (cardW + xSpacing);
+            const y = margin + row * (cardH + ySpacing);
+            // Card background (sharp corners)
+            doc.setFillColor(cardBg);
+            doc.rect(x, y, cardW, cardH, 'F');
+            // Hotel Name
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(fontSizeTitle);
+            doc.setTextColor(accentColor);
+            doc.text(hotelName, x + cardW / 2, y + 38, { align: 'center' });
+            // Underline hotel name
+            const nameWidth = doc.getTextWidth(hotelName);
+            doc.setDrawColor(accentColor);
+            doc.setLineWidth(1);
+            doc.line(x + (cardW - nameWidth) / 2, y + 42, x + (cardW + nameWidth) / 2, y + 42);
+            // QR code border (sharp)
+            const qrBorderX = x + (cardW - qrSize - 2 * qrBorderPad) / 2;
+            const qrBorderY = y + 54;
+            doc.setDrawColor(greyBorder);
+            doc.setLineWidth(1.5);
+            doc.rect(qrBorderX, qrBorderY, qrSize + 2 * qrBorderPad, qrSize + 2 * qrBorderPad, 'S');
+            // QR code
+            const qrImgUrl = getQRCodeDataUrl(qrUrl, qrSize);
+            const img = await new Promise(resolve => {
+              const image = new window.Image();
+              image.crossOrigin = 'Anonymous';
+              image.onload = () => resolve(image);
+              image.src = qrImgUrl;
+            });
+            doc.addImage(img, 'PNG', qrBorderX + qrBorderPad, qrBorderY + qrBorderPad, qrSize, qrSize);
+            // Divider
+            doc.setDrawColor(accentColor);
+            doc.setLineWidth(1.2);
+            doc.line(x + 24, qrBorderY + qrSize + 2 * qrBorderPad + 14, x + cardW - 24, qrBorderY + qrSize + 2 * qrBorderPad + 14);
+            // Table Name
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(fontSizeTable);
+            doc.setTextColor(fontColor);
+            doc.text(tables[i].name, x + cardW / 2, qrBorderY + qrSize + 2 * qrBorderPad + 38, { align: 'center' });
+            // Owner phone number
+            if (ownerPhone) {
+              doc.setFont('helvetica', 'normal');
+              doc.setFontSize(fontSizePhone);
+              doc.setTextColor('#888888');
+              doc.text('Call Owner: ' + ownerPhone, x + cardW / 2, qrBorderY + qrSize + 2 * qrBorderPad + 56, { align: 'center' });
             }
           }
           doc.save('table_qrcodes.pdf');
