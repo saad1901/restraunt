@@ -14,6 +14,8 @@ from django.contrib.staticfiles.views import serve
 from userApp import views as userview
 
 urlpatterns = [
+
+
     path('homepage/', views.homepage, name='homepage'),
     path('home/', home, name='home'),
     path('git_pull', git_pull, name='git_pull'),
@@ -109,7 +111,8 @@ urlpatterns = [
     path('settings/table/edit/', views.edit_table, name='edit_table'),
     path('settings/table/delete/<int:table_id>/', views.delete_table, name='delete_table'),
 
-    path('user/getmenu/<int:hotel>/<int:table>', userview.show_menu, name='user_show_menu'),
+    path('user/getmenu/<int:hotel>/', userview.show_menu, name='user_show_menu'),
+    path('user/getmenu/<int:hotel>/<int:table>/', userview.show_menu, name='user_show_menu'),
 
     path('serviceworker.js', serve, 
          kwargs={'path': 'js/serviceworker.js'}),

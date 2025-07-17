@@ -61,15 +61,32 @@ class MenuItem(models.Model):
 
 class Order(models.Model):
     hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE)  # Link order to hotel
-    table = models.ForeignKey(Table, on_delete=models.CASCADE)
+    table = models.ForeignKey(Table, on_delete=models.CASCADE, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     total = models.DecimalField(max_digits=6, decimal_places=2, default=0)
     discount = models.DecimalField(max_digits=6, decimal_places=2, default=0)
     completed = models.BooleanField(default=False)
     phone_number = models.CharField(max_length=15, blank=True)
     completedby = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True)
+    # New fields for order type and online source
+    ORDER_TYPE_CHOICES = [
+        ('table', 'Table'),
+        ('online', 'Online'),
+    ]
+    ONLINE_SOURCE_CHOICES = [
+        ('swiggy', 'Swiggy'),
+        ('zomato', 'Zomato'),
+        ('free', 'Free'),
+        ('other', 'Other'),
+    ]
+    order_type = models.CharField(max_length=10, choices=ORDER_TYPE_CHOICES, default='table')
+    online_source = models.CharField(max_length=10, choices=ONLINE_SOURCE_CHOICES, blank=True, null=True)
+
     def __str__(self):
-        return f"Order {self.id} - {self.hotel.name}"
+        base = f"Order {self.id} - {self.hotel.name}"
+        if self.order_type == 'online':
+            return f"{base} (Online: {self.online_source})"
+        return base
 
 class OrderItems(models.Model):
     hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE)  # Link order items to hotel

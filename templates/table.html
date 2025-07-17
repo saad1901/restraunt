@@ -317,9 +317,14 @@
           <h5 class="mb-0 fw-semibold">All Tables</h5>
           <span class="text-muted small">{{ tables|length }} tables available</span>
         </div>
-        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTableModal">
-          <i class="fas fa-plus me-2"></i>Add New Table
-        </button>
+        <div class="d-flex gap-2">
+          <button class="btn btn-outline-success" id="generateQRCodesPDF">
+            <i class="fas fa-qrcode me-2"></i>QR Codes
+          </button>
+          <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTableModal">
+            <i class="fas fa-plus me-2"></i>Add New Table
+          </button>
+        </div>
       </div>
       
       <div class="table-container">
@@ -437,7 +442,13 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script>
+    // Helper to load QR code as image
+    function getQRCodeDataUrl(url, size = 180) {
+      return `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(url)}`;
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
       // Handle edit table modal
       document.querySelectorAll('.edit-table').forEach(button => {
@@ -446,6 +457,93 @@
           modal.querySelector('#edit_table_id').value = button.dataset.id;
           modal.querySelector('#edit_table_number').value = button.dataset.name;
         });
+      });
+
+      document.getElementById('generateQRCodesPDF').addEventListener('click', async function() {
+        try {
+          const { jsPDF } = window.jspdf;
+          const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+          const tables = [
+            {% for table in tables %}
+              { name: `{{ table.name|escapejs }}` },
+            {% endfor %}
+          ];
+          const hotelName = `{{ request.user.staffof.name|escapejs }}`;
+          const ownerPhone = `{{ owner.phone|default:'' }}`;
+          const qrUrl = `{{ request.scheme }}://{{ request.get_host }}/user/getmenu/{{ request.user.staffof.id }}`;
+          const pageWidth = doc.internal.pageSize.getWidth();
+          const margin = 32;
+          const cardW = 260, cardH = 360;
+          const qrSize = 140;
+          const qrBorderPad = 14;
+          const cardBg = '#f5f7fa';
+          const cardRadius = 22;
+          const fontSizeTitle = 26;
+          const fontSizeTable = 16;
+          const fontSizePhone = 12;
+          const fontColor = '#22223b';
+          const accentColor = '#3f51b5';
+          const greyBorder = '#b0b0b0';
+          let y = margin;
+          for (let i = 0; i < tables.length; i += 2) {
+            for (let j = 0; j < 2 && i + j < tables.length; j++) {
+              const table = tables[i + j];
+              const x = margin + j * ((pageWidth - 2 * margin) / 2) + 10;
+              // Card background
+              doc.setFillColor(cardBg);
+              doc.roundedRect(x, y, cardW, cardH, cardRadius, cardRadius, 'F');
+              // Hotel Name (fashioned)
+              doc.setFont('helvetica', 'bold');
+              doc.setFontSize(fontSizeTitle);
+              doc.setTextColor(accentColor);
+              doc.text(hotelName, x + cardW / 2, y + 44, { align: 'center' });
+              // Underline hotel name for style
+              const nameWidth = doc.getTextWidth(hotelName);
+              doc.setDrawColor(accentColor);
+              doc.setLineWidth(1);
+              doc.line(x + (cardW - nameWidth) / 2, y + 48, x + (cardW + nameWidth) / 2, y + 48);
+              // QR code border (slim grey, padded)
+              const qrBorderX = x + (cardW - qrSize - 2 * qrBorderPad) / 2;
+              const qrBorderY = y + 60;
+              doc.setDrawColor(greyBorder);
+              doc.setLineWidth(1.5);
+              doc.roundedRect(qrBorderX, qrBorderY, qrSize + 2 * qrBorderPad, qrSize + 2 * qrBorderPad, 16, 16, 'S');
+              // QR code
+              const qrImgUrl = getQRCodeDataUrl(qrUrl, qrSize);
+              const img = await new Promise(resolve => {
+                const image = new window.Image();
+                image.crossOrigin = 'Anonymous';
+                image.onload = () => resolve(image);
+                image.src = qrImgUrl;
+              });
+              doc.addImage(img, 'PNG', qrBorderX + qrBorderPad, qrBorderY + qrBorderPad, qrSize, qrSize);
+              // Divider
+              doc.setDrawColor(accentColor);
+              doc.setLineWidth(1.2);
+              doc.line(x + 30, qrBorderY + qrSize + 2 * qrBorderPad + 18, x + cardW - 30, qrBorderY + qrSize + 2 * qrBorderPad + 18);
+              // Table Name
+              doc.setFont('helvetica', 'bold');
+              doc.setFontSize(fontSizeTable);
+              doc.setTextColor(fontColor);
+              doc.text(table.name, x + cardW / 2, qrBorderY + qrSize + 2 * qrBorderPad + 44, { align: 'center' });
+              // Owner phone number
+              if (ownerPhone) {
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(fontSizePhone);
+                doc.setTextColor('#888888');
+                doc.text('Call Owner: ' + ownerPhone, x + cardW / 2, qrBorderY + qrSize + 2 * qrBorderPad + 64, { align: 'center' });
+              }
+            }
+            if (i + 2 < tables.length) {
+              doc.addPage();
+              y = margin;
+            }
+          }
+          doc.save('table_qrcodes.pdf');
+        } catch (err) {
+          console.error('QR PDF generation error:', err);
+          alert('Failed to generate QR PDF. See console for details.');
+        }
       });
     });
   </script>
