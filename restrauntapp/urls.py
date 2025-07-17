@@ -78,6 +78,8 @@ urlpatterns = [
     path('update_quantity/', views.update_quantity, name='update_quantity'),
     path('ajax/get_orders/', views.ajax_get_orders, name='ajax_get_orders'),
 
+    path('order/set_started/', views.set_order_started, name='set_order_started'),
+
     path('owner/settings', views.button, name='button'),
     path('owner/settings/reports', views.reports, name='reports'),
 

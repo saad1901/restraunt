@@ -21,6 +21,7 @@ from .inventory_views import (
     inventory, add_inventory_item, edit_inventory_item, 
     delete_inventory_item, inventory_transaction, inventory_history
 )
+from django.views.decorators.csrf import csrf_exempt
 
 def homepage(request):
     """
@@ -325,6 +326,23 @@ def update_quantity(request):
         return JsonResponse({"success": False, "message": "Order not found."})
     except Exception as e:
         return JsonResponse({"success": False, "message": str(e)})
+
+@login_required
+@require_POST
+@csrf_exempt  # If you want to allow AJAX from JS without CSRF token, otherwise remove this
+def set_order_started(request):
+    try:
+        data = json.loads(request.body)
+        order_id = data.get('order_id')
+        started = data.get('started', True)
+        order = Order.objects.get(id=order_id)
+        order.started = bool(started)
+        order.save()
+        return JsonResponse({'success': True, 'started': order.started})
+    except Order.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Order not found.'}, status=404)
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=400)
 
 
 def settings(request):
