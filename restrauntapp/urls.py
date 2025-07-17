@@ -118,4 +118,6 @@ urlpatterns = [
 
     path('serviceworker.js', serve, 
          kwargs={'path': 'js/serviceworker.js'}),
+
+    path('waiter/orders/active/', views.waiter_active_orders, name='waiter_active_orders'),
 ]
