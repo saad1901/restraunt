@@ -138,7 +138,9 @@ def waiter_active_orders(request):
             'online_source': order.online_source if hasattr(order, 'online_source') and order.online_source else '',
             'total': float(order.total),
             'created_at': order.created_at.strftime('%d/%m/%y %I:%M %p'),
-            'items': items_data
+            'items': items_data,
+            'started': order.started,  # Add this line
+            'attendant': str(order.completedby) if order.completedby else '',
         })
     return JsonResponse({'orders': orders_data})
 
