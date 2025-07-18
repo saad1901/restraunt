@@ -519,6 +519,10 @@
                 font-size: 0.95rem;
             }
         }
+        .order-modal-card {
+            border-width: 2.5px !important;
+            border-color: #5046e5 !important;
+        }
     </style>
 </head>
 
@@ -578,9 +582,9 @@
         </div>
         <!-- Online Source Selector (hidden by default) -->
         <div class="mb-4 mx-auto table-card" id="onlineSourceGroup" style="display: none;">
-            <div class="card">
-                <label class="form-label text-primary">Online Source</label>
-                <select class="form-select" id="onlineSource">
+            <div class="card d-flex flex-row align-items-center gap-2">
+                <label class="form-label text-primary mb-0" style="white-space:nowrap;">Source</label>
+                <select class="form-select table-select-small" id="onlineSource">
                     <option value="swiggy">Swiggy</option>
                     <option value="zomato">Zomato</option>
                     <option value="free">Free</option>
@@ -594,7 +598,7 @@
                 <div class="d-flex align-items-center gap-2">
                     <label class="form-label text-primary mb-0" style="white-space:nowrap;">Select Table</label>
                     <select class="form-select table-select-small" id="selectedTable">
-                        <option value="">-- Choose a Table --</option>
+                        <option value="">Choose a Table</option>
                         {% for table in tables %}
                         <option value="{{ table.id }}"
                             data-status="{% if table.occupied %}occupied{% else %}free{% endif %}">
@@ -958,14 +962,16 @@
                                     }
                                     return `
                                         <div class="col-12 col-md-6">
-                                            <div class="card border-0 shadow-sm rounded-4 h-100">
+                                            <div class="card border-2 border-primary shadow-sm rounded-4 h-100 order-modal-card" style="border-color: #5046e5 !important;">
                                                 <div class="card-header bg-white border-0 rounded-top-4 py-2 px-3">
                                                     <div class="d-flex justify-content-between align-items-start">
                                                         <div>
                                                             ${tableOrSource}
-                                                            <div class="text-muted small mt-1 ms-1" style="font-size:0.97em;"><i class="far fa-clock me-1"></i>${order.created_at}</div>
+                                                            <div class="text-muted" style="font-size:0.88em; margin-top:2px;"><i class="far fa-clock me-1"></i>${order.created_at}</div>
                                                         </div>
-                                                        <span class="fw-bold text-success fs-5">₹${order.total.toFixed(2)}</span>
+                                                        <div class="form-check form-switch ms-2" title="Order Started?">
+                                                          <input class="form-check-input order-started-switch" type="checkbox" id="orderStartedSwitch${order.id}" data-order-id="${order.id}" ${order.started ? 'checked' : ''} style="transform: scale(1.4); accent-color: #5046e5;">
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div class="border-top px-3"></div>
@@ -979,10 +985,40 @@
                                                         `).join('')}
                                                     </div>
                                                 </div>
+                                                <div class="card-footer bg-white border-0 rounded-bottom-4 py-2 px-3 d-flex justify-content-between align-items-center">
+                                                  <span class="text-muted small" style="font-size:0.98em;">${order.attendant ? `<i class='fas fa-user me-1'></i>${order.attendant}` : ''}</span>
+                                                  <span class="fw-bold text-success fs-5" style="font-size:1.15rem; color: #5046e5 !important;">₹${order.total.toFixed(2)}</span>
+                                                </div>
                                             </div>
                                         </div>
                                     `;
                                 }).join('');
+                                // Attach event listeners to switches after rendering
+                                document.querySelectorAll('.order-started-switch').forEach(switchEl => {
+                                  switchEl.addEventListener('change', function() {
+                                    const orderId = this.getAttribute('data-order-id');
+                                    const started = this.checked;
+                                    fetch('/order/set_started/', {
+                                      method: 'POST',
+                                      headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRFToken': csrfToken
+                                      },
+                                      body: JSON.stringify({ order_id: orderId, started: started })
+                                    })
+                                    .then(res => res.json())
+                                    .then(data => {
+                                      if (!data.success) {
+                                        alert(data.error || 'Failed to update order status.');
+                                        this.checked = !started; // revert
+                                      }
+                                    })
+                                    .catch(() => {
+                                      alert('Network error.');
+                                      this.checked = !started;
+                                    });
+                                  });
+                                });
                             } else {
                                 ordersList.innerHTML = '<div class="text-center text-muted py-4">No active orders.</div>';
                             }
