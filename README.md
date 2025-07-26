@@ -2,12 +2,13 @@
 
 ## Application Link
 
-Access the live web application here: [Restaurant Management System](https://your-restaurant-app.pythonanywhere.com)
+Access the live web application here: [Restaurant Management System](https://hotelsoftware.pythonanywhere.com/)
+Access the HomePage of web application here: [Restaurant Management System](https://hotelsoftware.pythonanywhere.com/homepage/)
 
 ## APK Download
 
 Download the mobile application for Android devices:
-- **[Download Restaurant App APK](https://your-domain.com/downloads/restaurant-app.apk)**
+- **[Download Restaurant App APK](https://median.co/share/zjembl#apk)**
 - **File Size:** ~25 MB
 - **Minimum Android Version:** 6.0 (API level 23)
 - **Last Updated:** July 2025
