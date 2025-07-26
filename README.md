@@ -2,8 +2,8 @@
 
 ## Application Link
 
-Access the live web application here: [Restaurant Management System](https://hotelsoftware.pythonanywhere.com/)
-Access the HomePage of web application here: [Restaurant Management System](https://hotelsoftware.pythonanywhere.com/homepage/)
+- Access the live web application here: [Restaurant Management System](https://hotelsoftware.pythonanywhere.com/)
+- Access the HomePage of web application here: [Restaurant Management System](https://hotelsoftware.pythonanywhere.com/homepage/)
 
 ## APK Download
 
