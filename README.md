@@ -1,32 +1,60 @@
 # Restaurant App - System Operations
 
-## PythonAnywhere Deployment
+## Application Link
 
-### Setting up the Restart Server Feature
+- Access the live web application here: [Restaurant Management System](https://hotelsoftware.pythonanywhere.com/)
+- Access the HomePage of web application here: [Restaurant Management Adv](https://hotelsoftware.pythonanywhere.com/homepage/)
 
-To enable the "Restart Server" functionality on PythonAnywhere, you need to set up the API credentials:
+## APK Download
 
-1. Log in to your PythonAnywhere account.
-2. Go to Account settings and create an API token.
-3. Add the following environment variables to your PythonAnywhere web app:
-   - `PYTHONANYWHERE_USERNAME`: Your PythonAnywhere username
-   - `PYTHONANYWHERE_API_TOKEN`: Your API token created in step 2
+Download the mobile application for Android devices:
+- **[Download Restaurant App APK](https://median.co/share/zjembl#apk)**
+- **File Size:** ~25 MB
+- **Minimum Android Version:** 6.0 (API level 23)
+- **Last Updated:** July 2025
 
-### Setting Environment Variables in PythonAnywhere
+## Project Overview
 
-1. Go to the Web tab in your PythonAnywhere dashboard.
-2. Scroll down to the "Environment variables" section.
-3. Add the two environment variables mentioned above.
-4. Click the "Save" button.
-5. Reload your web app for the changes to take effect.
+This Restaurant Management System provides a comprehensive solution for restaurant operations with both web and mobile interfaces.
 
-Once these environment variables are set, the "Restart Server" button in the System Operations page will be able to automatically reload your web application using the PythonAnywhere API.
+### Key Features
 
-## Requirements
+- **Order Management** - Track and process customer orders in real-time
+- **Menu Management** - Add, edit, and organize restaurant menu items
+- **Table Management** - Monitor table availability and reservations
+- **Staff Dashboard** - Role-based access for different staff members
+- **System Operations** - Administrative controls and server management
+- **Cross-Platform** - Available as both web application and Android APK
 
-This project requires the following Python packages:
-- Django
-- requests (for the PythonAnywhere API integration)
-- Other dependencies listed in requirements.txt
+### Technology Stack
 
-Run `pip install -r requirements.txt` to install all dependencies. 
+- **Backend:** Django (Python web framework)
+- **Frontend:** HTML, CSS, JavaScript
+- **Mobile:** Android APK
+- **Deployment:** PythonAnywhere hosting
+- **API Integration:** RESTful services for mobile app connectivity
+
+### System Requirements
+
+**Web Application:**
+- Modern web browser (Chrome, Firefox, Safari, Edge)
+- Internet connection
+- Responsive design supports desktop, tablet, and mobile browsers
+
+**Mobile Application:**
+- Android 6.0 or higher
+- 50 MB free storage space
+- Internet connection for real-time synchronization
+
+### Installation
+
+**Web Access:**
+Simply visit the application link above - no installation required.
+
+**Mobile Installation:**
+1. Download the APK file from the link above
+2. Enable "Unknown sources" in Android settings if prompted
+3. Install the APK file
+4. Launch the Restaurant App
+
+The application provides seamless synchronization between web and mobile platforms, allowing staff to manage restaurant operations from any device.
