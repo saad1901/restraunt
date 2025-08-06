@@ -622,7 +622,7 @@
                 <div class="collapse {% if forloop.first %}show{% endif %}" id="category{{ category.id }}">
                     <div class="category-body">
                         {% for item in items %}
-                        {% if item.category == category %}
+                        {% if item.category == category and item.active %}
                         <div class="item-card item-fade" data-item-id="{{ item.id }}" data-item-name="{{ item.name }}" data-item-price="{{ item.price }}">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
