@@ -58,3 +58,5 @@ Simply visit the application link above - no installation required.
 4. Launch the Restaurant App
 
 The application provides seamless synchronization between web and mobile platforms, allowing staff to manage restaurant operations from any device.
+
+last updated : 27/08/2025
