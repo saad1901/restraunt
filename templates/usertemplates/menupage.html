@@ -368,20 +368,29 @@
 </head>
 <body>
     <!-- Header -->
-    <header class="header">
-        <div class="hotel-name">
-            <i class="fas fa-utensils"></i>
-            {{hotel.name}} Menu
+
+    <header class="header" style="display: flex; align-items: center; justify-content: space-between;">
+        <div style="display: flex; flex-direction: column; align-items: flex-start;">
+            <div class="hotel-name">
+                <i class="fas fa-utensils"></i>
+                {{hotel.name}} Menu
+            </div>
+            {% if table %}
+            <div class="table-name">{{ table.name }}</div>
+            {% endif %}
         </div>
-        {% if table %}
-        <div class="table-name">{{ table.name }}</div>
-        {% endif %}
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <label for="vegToggle" style="font-size: 1.5rem; font-weight: 600; margin-right: 4px; color: #10b981; display: flex; align-items: center; gap: 4px;">
+                <i class="fas fa-leaf" style="color: #10b981;"></i> Veg
+            </label>
+            <input type="checkbox" id="vegToggle" onchange="toggleVeg()" style="width: 22px; height: 22px; accent-color: #10b981; cursor: pointer; border: 2px solid #10b981;">
+        </div>
     </header>
 
     <!-- Main Content -->
-    <div class="container">
+    <div class="container" id="menuContainer">
         {% for category in menu %}
-        <div class="category">
+        <div class="category" data-category-index="{{ forloop.counter0 }}">
             <div class="category-header">
                 <h3 class="category-title">
                     {% if category.icon %}
@@ -392,16 +401,14 @@
                     {{ category.name }}
                 </h3>
             </div>
-            
             <div class="menu-items">
                 {% for item in category.items %}
-                <div class="menu-item">
+                <div class="menu-item" data-food-type="{{ item.food_type|default:'' }}">
                     <div class="item-info">
                         <div class="item-name">{{ item.name }}</div>
                         {% if item.description %}
                         <div class="item-description">{{ item.description }}</div>
                         {% endif %}
-                        
                         <div class="item-tags">
                             {% if item.food_type == 'veg' %}
                             <span class="tag tag-veg">
@@ -412,7 +419,6 @@
                                 <i class="fas fa-drumstick-bite"></i> Non-Veg
                             </span>
                             {% endif %}
-                            
                             {% if item.food_type == 'spicy' %}
                             <span class="tag tag-spicy">
                                 <i class="fas fa-pepper-hot"></i> Spicy
@@ -420,7 +426,6 @@
                             {% endif %}
                         </div>
                     </div>
-                    
                     <div class="item-right">
                         <div class="item-price">₹{{ item.price }}</div>
                         <div class="quantity-controls">
@@ -476,15 +481,12 @@
                     quantity: 0
                 };
             }
-            
             cart[itemId].quantity = 1;
             updateDisplay(itemId);
             updateTotal();
-            
             // Hide add button, show quantity controls
             const addBtn = document.querySelector(`[data-item-id="${itemId}"]`);
             const quantityDisplay = document.querySelector(`[data-quantity-id="${itemId}"]`);
-            
             addBtn.style.display = 'none';
             quantityDisplay.style.display = 'flex';
             quantityDisplay.querySelector('.quantity-text').textContent = '1';
@@ -498,7 +500,6 @@
                     quantity: 0
                 };
             }
-            
             cart[itemId].quantity += 1;
             updateDisplay(itemId);
             updateTotal();
@@ -507,20 +508,16 @@
         function decreaseQuantity(itemId) {
             if (cart[itemId] && cart[itemId].quantity > 0) {
                 cart[itemId].quantity -= 1;
-                
                 if (cart[itemId].quantity === 0) {
                     delete cart[itemId];
-                    
                     // Show add button, hide quantity controls
                     const addBtn = document.querySelector(`[data-item-id="${itemId}"]`);
                     const quantityDisplay = document.querySelector(`[data-quantity-id="${itemId}"]`);
-                    
                     addBtn.style.display = 'flex';
                     quantityDisplay.style.display = 'none';
                 } else {
                     updateDisplay(itemId);
                 }
-                
                 updateTotal();
             }
         }
@@ -535,15 +532,12 @@
         function updateTotal() {
             totalItems = 0;
             totalAmount = 0;
-            
             for (let itemId in cart) {
                 totalItems += cart[itemId].quantity;
                 totalAmount += cart[itemId].quantity * cart[itemId].price;
             }
-            
             document.getElementById('totalItems').textContent = `${totalItems} item${totalItems !== 1 ? 's' : ''}`;
             document.getElementById('totalAmount').textContent = `₹${totalAmount}`;
-            
             const totalBar = document.getElementById('totalBar');
             if (totalItems > 0) {
                 totalBar.classList.add('visible');
@@ -559,7 +553,32 @@
             }
         }
 
-        // Initialize page
+        // Veg toggler logic
+        function toggleVeg() {
+            const vegOnly = document.getElementById('vegToggle').checked;
+            // For each menu-item, show/hide based on food_type
+            document.querySelectorAll('.category').forEach(function(category) {
+                let anyVisible = false;
+                category.querySelectorAll('.menu-item').forEach(function(item) {
+                    const foodType = item.getAttribute('data-food-type');
+                    if (vegOnly) {
+                        // Show if veg or not specified (empty or null)
+                        if (foodType === 'veg' || foodType === '' || foodType === null) {
+                            item.style.display = '';
+                            anyVisible = true;
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    } else {
+                        item.style.display = '';
+                        anyVisible = true;
+                    }
+                });
+                // Hide category if no items visible
+                category.style.display = anyVisible ? '' : 'none';
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             updateTotal();
         });
