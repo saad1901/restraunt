@@ -11,3 +11,5 @@ restrauntapp/settings.py
 myapp/
 
 staticfiles/
+
+venv/
