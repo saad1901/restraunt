@@ -10,186 +10,258 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
     :root {
-      --primary: #4f46e5;
-      --primary-light: rgba(79, 70, 229, 0.1);
-      --primary-dark: #4338ca;
+      --primary: #6366f1;
+      --primary-light: rgba(99, 102, 241, 0.1);
+      --primary-dark: #4f46e5;
       --success: #10b981;
       --danger: #ef4444;
       --warning: #f59e0b;
-      --info: #0ea5e9;
       --bg-color: #f8fafc;
       --text-color: #334155;
       --card-bg: #ffffff;
       --border-color: #e2e8f0;
       --hover-bg: #f1f5f9;
-      --radius: 0.75rem;
+      --radius: 0.4rem;
       --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     }
 
     body {
-      background-color: var(--bg-color);
-      font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-color);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
       color: var(--text-color);
-      line-height: 1.5;
+      line-height: 1.3;
+      padding-bottom: 0.5rem;
     }
 
     .navbar {
-      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
       box-shadow: var(--shadow-md);
-      padding: 0.75rem 1rem;
+      padding: 0.7rem 1rem;
       position: sticky;
       top: 0;
       z-index: 1000;
     }
 
     .navbar-brand {
-      font-weight: 600;
-      font-size: 1.25rem;
+      font-weight: 700;
+      font-size: 1.1rem;
       color: white !important;
+      display: flex;
+      align-items: center;
+    }
+
+    .navbar-brand i {
+      margin-right: 0.3rem;
+      font-size: 1rem;
     }
 
     .btn-back {
-      display: flex;
-      align-items: center;
-      justify-content: center;
       color: white;
-      background-color: rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.15);
       border: none;
-      border-radius: 50px;
-      padding: 0.5rem 1rem;
-      font-size: 0.875rem;
-      font-weight: 500;
+      border-radius: 1rem;
+      padding: 0.3rem 0.6rem;
+      font-size: 0.85rem;
+      font-weight: 600;
       transition: all 0.2s ease;
     }
 
     .btn-back:hover {
-      background-color: rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.25);
       transform: translateY(-1px);
     }
 
     .page-container {
-      max-width: 1000px;
+      max-width: 900px;
       margin: 0 auto;
-      padding: 1.5rem 1rem;
+      padding: 0.5rem;
+    }
+
+    .page-header {
+      text-align: center;
+      margin-bottom: 0.8rem;
     }
 
     .page-title {
-      font-size: 1.5rem;
-      font-weight: 600;
-      color: var(--text-color);
-      margin-bottom: 1rem;
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 0.2rem;
     }
 
-    .items-card {
-      background: var(--card-bg);
-      border-radius: var(--radius);
-      border: 1px solid var(--border-color);
-      box-shadow: var(--shadow-sm);
-      overflow: hidden;
-      transition: box-shadow 0.3s ease;
-    }
-
-    .items-card:hover {
-      box-shadow: var(--shadow-md);
-    }
-
-    .card-header {
-      background-color: white;
-      border-bottom: 1px solid var(--border-color);
-      padding: 1.25rem;
+    .page-subtitle {
+      color: #64748b;
+      font-size: 0.9rem;
+      font-weight: 500;
+      margin-bottom: 0.6rem;
     }
 
     .btn-primary {
-      background-color: var(--primary);
-      border-color: var(--primary);
-      border-radius: 50px;
-      padding: 0.5rem 1.25rem;
-      font-weight: 500;
-      box-shadow: 0 1px 3px rgba(79, 70, 229, 0.2);
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border: none;
+      border-radius: 1rem;
+      padding: 0.4rem 1rem;
+      font-weight: 600;
+      font-size: 0.9rem;
       transition: all 0.2s ease;
     }
 
     .btn-primary:hover {
-      background-color: var(--primary-dark);
-      border-color: var(--primary-dark);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 6px rgba(79, 70, 229, 0.25);
+      transform: translateY(-1px);
+      box-shadow: 0 3px 8px rgba(99, 102, 241, 0.3);
     }
 
-    .btn-primary .fa-plus {
-      font-size: 0.75rem;
+    /* Category Cards */
+    .category-card {
+      background: white;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 0.6rem;
+      overflow: hidden;
+      transition: all 0.2s ease;
     }
 
-    .table-container {
-      padding: 0;
+    .category-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-1px);
     }
 
-    .items-table {
-      width: 100%;
-      border-collapse: separate;
-      border-spacing: 0;
+    .category-header {
+      background: linear-gradient(135deg, var(--primary), #8b5cf6);
+      color: white;
+      padding: 0.5rem 0.7rem;
     }
 
-    .items-table thead th {
-      background-color: var(--primary-light);
-      color: var(--primary);
+    .category-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .category-name {
+      display: flex;
+      align-items: center;
+    }
+
+    .category-icon {
+      margin-right: 0.4rem;
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
+    .category-count {
+      font-size: 0.8rem;
       font-weight: 600;
-      font-size: 0.875rem;
-      padding: 1rem 1.5rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      border: none;
+      opacity: 0.9;
     }
 
-    .items-table tbody td {
-      padding: 1rem 1.5rem;
-      border-bottom: 1px solid var(--border-color);
-      font-size: 0.95rem;
-      vertical-align: middle;
+    .category-items {
+      padding: 0.4rem;
     }
 
-    .items-table tbody tr:last-child td {
-      border-bottom: none;
+    /* Menu Items */
+    .menu-item {
+      background: #fafbfc;
+      border: 1px solid #f1f5f9;
+      border-radius: 0.3rem;
+      padding: 0.5rem;
+      margin-bottom: 0.3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.2s ease;
+      min-height: 2.8rem;
     }
 
-    .items-table tbody tr:hover {
-      background-color: var(--hover-bg);
+    .menu-item:hover {
+      background: white;
+      border-color: var(--primary-light);
+      transform: translateY(-1px);
+    }
+
+    .menu-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .item-info {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .item-details {
+      flex: 1;
+    }
+
+    .item-name {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-color);
+      margin: 0 0 0.1rem 0;
+      line-height: 1.2;
     }
 
     .item-price {
-      font-weight: 500;
+      font-size: 0.9rem;
+      font-weight: 700;
       color: var(--success);
+      line-height: 1;
     }
 
-    .category-badge {
-      display: inline-block;
-      padding: 0.25rem 0.75rem;
-      border-radius: 50px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      background-color: var(--primary-light);
-      color: var(--primary);
-    }
-
-    .table-actions {
-      display: flex;
-      gap: 0.5rem;
-      justify-content: flex-end;
-    }
-
-    .btn-icon {
+    /* Veg/Non-Veg Indicators */
+    .food-type-indicator {
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 2rem;
-      height: 2rem;
+      width: 1.8rem;
+      height: 1.8rem;
+      border-radius: 0.3rem;
+      font-size: 0.7rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .food-type-veg {
+      background: #dcfce7;
+      color: #166534;
+      border: 1px solid #22c55e;
+    }
+
+    .food-type-non-veg {
+      background: #fee2e2;
+      color: #dc2626;
+      border: 1px solid #ef4444;
+    }
+
+    .food-type-none {
+      background: #f1f5f9;
+      color: #64748b;
+      border: 1px solid #cbd5e1;
+    }
+
+    .item-actions {
+      display: flex;
+      gap: 0.3rem;
+    }
+
+    /* Action Icons */
+    .btn-icon {
+      width: 2.2rem;
+      height: 2.2rem;
       border-radius: 50%;
-      background-color: white;
-      color: var(--text-color);
       border: 1px solid var(--border-color);
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       transition: all 0.2s ease;
-      box-shadow: var(--shadow-sm);
+      font-size: 0.9rem;
+      cursor: pointer;
     }
 
     .btn-icon-edit {
@@ -198,10 +270,10 @@
     }
 
     .btn-icon-edit:hover {
-      background-color: var(--primary);
+      background: var(--primary);
       color: white;
-      border-color: var(--primary);
-      transform: translateY(-2px);
+      transform: scale(1.15);
+      box-shadow: 0 3px 8px rgba(99, 102, 241, 0.3);
     }
 
     .btn-icon-delete {
@@ -210,227 +282,350 @@
     }
 
     .btn-icon-delete:hover {
-      background-color: var(--danger);
+      background: var(--danger);
       color: white;
-      border-color: var(--danger);
-      transform: translateY(-2px);
+      transform: scale(1.15);
+      box-shadow: 0 3px 8px rgba(239, 68, 68, 0.3);
     }
 
-    .empty-state {
-      padding: 3rem 1rem;
+    /* Empty States */
+    .empty-category {
       text-align: center;
+      padding: 1rem 0.5rem;
+      color: #64748b;
     }
 
-    .empty-state-icon {
-      font-size: 3rem;
+    .empty-category i {
+      font-size: 1.5rem;
+      margin-bottom: 0.3rem;
+      opacity: 0.6;
+    }
+
+    .empty-category h6 {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 0.2rem;
+    }
+
+    .empty-category p {
+      font-size: 0.8rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .empty-all {
+      text-align: center;
+      padding: 1.5rem 1rem;
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .empty-all i {
+      font-size: 2rem;
       color: #cbd5e1;
-      margin-bottom: 1rem;
+      margin-bottom: 0.8rem;
     }
 
+    /* Modal */
     .modal-content {
       border-radius: var(--radius);
       border: none;
-      overflow: hidden;
       box-shadow: var(--shadow-md);
     }
 
     .modal-header {
-      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
       color: white;
-      padding: 1.25rem;
+      padding: 0.8rem 1rem;
       border-bottom: none;
     }
 
+    .modal-title {
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
     .modal-body {
-      padding: 1.5rem;
+      padding: 1rem;
     }
 
     .modal-footer {
-      padding: 1rem 1.5rem;
+      padding: 0.6rem 1rem;
       border-top: 1px solid var(--border-color);
-      background-color: var(--hover-bg);
+      background: #fafbfc;
     }
 
     .form-label {
-      font-weight: 500;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin-bottom: 0.3rem;
       color: var(--text-color);
-      margin-bottom: 0.5rem;
     }
 
     .form-control, .form-select {
-      border-radius: var(--radius);
+      border-radius: 0.3rem;
       border: 1px solid var(--border-color);
-      padding: 0.75rem 1rem;
-      font-size: 0.95rem;
-      box-shadow: var(--shadow-sm);
-      transition: all 0.2s ease;
+      padding: 0.4rem 0.6rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+      margin-bottom: 0.6rem;
+      height: auto;
     }
 
     .form-control:focus, .form-select:focus {
       border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+      box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
     }
 
-    /* Footer */
-    .page-footer {
-      text-align: center;
-      padding: 1rem;
+    .btn-sm {
+      padding: 0.3rem 0.8rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    /* Food Type Radio Buttons */
+    .food-type-options {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .food-type-option {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      cursor: pointer;
+      padding: 0.3rem 0.6rem;
+      border-radius: 0.3rem;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+    }
+
+    .food-type-option:hover {
+      background: var(--hover-bg);
+    }
+
+    .food-type-option input[type="radio"] {
+      margin: 0;
+    }
+
+    .food-type-option.veg {
+      color: var(--success);
+    }
+
+    .food-type-option.non-veg {
+      color: var(--danger);
+    }
+
+    .food-type-option.none {
       color: #64748b;
-      font-size: 0.875rem;
-      margin-top: 2rem;
     }
 
-    /* Mobile adjustments */
+    .food-type-option input[type="radio"]:checked + label {
+      font-weight: 700;
+    }
+
+    /* Responsive */
     @media (max-width: 768px) {
       .page-container {
-        padding: 1rem 0.75rem;
+        padding: 0.4rem;
       }
 
-      .items-table thead th,
-      .items-table tbody td {
-        padding: 0.75rem 0.5rem;
+      .category-header {
+        padding: 0.4rem 0.6rem;
       }
 
-      .items-table .item-name {
-        max-width: 120px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+      .category-items {
+        padding: 0.3rem;
       }
 
-      .modal-body {
-        padding: 1.25rem;
+      .menu-item {
+        padding: 0.4rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.4rem;
+        min-height: auto;
       }
-      
-      .category-badge {
-        padding: 0.2rem 0.5rem;
-        font-size: 0.7rem;
+
+      .item-info {
+        width: 100%;
+      }
+
+      .item-actions {
+        align-self: flex-end;
+      }
+
+      .food-type-options {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .page-title {
+        font-size: 1.2rem;
+      }
+
+      .btn-primary {
+        padding: 0.35rem 0.8rem;
+        font-size: 0.85rem;
+      }
+
+      .btn-icon {
+        width: 2rem;
+        height: 2rem;
+        font-size: 0.85rem;
       }
     }
   </style>
 </head>
 
 <body>
-  <nav class="navbar navbar-dark">
+  <nav class="navbar">
     <div class="container-fluid">
-      <span class="navbar-brand">Menu Items</span>
+      <span class="navbar-brand">
+        <i class="fas fa-utensils"></i>Menu Management
+      </span>
       <a href="{% url 'button' %}" class="btn-back">
-        <i class="fas fa-arrow-left me-2"></i>Back to Settings
+        <i class="fas fa-arrow-left me-1"></i>Back
       </a>
     </div>
   </nav>
 
   <div class="page-container">
-    <h1 class="page-title">Restaurant Menu</h1>
+    <div class="page-header">
+      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addItemModal">
+        <i class="fas fa-plus me-1"></i>Add Menu Item
+      </button>
+    </div>
 
-    <div class="items-card">
-      <div class="card-header d-flex justify-content-between align-items-center">
-        <div>
-          <h5 class="mb-0 fw-semibold">All Menu Items</h5>
-          <span class="text-muted small">{{ menu_items|length }} items available</span>
-        </div>
-        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addItemModal">
-          <i class="fas fa-plus me-2"></i>Add Item
-        </button>
-      </div>
-      <div class="table-container">
-        <table class="items-table">
-          <thead>
-            <tr>
-              <th>Item Name</th>
-              <th>Category</th>
-              <th>Price</th>
-              <th style="width: 100px; text-align: right;">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for item in menu_items %}
-            <tr>
-              <td class="item-name">{{ item.name }}</td>
-              <td><span class="category-badge">{{ item.category.name }}</span></td>
-              <td class="item-price">₹{{ item.price }}</td>
-              <td>
-                <div class="table-actions">
-                  <button class="btn-icon btn-icon-edit edit-item" data-bs-toggle="modal"
-                    data-bs-target="#editItemModal" data-id="{{ item.id }}" data-name="{{ item.name }}"
-                    data-price="{{ item.price }}" data-category="{{ item.category.id }}">
+    {% if categories %}
+      {% for category in categories %}
+        <div class="category-card">
+          <div class="category-header">
+            <div class="category-title">
+              <div class="category-name">
+                <i class="fas fa-utensils category-icon"></i>
+                {{ category.name }}
+              </div>
+              <span class="category-count">{{ category.menuitem_set.count }} items</span>
+            </div>
+          </div>
+          
+          <div class="category-items">
+            {% for item in category.menuitem_set.all %}
+              <div class="menu-item">
+                <div class="item-info">
+                  <div class="food-type-indicator 
+                    {% if item.food_type == 'veg' %}food-type-veg
+                    {% elif item.food_type == 'non_veg' %}food-type-non-veg
+                    {% else %}food-type-none{% endif %}">
+                    {% if item.food_type == 'veg' %}<i class="fas fa-leaf"></i>
+                    {% elif item.food_type == 'non_veg' %}<i class="fas fa-drumstick-bite"></i>
+                    {% else %}-{% endif %}
+                  </div>
+                  <div class="item-details">
+                    <div class="item-name">{{ item.name }}</div>
+                    <div class="item-price">₹{{ item.price }}</div>
+                  </div>
+                </div>
+                
+                <div class="item-actions">
+                  <button class="btn-icon btn-icon-edit edit-item" 
+                          data-bs-toggle="modal"
+                          data-bs-target="#editItemModal" 
+                          data-id="{{ item.id }}" 
+                          data-name="{{ item.name }}"
+                          data-price="{{ item.price }}" 
+                          data-category="{{ item.category.id }}"
+                          data-food-type="{{ item.food_type|default:'none' }}">
                     <i class="fas fa-edit"></i>
                   </button>
                   <form action="{% url 'delete_menu_item' item.id %}" method="post" class="d-inline">
                     {% csrf_token %}
                     <button type="submit" class="btn-icon btn-icon-delete"
-                      onclick="return confirm('Are you sure you want to delete this item?');">
-                      <i class="fas fa-trash-alt"></i>
+                            onclick="return confirm('Delete {{ item.name }}?');">
+                      <i class="fas fa-trash"></i>
                     </button>
                   </form>
                 </div>
-              </td>
-            </tr>
+              </div>
             {% empty %}
-            <tr>
-              <td colspan="4">
-                <div class="empty-state">
-                  <i class="fas fa-utensils empty-state-icon"></i>
-                  <h5 class="fw-medium mb-2">No menu items found</h5>
-                  <p class="text-muted mb-3">Add items to build your restaurant menu</p>
-                  <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addItemModal">
-                    <i class="fas fa-plus me-2"></i>Add First Item
-                  </button>
-                </div>
-              </td>
-            </tr>
+              <div class="empty-category">
+                <i class="fas fa-utensils"></i>
+                <h6>No items in {{ category.name }}</h6>
+                <p>Add items to this category</p>
+                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addItemModal">
+                  <i class="fas fa-plus me-1"></i>Add Item
+                </button>
+              </div>
             {% endfor %}
-          </tbody>
-        </table>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="empty-all">
+        <i class="fas fa-utensils"></i>
+        <h4>No Categories Found</h4>
+        <p class="text-muted">Create categories to organize your menu</p>
+        <a href="{% url 'button' %}" class="btn btn-primary">
+          <i class="fas fa-cog me-1"></i>Manage Categories
+        </a>
       </div>
-    </div>
-
-    <div class="page-footer">
-      <p class="mb-0">{{ request.user.staffof.name }} • Version 1.0.0</p>
-    </div>
+    {% endif %}
   </div>
 
   <!-- Add Item Modal -->
-  <div class="modal fade" id="addItemModal" tabindex="-1" aria-labelledby="addItemModalLabel" aria-hidden="true">
+  <div class="modal fade" id="addItemModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="addItemModalLabel">Add New Menu Item</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          <h5 class="modal-title">Add Menu Item</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
         <form action="{% url 'add_menu_item' %}" method="post">
           {% csrf_token %}
           <div class="modal-body">
-            <div class="mb-3">
-              <label for="item_name" class="form-label">Item Name</label>
-              <input type="text" class="form-control" id="item_name" name="item_name" required
-                placeholder="e.g. Butter Chicken, Pasta Carbonara">
+            <div>
+              <label class="form-label">Item Name</label>
+              <input type="text" class="form-control" name="item_name" required 
+                     placeholder="e.g. Butter Chicken">
             </div>
-            <div class="mb-3">
-              <label for="item_price" class="form-label">Price (₹)</label>
-              <input type="number" step="0.01" class="form-control" id="item_price" name="item_price" required
-                placeholder="e.g. 250.00">
+            <div>
+              <label class="form-label">Price (₹)</label>
+              <input type="number" step="0.01" class="form-control" name="item_price" required 
+                     placeholder="e.g. 299">
             </div>
-            <div class="mb-3">
-              <label for="item_category" class="form-label">Category</label>
-              <select class="form-select" id="item_category" name="item_category" required>
-                <option value="" disabled selected>Select a category</option>
+            <div>
+              <label class="form-label">Category</label>
+              <select class="form-select" name="item_category" required>
+                <option value="">Choose category</option>
                 {% for category in categories %}
                 <option value="{{ category.id }}">{{ category.name }}</option>
                 {% endfor %}
               </select>
-              <div class="form-text text-muted mt-2">
-                <i class="fas fa-info-circle me-1"></i>
-                If the category doesn't exist, create it in the Categories section first
+            </div>
+            <div>
+              <label class="form-label">Food Type</label>
+              <div class="food-type-options">
+                <div class="food-type-option veg">
+                  <input type="radio" id="veg" name="food_type" value="veg">
+                  <label for="veg"><i class="fas fa-leaf me-1"></i>Vegetarian</label>
+                </div>
+                <div class="food-type-option non-veg">
+                  <input type="radio" id="non_veg" name="food_type" value="non_veg">
+                  <label for="non_veg"><i class="fas fa-drumstick-bite me-1"></i>Non-Vegetarian</label>
+                </div>
+                <div class="food-type-option none">
+                  <input type="radio" id="none" name="food_type" value="none" checked>
+                  <label for="none">Not Specified</label>
+                </div>
               </div>
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-            <button type="submit" class="btn btn-primary">
-              <i class="fas fa-plus me-1"></i>
-              Add Item
-            </button>
+            <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary btn-sm">Add Item</button>
           </div>
         </form>
       </div>
@@ -438,40 +633,54 @@
   </div>
 
   <!-- Edit Item Modal -->
-  <div class="modal fade" id="editItemModal" tabindex="-1" aria-labelledby="editItemModalLabel" aria-hidden="true">
+  <div class="modal fade" id="editItemModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="editItemModalLabel">Edit Menu Item</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          <h5 class="modal-title">Edit Menu Item</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
         <form action="{% url 'edit_menu_item' %}" method="post">
           {% csrf_token %}
           <div class="modal-body">
-            <input type="hidden" id="item_id" name="item_id">
-            <div class="mb-3">
-              <label for="item_name" class="form-label">Item Name</label>
-              <input type="text" class="form-control" id="item_name" name="item_name" required>
+            <input type="hidden" id="edit_item_id" name="item_id">
+            <div>
+              <label class="form-label">Item Name</label>
+              <input type="text" class="form-control" id="edit_item_name" name="item_name" required>
             </div>
-            <div class="mb-3">
-              <label for="item_price" class="form-label">Price (₹)</label>
-              <input type="number" step="0.01" class="form-control" id="item_price" name="item_price" required>
+            <div>
+              <label class="form-label">Price (₹)</label>
+              <input type="number" step="0.01" class="form-control" id="edit_item_price" name="item_price" required>
             </div>
-            <div class="mb-3">
-              <label for="item_category" class="form-label">Category</label>
-              <select class="form-select" id="item_category" name="item_category" required>
+            <div>
+              <label class="form-label">Category</label>
+              <select class="form-select" id="edit_item_category" name="item_category" required>
                 {% for category in categories %}
                 <option value="{{ category.id }}">{{ category.name }}</option>
                 {% endfor %}
               </select>
             </div>
+            <div>
+              <label class="form-label">Food Type</label>
+              <div class="food-type-options">
+                <div class="food-type-option veg">
+                  <input type="radio" id="edit_veg" name="food_type" value="veg">
+                  <label for="edit_veg"><i class="fas fa-leaf me-1"></i>Vegetarian</label>
+                </div>
+                <div class="food-type-option non-veg">
+                  <input type="radio" id="edit_non_veg" name="food_type" value="non_veg">
+                  <label for="edit_non_veg"><i class="fas fa-drumstick-bite me-1"></i>Non-Vegetarian</label>
+                </div>
+                <div class="food-type-option none">
+                  <input type="radio" id="edit_none" name="food_type" value="none">
+                  <label for="edit_none">Not Specified</label>
+                </div>
+              </div>
+            </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-            <button type="submit" class="btn btn-primary">
-              <i class="fas fa-save me-1"></i>
-              Save Changes
-            </button>
+            <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary btn-sm">Save Changes</button>
           </div>
         </form>
       </div>
@@ -480,19 +689,18 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      // Item Edit Modal Handler
-      document.querySelectorAll('.edit-item').forEach(button => {
-        button.addEventListener('click', () => {
-          const modal = document.querySelector('#editItemModal');
-          modal.querySelector('#item_id').value = button.dataset.id;
-          modal.querySelector('#item_name').value = button.dataset.name;
-          modal.querySelector('#item_price').value = button.dataset.price;
-          modal.querySelector('#item_category').value = button.dataset.category;
-        });
+    document.querySelectorAll('.edit-item').forEach(button => {
+      button.addEventListener('click', () => {
+        document.getElementById('edit_item_id').value = button.dataset.id;
+        document.getElementById('edit_item_name').value = button.dataset.name;
+        document.getElementById('edit_item_price').value = button.dataset.price;
+        document.getElementById('edit_item_category').value = button.dataset.category;
+        
+        // Set food type radio button
+        const foodType = button.dataset.foodType || 'none';
+        document.getElementById('edit_' + foodType).checked = true;
       });
     });
   </script>
 </body>
-
 </html>

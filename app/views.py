@@ -474,10 +474,12 @@ def add_menu_item(request):
         name = request.POST.get('item_name')
         price = request.POST.get('item_price')
         category_id = request.POST.get('item_category')
+        food_type = request.POST.get('food_type')
         # Create new menu item directly
         MenuItem.objects.create(
             name=name,
             price=price,
+            food_type=food_type,
             category_id=category_id,
             hotel=hotel
         )
@@ -495,11 +497,12 @@ def edit_menu_item(request):
         name = request.POST.get('item_name')
         price = request.POST.get('item_price')
         category_id = request.POST.get('item_category')
-        
+        food_type = request.POST.get('food_type')
         # Update the menu item manually
         menu_item.name = name
         menu_item.price = price
         menu_item.category_id = category_id
+        menu_item.food_type = food_type
         menu_item.save()
         
         messages.success(request, 'Menu item updated successfully!')
