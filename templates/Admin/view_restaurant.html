@@ -491,7 +491,7 @@
             <div class="info-card-body">
                 <div class="info-item">
                     <div class="info-label">Name:</div>
-                    <div class="info-value">{{ hotel.owner.get_full_name|default:hotel.owner.username }}</div>
+                    <div class="info-value">{{ hotel.owner.get_full_name|default:hotel.owner.username }} | (username: {{hotel.owner.username}})</div>
                 </div>
                 <div class="info-item">
                     <div class="info-label">Email:</div>

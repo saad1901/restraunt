@@ -284,12 +284,12 @@
             <div class="col-xl-4 col-md-6 mb-4">
                 <div class="card hotel-card h-100">
                     <div class="hotel-header">
-                        <i class="fas fa-hotel me-2 text-primary"></i>{{ hotel.name }}
+                        <i class="fas fa-hotel me-2 text-primary"></i>{{ hotel.name }} 
                     </div>
                     <div class="hotel-content">
                         <div class="hotel-info">
                             <i class="fas fa-user"></i>
-                            <span><strong>{{ hotel.owner.first_name }} {{ hotel.owner.last_name }}</strong></span>
+                            <span><strong>{{ hotel.owner.first_name }} {{ hotel.owner.last_name }}</strong> (username: {{hotel.owner.username}})</span>
                         </div>
                         <div class="hotel-info">
                             <i class="fas fa-phone"></i>
