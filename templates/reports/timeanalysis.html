@@ -3,211 +3,323 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Restaurant Analytics Dashboard</title>
+  <title>Time Analysis</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
   <style>
     :root {
-      --bg-light: #f8fafc;
-      --card-light: #ffffff;
-      --text-primary: #2d3748;
-      --text-secondary: #64748b;
-      --accent: #5046e5;
-      --accent-secondary: #ef4444;
-      --accent-info: #0ea5e9;
-      --accent-success: #10b981;
-      --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
-      --shadow-md: 0 4px 6px rgba(0,0,0,0.05), 0 2px 4px rgba(0,0,0,0.05);
-      --shadow-lg: 0 10px 15px rgba(0,0,0,0.03), 0 5px 10px rgba(0,0,0,0.05);
-      --border-color: #e2e8f0;
-      --border-radius: 12px;
+      --primary: #3b82f6;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --bg: #ffffff;
+      --surface: #f8fafc;
+      --text: #1f2937;
+      --text-light: #6b7280;
+      --border: #e5e7eb;
+      --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      -webkit-tap-highlight-color: transparent;
     }
 
     body {
-      background-color: var(--bg-light);
-      color: var(--text-primary);
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-      padding-bottom: 2rem;
+      background: var(--surface);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
       margin: 0;
     }
 
     .navbar {
-      background-color: var(--accent);
-      padding: 1rem;
-      margin-bottom: 1.5rem;
-      box-shadow: var(--shadow-md);
+      background: linear-gradient(90deg, #3b82f6 0%, #10b981 100%);
+      box-shadow: var(--shadow);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 0;
+    }
+
+    .navbar-content {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
     }
 
     .navbar-brand {
-      font-size: 1.4rem;
-      font-weight: 700;
-      color: white;
-      margin-left: 0.5rem;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #fff;
+      margin: 0;
+      text-shadow: 0 2px 8px rgba(59,130,246,0.15);
     }
 
-    .btn-back {
-      background: rgba(255, 255, 255, 0.2);
-      border: none;
-      color: white;
-      border-radius: 8px;
-      padding: 0.5rem 1rem;
-      font-size: 0.9rem;
+    .btn-nav {
       display: inline-flex;
       align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 0.875rem;
       transition: all 0.2s ease;
       text-decoration: none;
-      margin-right: 0.75rem;
+      color: #fff;
+      background: linear-gradient(90deg, #3b82f6 0%, #10b981 100%);
+      border: 2px solid #3b82f6;
+      box-shadow: 0 2px 8px rgba(59,130,246,0.08);
     }
 
-    .btn-back:hover {
-      background: rgba(255, 255, 255, 0.3);
-      transform: translateX(-3px);
+    .btn-nav:hover {
+      background: #fff;
+      color: #3b82f6;
+      border-color: #10b981;
+      transform: scale(1.04);
     }
 
-    .btn-back i {
-      margin-right: 0.5rem;
+    .main-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1.5rem 1rem 3rem;
+    }
+
+    .page-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .page-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--text);
+      margin: 0;
     }
 
     .chart-card {
-      background: var(--card-light);
-      border-radius: var(--border-radius);
-      box-shadow: var(--shadow-md);
+      background: linear-gradient(120deg, #fff 80%, #e0f2fe 100%);
+      border: 2px solid #3b82f6;
+      border-radius: 14px;
       padding: 1.5rem;
       margin-bottom: 1.5rem;
+      box-shadow: 0 2px 12px rgba(59,130,246,0.07);
       transition: all 0.3s ease;
     }
 
     .chart-card:hover {
-      box-shadow: var(--shadow-lg);
-      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(59,130,246,0.13);
+      transform: translateY(-2px) scale(1.01);
+      border-color: #10b981;
     }
 
     .chart-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1rem;
+      margin-bottom: 1.25rem;
     }
 
     .chart-title {
       font-size: 1.25rem;
       font-weight: 700;
-      color: var(--text-primary);
-      margin: 0;
+      color: #3b82f6;
+      margin-bottom: 0.5rem;
+      letter-spacing: -1px;
+      text-shadow: 0 2px 8px rgba(59,130,246,0.08);
     }
 
     .chart-subtitle {
-      font-size: 0.9rem;
-      color: var(--text-secondary);
-      margin-top: 0.25rem;
-    }
-
-    .chart-container {
-      position: relative;
-      height: 350px;
-      width: 100%;
+      font-size: 0.875rem;
+      color: var(--text-light);
+      margin: 0;
     }
 
     .filter-buttons {
       display: flex;
-      justify-content: center;
+      gap: 0.5rem;
       margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
     }
 
     .filter-btn {
-      background: var(--card-light);
-      border: 1px solid var(--border-color);
-      color: var(--text-secondary);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text-light);
       border-radius: 8px;
       padding: 0.5rem 1rem;
-      margin: 0 0.25rem;
-      font-size: 0.9rem;
+      font-size: 0.875rem;
       font-weight: 500;
       transition: all 0.2s ease;
       cursor: pointer;
+      white-space: nowrap;
     }
 
     .filter-btn:hover {
-      background-color: rgba(80, 70, 229, 0.05);
-      color: var(--accent);
+      background-color: rgba(59, 130, 246, 0.05);
+      color: var(--primary);
+      border-color: rgba(59, 130, 246, 0.2);
     }
 
     .filter-btn.active {
-      background-color: var(--accent);
+      background-color: var(--primary);
       color: white;
-      border-color: var(--accent);
+      border-color: var(--primary);
     }
 
-    .page-header {
-      color: var(--text-primary);
-      margin-bottom: 0.5rem;
-      font-weight: 700;
-      font-size: 1.75rem;
-      padding-left: 0.5rem;
-      border-left: 4px solid var(--accent);
+    .chart-container {
+      position: relative;
+      height: 320px;
+      width: 100%;
     }
 
-    .page-subtitle {
-      color: var(--text-secondary);
-      margin-bottom: 2rem;
-      font-size: 1rem;
-      padding-left: 0.5rem;
+    .no-data {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--text-light);
     }
 
-    /* Responsive adjustments */
+    .no-data i {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    .no-data p {
+      margin: 0;
+      font-size: 0.9375rem;
+    }
+
+    /* Mobile optimizations */
     @media (max-width: 768px) {
-      .chart-container {
-        height: 300px;
+      .main-container {
+        padding: 1rem 0.875rem 2rem;
+      }
+
+      .page-title {
+        font-size: 1.5rem;
+      }
+
+      .chart-card {
+        padding: 1.25rem;
+        margin-bottom: 1.25rem;
       }
 
       .chart-title {
-        font-size: 1.1rem;
+        font-size: 1.125rem;
+      }
+
+      .chart-subtitle {
+        font-size: 0.8125rem;
+      }
+
+      .chart-container {
+        height: 280px;
       }
 
       .filter-buttons {
-        flex-wrap: wrap;
+        gap: 0.375rem;
       }
 
       .filter-btn {
-        margin-bottom: 0.5rem;
+        padding: 0.4375rem 0.875rem;
+        font-size: 0.8125rem;
+      }
+
+      .navbar {
+        padding: 0.875rem 0;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .main-container {
+        padding: 0.875rem 0.75rem 1.5rem;
+      }
+
+      .chart-card {
+        padding: 1rem;
+      }
+
+      .chart-container {
+        height: 260px;
+      }
+
+      .filter-buttons {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .filter-btn {
+        text-align: center;
+      }
+    }
+
+    /* Chart loading animation */
+    .chart-card {
+      animation: slideUp 0.4s ease-out;
+    }
+
+    .chart-card:nth-child(2) {
+      animation-delay: 0.1s;
+    }
+
+    .chart-card:nth-child(3) {
+      animation-delay: 0.2s;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
       }
     }
   </style>
 </head>
 <body>
+  <!-- Clean Navigation -->
   <nav class="navbar">
     <div class="container">
-      <div class="d-flex align-items-center">
-        <a class="btn-back" href="{% url 'reports'%}">
-          <i class="fas fa-arrow-left"></i> Back
+      <div class="navbar-content">
+        <a class="btn-nav" href="{% url 'reports'%}">
+          <i class="fas fa-arrow-left"></i>
+          <span>Back</span>
         </a>
-        <span class="navbar-brand">Time Analysis</span>
+        <h1 class="navbar-brand">Time Analysis</h1>
       </div>
     </div>
   </nav>
 
-  <div class="container">
-    <h1 class="page-header">Business Analytics</h1>
+  <!-- Main Content -->
+  <main class="main-container">
+    <header class="page-header">
+      <h1 class="page-title">Business Analytics</h1>
+    </header>
 
-    <div class="chart-card">
+    <!-- Order Volume Chart -->
+    <section class="chart-card">
       <div class="chart-header">
-        <div>
-          <h2 class="chart-title">Order Volume by Hour</h2>
-          <p class="chart-subtitle">
-            {% if selected_days == 1 %}
-              Today's order patterns
-            {% elif selected_days == 7 %}
-              Last 7 days of order patterns
-            {% elif selected_days == 30 %}
-              Last 30 days of order patterns
-            {% else %}
-              Identify your busiest hours and optimize staffing
-            {% endif %}
-          </p>
-        </div>
+        <h2 class="chart-title">Order Volume by Hour</h2>
+        <p class="chart-subtitle">
+          {% if selected_days == 1 %}
+            Today's order patterns
+          {% elif selected_days == 7 %}
+            Last 7 days average
+          {% elif selected_days == 30 %}
+            Last 30 days average
+          {% else %}
+            Identify busy hours
+          {% endif %}
+        </p>
       </div>
+      
       <div class="filter-buttons">
         <button 
           onclick="window.location.href='?days=1'" 
@@ -219,76 +331,105 @@
           onclick="window.location.href='?days=7'" 
           class="filter-btn {% if selected_days == 7 %}active{% endif %}"
         >
-          Last 7 Days
+          7 Days
         </button>
         <button 
           onclick="window.location.href='?days=30'" 
           class="filter-btn {% if selected_days == 30 %}active{% endif %}"
         >
-          Last 30 Days
+          30 Days
         </button>
       </div>
+      
       <div class="chart-container">
         <canvas id="hourlyOrdersChart"></canvas>
       </div>
-    </div>
+    </section>
 
-    <div class="chart-card">
+    <!-- Top Items Chart -->
+    <section class="chart-card">
       <div class="chart-header">
-        <div>
-          <h2 class="chart-title">Most Popular Menu Items</h2>
-          <p class="chart-subtitle">
-            {% if selected_days == 1 %}
-              Today's top sellers
-            {% elif selected_days == 7 %}
-              Best sellers in the last 7 days
-            {% elif selected_days == 30 %}
-              Best sellers in the last 30 days  
-            {% else %}
-              Track your best-selling items over time
-            {% endif %}
-          </p>
-        </div>
+        <h2 class="chart-title">Popular Items</h2>
+        <p class="chart-subtitle">
+          {% if selected_days == 1 %}
+            Today's top sellers
+          {% elif selected_days == 7 %}
+            Best sellers (7 days)
+          {% elif selected_days == 30 %}
+            Best sellers (30 days)
+          {% else %}
+            Track popular items
+          {% endif %}
+        </p>
       </div>
+      
       <div class="chart-container">
         <canvas id="topItemsChart"></canvas>
       </div>
-    </div>
-  </div>
+    </section>
+  </main>
 
   <script>
+    // Mobile-optimized chart configuration
+    const isMobile = window.innerWidth <= 768;
+    
+    // Common responsive options
+    const commonOptions = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: false
+        },
+        tooltip: {
+          backgroundColor: 'rgba(0, 0, 0, 0.8)',
+          padding: isMobile ? 8 : 12,
+          titleFont: {
+            size: isMobile ? 12 : 14,
+            weight: 'bold'
+          },
+          bodyFont: {
+            size: isMobile ? 11 : 13
+          },
+          cornerRadius: 8
+        }
+      },
+      interaction: {
+        intersect: false,
+        mode: 'index'
+      }
+    };
+
     // ====== HOURLY ORDERS CHART ======
     const hours = JSON.parse('{{ hours|escapejs }}');
     const totals = JSON.parse('{{ totals|escapejs }}');
 
-    // Format hour labels to 12-hour format with AM/PM
     const formattedHours = hours.map(h => {
+      if (isMobile) {
+        return h === 0 ? '12A' : 
+               h < 12 ? `${h}A` : 
+               h === 12 ? '12P' : 
+               `${h - 12}P`;
+      }
       return h === 0 ? '12 AM' : 
              h < 12 ? `${h} AM` : 
              h === 12 ? '12 PM' : 
              `${h - 12} PM`;
     });
 
-    // Check if we have any orders
     const hasOrders = totals.some(total => total > 0);
     
     if (!hasOrders) {
       document.getElementById('hourlyOrdersChart').style.display = 'none';
       const noDataMessage = document.createElement('div');
-      noDataMessage.className = 'text-center py-5 text-secondary';
-      noDataMessage.innerHTML = '<i class="fas fa-clock fa-3x mb-3"></i><p>No order data for the selected period</p>';
+      noDataMessage.className = 'no-data';
+      noDataMessage.innerHTML = '<i class="fas fa-clock"></i><p>No order data available</p>';
       document.getElementById('hourlyOrdersChart').parentNode.appendChild(noDataMessage);
     } else {
-      // Find the peak hour (for highlighting)
       const peakHourIndex = totals.indexOf(Math.max(...totals));
       
-      // Generate colors array with highlight for peak hour
       const backgroundColors = totals.map((value, index) => 
-        index === peakHourIndex ? 'rgba(80, 70, 229, 0.8)' : 'rgba(80, 70, 229, 0.5)'
-      );
-      
-      const borderColors = totals.map((value, index) => 
-        index === peakHourIndex ? 'rgba(80, 70, 229, 1)' : 'rgba(80, 70, 229, 0.8)'
+        index === peakHourIndex ? '#3b82f6' : '#93c5fd'
       );
 
       const ctx = document.getElementById('hourlyOrdersChart').getContext('2d');
@@ -297,69 +438,53 @@
         data: {
           labels: formattedHours,
           datasets: [{
-            label: 'Number of Orders',
             data: totals,
             backgroundColor: backgroundColors,
-            borderColor: borderColors,
-            borderWidth: 1,
+            borderColor: '#3b82f6',
+            borderWidth: 0,
             borderRadius: 4,
-            barPercentage: 0.6,
+            barPercentage: isMobile ? 0.7 : 0.6,
             categoryPercentage: 0.8
           }]
         },
         options: {
-          responsive: true,
-          maintainAspectRatio: false,
+          ...commonOptions,
           scales: {
             x: {
-              title: {
-                display: true,
-                text: 'Hour of the Day',
-                font: {
-                  weight: 'bold'
-                }
-              },
               grid: {
                 display: false
+              },
+              ticks: {
+                font: {
+                  size: isMobile ? 10 : 12
+                },
+                maxRotation: 0
               }
             },
             y: {
               beginAtZero: true,
-              title: {
-                display: true,
-                text: 'Order Volume',
-                font: {
-                  weight: 'bold'
-                }
+              grid: {
+                color: '#f3f4f6',
+                borderDash: [2, 4]
               },
               ticks: {
+                font: {
+                  size: isMobile ? 10 : 12
+                },
                 precision: 0
-              },
-              grid: {
-                borderDash: [2, 4]
               }
             }
           },
           plugins: {
-            legend: {
-              display: false
-            },
+            ...commonOptions.plugins,
             tooltip: {
-              backgroundColor: 'rgba(0, 0, 0, 0.7)',
-              padding: 10,
-              titleFont: {
-                size: 14,
-                weight: 'bold'
-              },
+              ...commonOptions.plugins.tooltip,
               callbacks: {
-                title: (context) => `${formattedHours[context[0].dataIndex]}`,
-                label: (context) => {
-                  const value = context.parsed.y;
-                  return `Orders: ${value} ${value === 1 ? 'order' : 'orders'}`;
-                },
+                title: (context) => formattedHours[context[0].dataIndex],
+                label: (context) => `${context.parsed.y} orders`,
                 afterLabel: (context) => {
                   const percent = (context.parsed.y / totals.reduce((a, b) => a + b, 0) * 100).toFixed(1);
-                  return `${percent}% of daily total`;
+                  return `${percent}% of total`;
                 }
               }
             }
@@ -369,93 +494,71 @@
     }
 
     // ====== TOP ITEMS CHART ======
-    // Use real data from backend
     const topItemNames = JSON.parse('{{ top_item_names|escapejs }}');
     const topItemCounts = JSON.parse('{{ top_item_counts|escapejs }}');
     
-    // Create a horizontal bar chart for top items
-    const itemsCtx = document.getElementById('topItemsChart').getContext('2d');
-    
-    // If we have no data, show a message
     if (topItemNames.length === 0) {
       document.getElementById('topItemsChart').style.display = 'none';
       const noDataMessage = document.createElement('div');
-      noDataMessage.className = 'text-center py-5 text-secondary';
-      noDataMessage.innerHTML = '<i class="fas fa-chart-bar fa-3x mb-3"></i><p>No item sales data for the selected period</p>';
+      noDataMessage.className = 'no-data';
+      noDataMessage.innerHTML = '<i class="fas fa-chart-bar"></i><p>No sales data available</p>';
       document.getElementById('topItemsChart').parentNode.appendChild(noDataMessage);
     } else {
-      // Generate gradient colors based on order count
-      const gradientColors = topItemCounts.map((count, index) => {
-        const opacity = 0.8 - (index * 0.1);
-        return `rgba(14, 165, 233, ${opacity > 0.3 ? opacity : 0.3})`;
-      });
+      const itemsCtx = document.getElementById('topItemsChart').getContext('2d');
       
-      const borderColors = topItemCounts.map((count, index) => {
-        const opacity = 1 - (index * 0.1);
-        return `rgba(14, 165, 233, ${opacity > 0.6 ? opacity : 0.6})`;
-      });
-    
       new Chart(itemsCtx, {
         type: 'bar',
         data: {
-          labels: topItemNames,
+          labels: topItemNames.map(name => 
+            isMobile && name.length > 15 ? name.substring(0, 12) + '...' : name
+          ),
           datasets: [{
             axis: 'y',
-            label: 'Orders',
             data: topItemCounts,
-            backgroundColor: gradientColors,
-            borderColor: borderColors,
-            borderWidth: 1,
+            backgroundColor: '#10b981',
+            borderColor: '#059669',
+            borderWidth: 0,
             borderRadius: 4
           }]
         },
         options: {
+          ...commonOptions,
           indexAxis: 'y',
-          responsive: true,
-          maintainAspectRatio: false,
           scales: {
             x: {
               beginAtZero: true,
-              title: {
-                display: true,
-                text: 'Number of Orders',
-                font: {
-                  weight: 'bold'
-                }
+              grid: {
+                color: '#f3f4f6',
+                borderDash: [2, 4]
               },
               ticks: {
+                font: {
+                  size: isMobile ? 10 : 12
+                },
                 precision: 0
-              },
-              grid: {
-                borderDash: [2, 4]
               }
             },
             y: {
               grid: {
                 display: false
+              },
+              ticks: {
+                font: {
+                  size: isMobile ? 9 : 11
+                }
               }
             }
           },
           plugins: {
-            legend: {
-              display: false
-            },
+            ...commonOptions.plugins,
             tooltip: {
-              backgroundColor: 'rgba(0, 0, 0, 0.7)',
-              padding: 10,
-              titleFont: {
-                size: 14,
-                weight: 'bold'
-              },
+              ...commonOptions.plugins.tooltip,
               callbacks: {
                 title: (context) => context[0].label,
-                label: (context) => {
-                  const value = context.parsed.x;
-                  return `Sold: ${value} ${value === 1 ? 'order' : 'orders'}`;
-                },
+                label: (context) => `${context.parsed.x} orders`,
                 afterLabel: (context) => {
                   const percent = (context.parsed.x / topItemCounts.reduce((a, b) => a + b, 0) * 100).toFixed(1);
-                  return `${percent}% of total orders`;
+                  return `${percent}% of item sales`;
                 }
               }
             }
@@ -463,6 +566,18 @@
         }
       });
     }
+
+    // Handle window resize for mobile responsiveness
+    let resizeTimeout;
+    window.addEventListener('resize', function() {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(function() {
+        if (window.innerWidth <= 768 !== isMobile) {
+          location.reload();
+        }
+      }, 250);
+    });
   </script>
 </body>
 </html>
+F

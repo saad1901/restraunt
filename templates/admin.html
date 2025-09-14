@@ -1164,9 +1164,13 @@
                 </div>
 
                 <div class="modal-footer py-2">
+                    {% if upi or upi.upiid %}
                     <button type="button" class="btn btn-info" onclick="showQRCode()">
                         <i class="fas fa-qrcode me-1"></i>Payment QR
                     </button>
+                    {% else %}
+                        <span class="text-danger fw-bold">Add UPI ID to accept Payment on QR</span>
+                    {% endif %}
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                         <i class="fas fa-times me-1"></i>Cancel
                     </button>
