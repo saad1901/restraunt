@@ -13,3 +13,4 @@ myapp/
 staticfiles/
 
 venv/
+.env
