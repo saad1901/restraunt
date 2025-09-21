@@ -9,12 +9,9 @@ from app.agentView import agenthome
 from app.policy_views import terms_view, privacy_view, cookies_view, help_center_view, documentation_view, api_view, status_view
 from django.views.generic import TemplateView
 from django.contrib.staticfiles.views import serve
-
-# USERAPP IMPORTS
 from userApp import views as userview
 
 urlpatterns = [
-
 
     path('homepage/', views.homepage, name='homepage'),
     path('home/', home, name='home'),
