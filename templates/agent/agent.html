@@ -1,0 +1,1369 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --primary-light: #e0e7ff;
+            --secondary: #64748b;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --white: #ffffff;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --accent: #8b5cf6;
+            --accent-light: #ede9fe;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--light);
+            display: flex;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            color: var(--dark);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background-color: var(--white);
+            border-right: 1px solid var(--gray-200);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            transition: transform 0.3s ease;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            color: var(--white);
+        }
+
+        .sidebar-header h1 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0;
+            color: var(--white);
+        }
+
+        .sidebar-header i {
+            margin-right: 0.75rem;
+            color: var(--white);
+        }
+
+        .sidebar-links {
+            padding: 1rem 0;
+            flex-grow: 1;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+            margin-bottom: 0.35rem;
+        }
+
+        .sidebar-link i {
+            margin-right: 0.75rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-link:hover {
+            color: var(--primary);
+            background-color: var(--primary-light);
+            border-left-color: var(--primary);
+        }
+
+        .sidebar-link.active {
+            color: var(--primary);
+            background-color: var(--primary-light);
+            border-left-color: var(--primary);
+            font-weight: 600;
+        }
+
+        .sidebar-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 0;
+            margin-left: 250px;
+            width: calc(100% - 250px);
+            transition: margin-left 0.3s ease, width 0.3s ease;
+            padding-bottom: 60px;
+        }
+
+        /* Header */
+        .header {
+            background-color: var(--white);
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.03);
+        }
+
+        .page-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+        }
+        
+        .page-title i {
+            margin-right: 10px;
+            color: var(--primary);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .action-button {
+            display: flex;
+            align-items: center;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            text-decoration: none;
+            box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2);
+        }
+        
+        .action-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(79, 70, 229, 0.3);
+            color: white;
+        }
+        
+        .action-button i {
+            margin-right: 8px;
+        }
+        
+        .help-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--accent-light);
+            color: var(--accent);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        
+        .help-button:hover {
+            background-color: var(--accent);
+            color: white;
+        }
+        
+        .user-profile {
+            display: flex;
+            align-items: center;
+            background-color: var(--gray-100);
+            padding: 0.36rem 0.87rem;
+            border-radius: 60px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        
+        .user-profile:hover {
+            background-color: var(--primary-light);
+        }
+        
+        .avatar {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+        
+        .user-name {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .stats-container {
+            background-color: var(--white);
+            margin: 1rem;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .stats-card {
+            display: flex;
+            align-items: center;
+            background-color: rgba(59, 130, 246, 0.05);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            border-left: 4px solid var(--primary);
+        }
+
+        .stats-icon {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-right: 1rem;
+        }
+
+        .stats-info {
+            flex: 1;
+        }
+
+        .stats-title {
+            font-size: 0.875rem;
+            color: var(--secondary);
+            margin: 0;
+        }
+
+        .stats-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin: 0;
+        }
+
+        /* Hotel Cards */
+        .hotels-container {
+            padding: 1rem;
+        }
+
+        .hotels-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .hotel-card {
+            background-color: var(--white);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: none;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .hotel-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+        }
+
+        .hotel-header {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            padding: 0.75rem 1rem;
+            border-bottom: none;
+        }
+
+        .hotel-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 0;
+            color: white;
+            display: flex;
+            align-items: center;
+        }
+        
+        .hotel-name i {
+            margin-right: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .hotel-content {
+            padding: 0.75rem 1rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .hotel-detail {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+        }
+
+        .hotel-detail:last-of-type {
+            margin-bottom: 0;
+        }
+
+        .hotel-detail i {
+            color: var(--primary);
+            width: 20px;
+            margin-right: 0.5rem;
+            font-size: 0.9rem;
+            background-color: var(--primary-light);
+            height: 20px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .hotel-detail div {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+        }
+
+        .hotel-detail a, .hotel-detail span:not(.detail-label) {
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .hotel-detail a {
+            color: var(--primary);
+        }
+
+        .hotel-detail a:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+
+        .detail-label {
+            font-weight: 500;
+            color: var(--secondary);
+            font-size: 0.75rem;
+            margin-left: 0.5rem;
+        }
+
+        .hotel-footer {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            border-top: 1px solid var(--gray-200);
+            background-color: var(--gray-100);
+        }
+
+        .hotel-status {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.3rem 0.75rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .status-inactive {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+        
+        .hotel-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            background-color: var(--white);
+            border-radius: 16px;
+            margin: 1rem 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+        }
+
+        .empty-state h3 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .empty-state p {
+            color: var(--secondary);
+            margin-bottom: 2rem;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        
+        .empty-state .btn {
+            padding: 0.75rem 2rem;
+            font-size: 1rem;
+        }
+        
+        @media (max-width: 768px) {
+            .empty-state {
+                padding: 3rem 1.5rem;
+            }
+            
+            .empty-state i {
+                font-size: 3.5rem;
+            }
+            
+            .empty-state h3 {
+                font-size: 1.5rem;
+            }
+            
+            .empty-state p {
+                font-size: 1rem;
+            }
+        }
+        
+        .btn-primary {
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            border: none;
+            box-shadow: 0 4px 8px rgba(79, 70, 229, 0.25);
+            transition: all 0.3s;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(to right, var(--primary-dark), var(--accent));
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(79, 70, 229, 0.3);
+        }
+
+        /* Action Button */
+        .action-button {
+            position: fixed;
+            right: 1.5rem;
+            bottom: 1.5rem;
+            width: 3.5rem;
+            height: 3.5rem;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.2s;
+            z-index: 1000;
+        }
+
+        .action-button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-4px);
+            box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+        }
+
+        /* Help Button */
+        .help-button {
+            position: fixed;
+            right: 1.5rem;
+            bottom: 6rem;
+            width: 3.5rem;
+            height: 3.5rem;
+            border-radius: 50%;
+            background-color: var(--warning);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.2s;
+            z-index: 1000;
+        }
+
+        .help-button:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+        }
+
+        /* Modal */
+        .modal-content {
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .modal-header {
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            color: var(--white);
+            padding: 0.85rem 1.25rem;
+            border-bottom: none;
+        }
+        
+        .modal-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .btn-close-white {
+            opacity: 0.8;
+            font-size: 0.8rem;
+        }
+        
+        .btn-close-white:hover {
+            opacity: 1;
+        }
+
+        .modal-body {
+            padding: 1.25rem;
+        }
+        
+        .modal-body i {
+            color: var(--primary);
+            width: 20px;
+            margin-right: 0.5rem;
+            text-align: center;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            padding: 0.75rem;
+            background-color: var(--light);
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        
+        .contact-item:hover {
+            background-color: var(--primary-light);
+            transform: translateY(-2px);
+        }
+
+        .contact-label {
+            font-weight: 600;
+            margin-right: 0.25rem;
+            color: var(--dark);
+            font-size: 0.8rem;
+        }
+        
+        .contact-link {
+            color: var(--primary);
+            text-decoration: none;
+            transition: color 0.2s;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        
+        .contact-link:hover {
+            text-decoration: underline;
+            color: var(--primary-dark);
+        }
+        
+        .modal-footer {
+            border-top: 1px solid var(--gray-200);
+            padding: 0.85rem 1.25rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+            
+            .header {
+                position: sticky;
+                top: 0;
+                z-index: 99;
+            }
+            
+            .mobile-menu-toggle {
+                display: block;
+                background: none;
+                border: none;
+                font-size: 1.5rem;
+                color: var(--dark);
+                cursor: pointer;
+            }
+        }
+
+        /* Replace the existing action buttons with a fixed bottom bar */
+        .action-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--white);
+            padding: 0.75rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--gray-200);
+            z-index: 1000;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            border-radius: 50px;
+            padding: 0.5rem 1.25rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .action-btn i {
+            margin-right: 0.5rem;
+        }
+
+        .add-btn {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+
+        .add-btn:hover {
+            background-color: var(--primary-dark);
+            color: var(--white);
+        }
+
+        .help-btn {
+            background-color: #22c55e;
+            color: var(--white);
+            width: 48px;
+            padding: 0.5rem;
+            justify-content: center;
+        }
+
+        .help-btn:hover {
+            background-color: #16a34a;
+            color: var(--white);
+        }
+
+        .help-btn i {
+            margin-right: 0;
+            font-size: 1.25rem;
+        }
+
+        /* Stats Cards */
+        .card {
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+            overflow: hidden;
+        }
+        
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 12px rgba(0,0,0,0.08);
+        }
+        
+        .card-body {
+            padding: 1rem;
+        }
+        
+        .stats-icon {
+            position: relative;
+            width: 42px;
+            height: 42px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 0.75rem;
+            flex-shrink: 0;
+        }
+        
+        .stats-icon i {
+            font-size: 1.1rem;
+        }
+        
+        .stats-icon.primary {
+            background: linear-gradient(45deg, var(--primary-light), rgba(79, 70, 229, 0.2));
+            color: var(--primary);
+        }
+        
+        .stats-icon.success {
+            background: linear-gradient(45deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.2));
+            color: var(--success);
+        }
+        
+        .stats-icon.warning {
+            background: linear-gradient(45deg, rgba(245, 158, 11, 0.1), rgba(245, 158, 11, 0.2));
+            color: var(--warning);
+        }
+        
+        .card-subtitle {
+            font-size: 0.75rem;
+            color: var(--secondary);
+            font-weight: 500;
+        }
+        
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        /* Button Styles */
+        .btn {
+            border-radius: 8px;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            transition: all 0.2s;
+        }
+        
+        .btn-sm {
+            padding: 0.35rem 0.75rem;
+            font-size: 0.875rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(to right, var(--primary), var(--primary-dark));
+            border: none;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(79, 70, 229, 0.3);
+        }
+        
+        .btn-success {
+            background: linear-gradient(to right, var(--success), var(--success-dark));
+            border: none;
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.2);
+        }
+        
+        .btn-success:hover {
+            background: linear-gradient(to right, var(--success-dark), var(--success));
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(34, 197, 94, 0.3);
+        }
+        
+        .btn-warning {
+            background: linear-gradient(to right, var(--warning), var(--warning-dark));
+            border: none;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+            color: white;
+        }
+        
+        .btn-warning:hover {
+            background: linear-gradient(to right, var(--warning-dark), var(--warning));
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(245, 158, 11, 0.3);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background-color: var(--gray-100);
+            color: var(--dark);
+            border: 1px solid var(--gray-200);
+        }
+        
+        .btn-secondary:hover {
+            background-color: var(--gray-200);
+            color: var(--dark);
+            border-color: var(--gray-300);
+        }
+        
+        .btn-link {
+            color: var(--primary);
+            text-decoration: none;
+            box-shadow: none;
+        }
+        
+        .btn-link:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+        
+        .btn i {
+            margin-right: 0.5rem;
+        }
+        
+        /* Form Controls */
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 1px solid var(--gray-200);
+            padding: 0.625rem 1rem;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+        }
+        
+        .form-floating > .form-control, 
+        .form-floating > .form-select {
+            height: calc(3.5rem + 2px);
+            padding: 1.625rem 1rem 0.625rem;
+        }
+        
+        .form-floating > label {
+            padding: 1rem 1rem 0;
+            opacity: 0.65;
+        }
+        
+        .form-check-input:checked {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+        
+        .form-label {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+        
+        .form-text {
+            color: var(--gray-500);
+            font-size: 0.875rem;
+        }
+        
+        /* Input Group */
+        .input-group-text {
+            background-color: var(--light);
+            border: 1px solid var(--gray-200);
+            color: var(--gray-500);
+            border-radius: 8px;
+        }
+        
+        .input-group .form-control:not(:first-child) {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+        
+        .input-group .form-control:not(:last-child) {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin: 1rem 0 0.75rem;
+            padding: 0 0.5rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title i {
+            margin-right: 0.5rem;
+            color: var(--primary);
+            background-color: var(--primary-light);
+            width: 26px;
+            height: 26px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-user-tie"></i>
+            <h1>Agent Portal</h1>
+        </div>
+        <div class="sidebar-links">
+            <a href="#" class="sidebar-link active">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="{% url 'owner_register' %}" class="sidebar-link">
+                <i class="fas fa-plus-circle"></i>
+                <span>Register Hotel</span>
+            </a>
+            <a href="#" onclick="showAnalyticsModal(); return false;" class="sidebar-link">
+                <i class="fas fa-chart-line"></i>
+                <span>Analytics</span>
+            </a>
+            <a href="#" onclick="showHelpModal()" class="sidebar-link">
+                <i class="fas fa-question-circle"></i>
+                <span>Help & Support</span>
+            </a>
+            <a href="{% url 'logout' %}" class="sidebar-link" style="color: red;">
+                <i class="fas fa-sign-out-alt" style="color: red;"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+        <div class="sidebar-footer">
+
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header">
+            <div class="d-flex align-items-center">
+                <button class="mobile-menu-toggle d-lg-none me-3" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+            </button>
+                <h2 class="page-title">
+                    Agent Dashboard
+                </h2>
+            </div>
+            <div class="header-right">
+                <div class="user-profile">
+                    <div class="avatar">
+                        {{ user.username|slice:":1"|upper }}
+                    </div>
+                    <span class="user-name">{{ user.username }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hotels -->
+        <div class="hotels-container">
+            <h3 class="section-title">
+                <i class="fas fa-building"></i>
+                Managed Hotels
+            </h3>
+            {% if hotels %}
+            <div class="hotels-grid">
+                {% for hotel in hotels %}
+                <div class="hotel-card">
+                    <div class="hotel-header">
+                        <h3 class="hotel-name">
+                            <i class="fas fa-hotel"></i>
+                            {{ hotel.name }}
+                        </h3>
+                    </div>
+                    <div class="hotel-content">
+                        <div class="hotel-detail">
+                            <i class="fas fa-phone"></i>
+                            <div>
+                                <a href="tel:{{ hotel.owner.phone }}">{{ hotel.owner.phone }}</a>
+                                <span class="detail-label">Phone</span>
+                            </div>
+                        </div>
+                        <div class="hotel-detail">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <div>
+                                <span>{{ hotel.address|default:"No address provided" }}</span>
+                                <span class="detail-label">Location</span>
+                            </div>
+                        </div>
+                        <div class="hotel-detail">
+                            <i class="fas fa-user"></i>
+                            <div>
+                                <span>{{ hotel.owner.first_name }} {{ hotel.owner.last_name }}</span>
+                                <span class="detail-label">Owner</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hotel-footer">
+                        <span class="hotel-status {% if hotel.status %}status-active{% else %}status-inactive{% endif %}">
+                            <i class="fas {% if hotel.status %}fa-check-circle{% else %}fa-times-circle{% endif %} me-1"></i>
+                            {% if hotel.status %}Active{% else %}Inactive{% endif %}
+                        </span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <i class="fas fa-building"></i>
+                <h3>No Hotels Registered Yet</h3>
+                <p>Your hotel management journey begins here. Start by registering your first hotel to access our powerful management tools and analytics.</p>
+        <a href="{% url 'owner_register' %}" class="btn btn-primary">
+                    <i class="fas fa-plus-circle me-2"></i>Register Your First Hotel
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Replace the floating action buttons with a fixed action bar -->
+    <div class="action-bar">
+        <a href="{% url 'owner_register' %}" class="action-btn add-btn">
+            <i class="fas fa-plus"></i>
+            ADD HOTEL
+        </a>
+        <button onclick="showHelpModal()" class="action-btn help-btn">
+            <i class="fas fa-headset"></i>
+        </button>
+    </div>
+
+    <!-- Analytics Modal -->
+    <div class="modal fade" id="analyticsModal" tabindex="-1" aria-labelledby="analyticsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="analyticsModalLabel">
+                        <i class="fas fa-chart-pie me-2"></i>Performance Analytics
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-body d-flex align-items-center">
+                                    <div class="stats-icon primary">
+                                        <i class="fas fa-hotel fa-lg"></i>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <h3 class="card-title mb-0">{{ hotels|length }}</h3>
+                                        <h6 class="card-subtitle mb-0 ms-2">Total Hotels</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-body d-flex align-items-center">
+                                    <div class="stats-icon success">
+                                        <i class="fas fa-money-bill-wave fa-lg"></i>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <h3 class="card-title mb-0">₹{{ total|floatformat:0 }}</h3>
+                                        <h6 class="card-subtitle mb-0 ms-2">Total Revenue</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-body d-flex align-items-center">
+                                    <div class="stats-icon warning">
+                                        <i class="fas fa-chart-bar fa-lg"></i>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <h3 class="card-title mb-0">Active</h3>
+                                        <h6 class="card-subtitle mb-0 ms-2">Status</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h5 class="mb-3">Monthly Performance</h5>
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <canvas id="monthlyChart" height="250"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center bg-light py-3">
+                                    <h6 class="mb-0">Active Hotels by Category</h6>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="categoryChart" height="200"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center bg-light py-3">
+                                    <h6 class="mb-0">Revenue Distribution</h6>
+                                </div>
+                    <div class="card-body">
+                                    <canvas id="revenueChart" height="200"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <a href="#" class="btn btn-primary">
+                        <i class="fas fa-download me-1"></i>Download Report
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div class="modal fade" id="helpModal" tabindex="-1" aria-labelledby="helpModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="helpModalLabel">
+                        <i class="fas fa-info-circle me-2"></i>Need Assistance?
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-4">Contact our support team</p>
+                    
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <span class="contact-label">Email:</span>
+                            <a href="mailto:support@hotelmanager.com" class="contact-link">support@hotehub.com</a>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <i class="fas fa-phone-alt"></i>
+                        <div>
+                            <span class="contact-label">Phone:</span>
+                            <a href="tel:+1234567890" class="contact-link">+91 8799878583</a>
+                        </div>
+                    </div>
+                    
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <a href="#" class="btn btn-primary">
+                        <i class="fas fa-book me-1"></i>View Documentation
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Improved sidebar toggle function
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('sidebar');
+            
+            sidebarToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('show');
+            });
+            
+            // Close sidebar when clicking outside on mobile
+            document.addEventListener('click', function(event) {
+                const isClickInsideSidebar = sidebar.contains(event.target);
+                const isClickOnToggle = sidebarToggle.contains(event.target);
+                
+                if (!isClickInsideSidebar && !isClickOnToggle && sidebar.classList.contains('show')) {
+                    sidebar.classList.remove('show');
+                }
+            });
+        });
+        
+        function showHelpModal() {
+            var helpModal = new bootstrap.Modal(document.getElementById('helpModal'));
+            helpModal.show();
+        }
+        
+        function showAnalyticsModal() {
+            var analyticsModal = new bootstrap.Modal(document.getElementById('analyticsModal'));
+            analyticsModal.show();
+            
+            // Create sample charts when modal is shown
+            setTimeout(function() {
+                createMonthlyChart();
+                createCategoryChart();
+                createRevenueChart();
+            }, 500);
+        }
+        
+        // Sample chart data and functions
+        function createMonthlyChart() {
+            const ctx = document.getElementById('monthlyChart').getContext('2d');
+            
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const hotelData = [5, 8, 12, 15, 18, 20, 22, 25, 28, 30, 32, 35];
+            const revenueData = [25000, 35000, 45000, 60000, 75000, 90000, 110000, 125000, 140000, 155000, 170000, 185000];
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: months,
+                    datasets: [
+                        {
+                            label: 'Hotels',
+                            data: hotelData,
+                            borderColor: '#4f46e5',
+                            backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                            borderWidth: 2,
+                            tension: 0.3,
+                            pointRadius: 4,
+                            pointBackgroundColor: '#4f46e5',
+                            pointHoverRadius: 6,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Revenue (₹)',
+                            data: revenueData,
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            borderWidth: 2,
+                            tension: 0.3,
+                            pointRadius: 4,
+                            pointBackgroundColor: '#10b981',
+                            pointHoverRadius: 6,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: 'Hotels Count'
+                            }
+                        },
+                        y1: {
+                            type: 'linear',
+                            position: 'right',
+                            title: {
+                                display: true,
+                                text: 'Revenue (₹)'
+                            },
+                            grid: {
+                                drawOnChartArea: false,
+                            },
+                        }
+                    }
+                }
+            });
+        }
+        
+        function createCategoryChart() {
+            const ctx = document.getElementById('categoryChart').getContext('2d');
+            
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Luxury', 'Business', 'Resort', 'Budget', 'Boutique'],
+                    datasets: [{
+                        data: [30, 25, 20, 15, 10],
+                        backgroundColor: [
+                            '#4f46e5',
+                            '#8b5cf6',
+                            '#ec4899',
+                            '#10b981',
+                            '#f59e0b'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+        
+        function createRevenueChart() {
+            const ctx = document.getElementById('revenueChart').getContext('2d');
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Bookings', 'Food & Beverage', 'Events', 'Spa', 'Other'],
+                    datasets: [{
+                        label: 'Revenue Sources',
+                        data: [45, 25, 15, 10, 5],
+                        backgroundColor: [
+                            'rgba(79, 70, 229, 0.7)',
+                            'rgba(139, 92, 246, 0.7)',
+                            'rgba(16, 185, 129, 0.7)',
+                            'rgba(245, 158, 11, 0.7)',
+                            'rgba(236, 72, 153, 0.7)'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Percentage (%)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>

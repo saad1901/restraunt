@@ -638,7 +638,7 @@ def dailytransc(request):
         orders = Order.objects.filter(hotel=request.user.staffof).prefetch_related('orderitems').order_by('created_at')
         selected_date_obj = None
 
-    return render(request, 'reports/sales/dailytransc.html', {
+    return render(request, 'owner/reports/sales/dailytransc.html', {
         'orders': orders,
         'selected_date': selected_date_obj,
         'grand_total' : orders.aggregate(total=Sum('total'))['total'] or 0,
@@ -836,4 +836,35 @@ def payment(request):
         hotel = Hotel.objects.get(id=request.user.staffof.id)
     except ObjectDoesNotExist:
         messages.error(request, "Unable to find your hotel details. Please contact support.")
-    return redirect('button')
+        return redirect('button')
+    
+    # Handle form submission
+    if request.method == "POST":
+        upiid = request.POST.get('upi_id', '').strip()
+        name = request.POST.get('business_name', '').strip()
+        
+        if not upiid:
+            messages.error(request, "UPI ID is required")
+            return render(request, 'owner/paymentsetting.html', {'upi': None})
+
+        # Update or create payment details
+        try:
+            PaymentDetails.objects.update_or_create(
+            hotel=hotel,
+            defaults={
+                'upiid': upiid,
+                'name': name
+            }
+        )
+            return redirect("/owner/payment/?success")   # Redirect to prevent duplicate submissions
+        except Exception as e:
+            messages.error(request, f"An error occurred: {str(e)}")
+            return render(request, 'owner/paymentsetting.html', {'upi': None})
+
+    # Try to get existing payment details
+    try:
+        upi = PaymentDetails.objects.get(hotel=hotel)
+    except ObjectDoesNotExist:
+        upi = None
+
+    return render(request, 'owner/paymentsetting.html', {'upi': upi})

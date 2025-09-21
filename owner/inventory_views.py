@@ -71,7 +71,7 @@ def inventory(request):
         'page_obj': items,
     }
     
-    return render(request, 'reports/inventory.html', context)
+    return render(request, 'owner/reports/inventory.html', context)
 
 @login_required
 def add_inventory_item(request):
