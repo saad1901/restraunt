@@ -1,4 +1,4 @@
-from authn.setupView import owner_register, hotel_register, register
+from authn.setupView import owner_register, hotel_register
 from django.contrib.staticfiles.views import serve
 from userApp import views as userview
 from django.contrib import admin
@@ -14,8 +14,6 @@ urlpatterns = [
     path('agent/', include('agent.urls')),
     path('site/', include('frontsite.urls')),
     path('auth/', include('authn.urls')),
-
-    path('register/', register, name='register'),
 
 
     path('register/owner/', owner_register, name='owner_register'),

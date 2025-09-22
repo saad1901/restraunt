@@ -446,7 +446,7 @@
                     <i class="fas fa-database"></i>
                     <span>Database Management</span>
                 </a>
-                <a href="{% url 'home' %}" class="nav-link {% if 'logs' in request.path %}active{% endif %}">
+                <a href="{% url 'logs' %}" class="nav-link {% if 'logs' in request.path %}active{% endif %}">
                     <i class="fas fa-file-alt"></i>
                     <span>System Logs</span>
                 </a>
@@ -470,7 +470,7 @@
                 </a>
                 <div class="sidebar-divider"></div>
                 <div class="sidebar-heading">External</div>
-                <a href="{% url 'homepage' %}" class="nav-link" target="_blank">
+                <a href="{% url 'frontsite' %}" class="nav-link" target="_blank">
                     <i class="fas fa-globe"></i>
                     <span>View Front Page</span>
                 </a>

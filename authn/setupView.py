@@ -17,7 +17,7 @@ def owner_register(request):
             return redirect('hotel_register')
     else:
         form = OwnerRegistrationForm()
-    return render(request, 'registration/owner_register.html', {'form': form})
+    return render(request, 'Registration/owner_register.html', {'form': form})
 
 
 def hotel_register(request):
@@ -94,8 +94,8 @@ def hotel_register(request):
                 return redirect('owner')
             
     form = HotelRegistrationForm()
-    return render(request, 'registration/hotel_register.html', {'form': form})
+    return render(request, 'Registration/hotel_register.html', {'form': form})
 
 
 def register(request):
-    return render(request, 'RegisterUser/register.html')
+    return render(request, 'auth/register.html')
