@@ -2060,7 +2060,7 @@
                 } else {
                     payload.online_source = onlineSource;
                 }
-                const response = await fetch('/submit-order/', {
+                const response = await fetch('/owner/submit-order/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -2394,7 +2394,7 @@
             const csrfToken = document.getElementById('csrfToken').value;
             
                 try {
-                    const response = await fetch('/delete_order/', {
+                    const response = await fetch('/owner/delete_order/', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
