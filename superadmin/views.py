@@ -50,6 +50,9 @@ def home(request):
     return render(request, 'superadmin/home.html', context)
 
 def addagent(request):
+    if request.user.role != 'superadmin':
+        messages.error(request, "You do not have permission to access this page.")
+        return redirect('home')
     form = AgentRegisterForm()
     if request.method == 'POST':
         form = AgentRegisterForm(request.POST)
@@ -1280,3 +1283,9 @@ def user_activity(request):
     }
     return render(request, 'superadmin/user_activity.html', context)
 
+@login_required
+def logs(request):
+    if request.user.role != 'superadmin':
+        messages.error(request, "You do not have permission to access this page.")
+        return redirect('home')
+    return render(request, 'superadmin/logs.html')

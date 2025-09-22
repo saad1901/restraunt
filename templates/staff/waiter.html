@@ -844,7 +844,7 @@
                 } else {
                     payload.online_source = onlineSource;
                 }
-                const response = await fetch('/submit-order/', {
+                const response = await fetch('/owner/submit-order/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -945,7 +945,7 @@
                 ordersModal.addEventListener('show.bs.modal', function() {
                     ordersList.innerHTML = '';
                     ordersListLoading.classList.remove('d-none');
-                    fetch('/waiter/orders/active/')
+                    fetch('/staff/orders/active/')
                         .then(res => res.json())
                         .then(data => {
                             ordersListLoading.classList.add('d-none');
@@ -998,7 +998,7 @@
                                   switchEl.addEventListener('change', function() {
                                     const orderId = this.getAttribute('data-order-id');
                                     const started = this.checked;
-                                    fetch('/order/set_started/', {
+                                    fetch('/owner/order/set_started/', {
                                       method: 'POST',
                                       headers: {
                                         'Content-Type': 'application/json',

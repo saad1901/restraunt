@@ -2353,7 +2353,7 @@
             toggleLoader(true);
 
             try {
-                const response = await fetch('/complete_order/', {
+                const response = await fetch('/owner/complete_order/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -2477,7 +2477,7 @@
         }
 
         function toggleCookingStatus(orderId, started) {
-            fetch('/order/set_started/', {
+            fetch('/owner/order/set_started/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
