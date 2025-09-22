@@ -1,0 +1,366 @@
+{% extends 'Baseimages/base.html' %}
+{% load static %}
+
+{% block style %}
+<style>
+    .stats-card {
+        border-radius: 10px;
+        transition: all 0.3s;
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .stats-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .stats-icon {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 0.75rem;
+        font-size: 1.25rem;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .stats-data {
+        flex-grow: 1;
+    }
+
+    .stats-value {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin: 0;
+        line-height: 1.2;
+    }
+
+    .stats-label {
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.8);
+        margin: 0;
+    }
+
+    .hotel-card {
+        height: 100%;
+        transition: all 0.3s;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        background-color: white;
+    }
+
+    .hotel-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        border-color: var(--primary);
+    }
+
+    .hotel-header {
+        padding: 1rem;
+        font-weight: 600;
+        font-size: 1.1rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        background-color: #f8f9fa;
+        color: var(--dark);
+    }
+
+    .hotel-content {
+        padding: 1.25rem;
+    }
+
+    .hotel-info {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.75rem;
+    }
+
+    .hotel-info i {
+        margin-right: 0.75rem;
+        width: 18px;
+        color: var(--primary);
+    }
+
+    .hotel-actions {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 1.25rem;
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
+        padding-top: 1.25rem;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.35rem 0.75rem;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    .status-badge i {
+        margin-right: 0.35rem;
+    }
+
+    .search-box {
+        position: relative;
+        margin-bottom: 1.5rem;
+    }
+
+    .search-box .form-control {
+        border-radius: 50px;
+        padding-left: 3rem;
+        height: 50px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 1.25rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--gray);
+    }
+
+    .btn-action {
+        border-radius: 50px;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .btn-action:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .pagination-container {
+        margin-top: 2rem;
+        display: flex;
+        justify-content: center;
+    }
+
+    .page-item.active .page-link {
+        background-color: var(--primary);
+        border-color: var(--primary);
+    }
+    
+    .dashboard-header {
+        background-color: white;
+        padding: 1.5rem;
+        border-radius: 10px;
+        margin-bottom: 1.5rem;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+    
+    .btn-filter {
+        border-radius: 8px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        background-color: white;
+        color: var(--dark);
+        padding: 0.5rem 1rem;
+        font-weight: 500;
+        transition: all 0.3s;
+    }
+    
+    .btn-filter:hover {
+        background-color: #f8f9fa;
+    }
+</style>
+{% endblock %}
+
+{% block myblock %}
+<!-- Dashboard Header -->
+<div class="dashboard-header d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+        <p class="text-muted mb-0">Welcome to your admin dashboard</p>
+    </div>
+</div>
+
+<!-- Display messages -->
+{% if messages %}
+<div class="mb-4">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' or message.tags == 'danger' %}exclamation-circle{% else %}info-circle{% endif %} me-2"></i>
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- Stats Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-xl-3 col-md-6">
+        <div class="stats-card bg-primary text-white">
+            <div class="stats-icon bg-white text-primary">
+                <i class="fas fa-hotel"></i>
+            </div>
+            <div class="stats-data">
+                <h2 class="stats-value">{{ hotels.count }}</h2>
+                <p class="stats-label">Total Hotels</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="stats-card bg-success text-white">
+            <div class="stats-icon bg-white text-success">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stats-data">
+                <h2 class="stats-value">{{ active_hotels_count }}</h2>
+                <p class="stats-label">Active Hotels</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="stats-card bg-warning text-white">
+            <div class="stats-icon bg-white text-warning">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="stats-data">
+                <h2 class="stats-value">{{ owners_count }}</h2>
+                <p class="stats-label">Restaurant Owners</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="stats-card bg-info text-white">
+            <div class="stats-icon bg-white text-info">
+                <i class="fas fa-user-tie"></i>
+            </div>
+            <div class="stats-data">
+                <h2 class="stats-value">{{ agents_count|default:"0" }}</h2>
+                <p class="stats-label">Active Agents</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hotels Section -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0">
+            <i class="fas fa-hotel me-2"></i>Registered Hotels
+        </h5>
+    </div>
+    <div class="card-body">
+        <!-- Search Form -->
+        <div class="row mb-4">
+            <div class="col-lg-6">
+                <form method="POST" class="search-box">
+                    {% csrf_token %}
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" name="q" class="form-control" placeholder="Search hotels by name..." value="{{ request.POST.q|default:'' }}">
+                </form>
+            </div>
+            <div class="col-lg-6 text-end">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-filter me-2">
+                        <i class="fas fa-filter me-1"></i>Filter
+                    </button>
+                    <button type="button" class="btn btn-filter">
+                        <i class="fas fa-sort me-1"></i>Sort By
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hotels Grid -->
+        {% if hotels %}
+        <div class="row">
+            {% for hotel in hotels %}
+            <div class="col-xl-4 col-md-6 mb-4">
+                <div class="card hotel-card h-100">
+                    <div class="hotel-header">
+                        <i class="fas fa-hotel me-2 text-primary"></i>{{ hotel.name }} 
+                    </div>
+                    <div class="hotel-content">
+                        <div class="hotel-info">
+                            <i class="fas fa-user"></i>
+                            <span><strong>{{ hotel.owner.first_name }} {{ hotel.owner.last_name }}</strong> (username: {{hotel.owner.username}})</span>
+                        </div>
+                        <div class="hotel-info">
+                            <i class="fas fa-phone"></i>
+                            <span>{{ hotel.owner.phone|default:"No phone" }}</span>
+                        </div>
+                        <div class="hotel-info">
+                            <i class="fas fa-envelope"></i>
+                            <span>{{ hotel.owner.email|default:"No email" }}</span>
+                        </div>
+                        <div class="hotel-info">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>{{ hotel.address|default:"No address" }}</span>
+                        </div>
+                        
+                        <div class="hotel-actions">
+                            <span class="status-badge bg-{% if hotel.status %}success{% else %}danger{% endif %}-subtle text-{% if hotel.status %}success{% else %}danger{% endif %}">
+                                <i class="fas fa-{% if hotel.status %}check-circle{% else %}times-circle{% endif %}"></i>
+                                {% if hotel.status %}Active{% else %}Inactive{% endif %}
+                            </span>
+                            
+                            <div>
+                                <a href="{% url 'view_restaurant' hotel.id %}" class="btn btn-sm btn-outline-primary btn-action">
+                                    <i class="fas fa-eye me-1"></i>View
+                                </a>
+                                <a href="{% url 'toggle_hotel_status' hotel.id %}" class="btn btn-sm btn-outline-{% if hotel.status %}danger{% else %}success{% endif %} btn-action"
+                                    onclick="return confirm('Are you sure you want to {% if hotel.status %}deactivate{% else %}activate{% endif %} {{ hotel.name }}?');">
+                                    <i class="fas fa-toggle-{% if hotel.status %}on{% else %}off{% endif %} me-1"></i>
+                                    {% if hotel.status %}Deactivate{% else %}Activate{% endif %}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Pagination -->
+        <div class="pagination-container">
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1">Previous</a>
+                    </li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-hotel fa-3x text-muted mb-3"></i>
+            <h5>No Hotels Found</h5>
+            <p class="text-muted">There are no hotels registered yet or matching your search criteria.</p>
+            <a href="{% url 'owner_register' %}" class="btn btn-primary mt-3">
+                <i class="fas fa-plus-circle me-2"></i>Add New Hotel
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize any dashboard widgets or charts here
+    });
+</script>
+{% endblock %}

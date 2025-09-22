@@ -1,0 +1,408 @@
+{% extends 'Baseimages/base.html' %}
+{% load static %}
+
+{% block style %}
+<style>
+    .stats-card {
+        border-radius: 10px;
+        transition: all 0.3s;
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        margin-bottom: 1.5rem;
+    }
+
+    .stats-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .stats-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        font-size: 1.5rem;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .stats-data {
+        flex-grow: 1;
+    }
+
+    .stats-value {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin: 0;
+        line-height: 1.2;
+    }
+
+    .stats-label {
+        font-size: 0.9rem;
+        margin: 0;
+        opacity: 0.8;
+    }
+
+    .chart-container {
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        height: 100%;
+    }
+
+    .chart-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .time-filter {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .time-filter .btn {
+        border-radius: 20px;
+        padding: 0.4rem 1rem;
+        font-size: 0.9rem;
+        background-color: #f8f9fa;
+        color: #495057;
+        border: 1px solid #dee2e6;
+    }
+
+    .time-filter .btn.active {
+        background-color: var(--primary);
+        color: white;
+        border-color: var(--primary);
+    }
+
+    .role-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.35rem 0.65rem;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    .role-superadmin {
+        background-color: rgba(220, 53, 69, 0.1);
+        color: #dc3545;
+    }
+
+    .role-admin {
+        background-color: rgba(32, 201, 151, 0.1);
+        color: #20c997;
+    }
+
+    .role-agent {
+        background-color: rgba(13, 110, 253, 0.1);
+        color: #0d6efd;
+    }
+
+    .role-owner {
+        background-color: rgba(255, 193, 7, 0.1);
+        color: #ffc107;
+    }
+
+    .role-staff {
+        background-color: rgba(108, 117, 125, 0.1);
+        color: #6c757d;
+    }
+
+    .activity-item {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .activity-item:last-child {
+        border-bottom: none;
+    }
+
+    .activity-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: var(--primary);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        font-weight: 600;
+    }
+
+    .activity-details {
+        flex-grow: 1;
+    }
+
+    .activity-user {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+
+    .activity-info {
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+
+    .activity-time {
+        font-size: 0.85rem;
+        color: #adb5bd;
+    }
+</style>
+{% endblock %}
+
+{% block myblock %}
+<!-- Dashboard Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-0 text-gray-800">User Activity</h1>
+        <p class="text-muted mb-0">Monitor user registrations and system usage</p>
+    </div>
+    <div class="time-filter">
+        <a href="?days=7" class="btn {% if days == 7 %}active{% endif %}">Last 7 Days</a>
+        <a href="?days=30" class="btn {% if days == 30 %}active{% endif %}">Last 30 Days</a>
+        <a href="?days=90" class="btn {% if days == 90 %}active{% endif %}">Last 90 Days</a>
+    </div>
+</div>
+
+<!-- Stats Cards -->
+<div class="row">
+    {% for role_data in users_by_role %}
+    <div class="col-xl-3 col-md-6">
+        <div class="stats-card">
+            <div class="stats-icon bg-primary text-white">
+                <i class="fas {% if role_data.role == 'superadmin' %}fa-user-shield{% elif role_data.role == 'admin' %}fa-user-cog{% elif role_data.role == 'owner' %}fa-user-tie{% elif role_data.role == 'agent' %}fa-user-tag{% else %}fa-user{% endif %}"></i>
+            </div>
+            <div class="stats-data">
+                <h2 class="stats-value">{{ role_data.count }}</h2>
+                <p class="stats-label">
+                    <span class="role-badge role-{{ role_data.role }}">{{ role_data.role|title }}</span> Users
+                </p>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Charts Section -->
+<div class="row">
+    <div class="col-xl-8">
+        <div class="chart-container" style="max-height: 300px; height: 300px; overflow: hidden;">
+            <h5 class="chart-title">User Registrations</h5>
+            <canvas id="userRegistrationChart" style="max-height: 200px;"></canvas>
+        </div>
+    </div>
+    <div class="col-xl-4">
+        <div class="chart-container" style="max-height: 300px; height: 300px; overflow: hidden;">
+            <h5 class="chart-title">User Distribution by Role</h5>
+            <canvas id="userRoleChart" style="max-height: 200px;"></canvas>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Recent Logins -->
+    <div class="col-xl-6">
+        <div class="chart-container">
+            <h5 class="chart-title">Recent Logins</h5>
+            <div class="activity-list">
+                {% for user in recent_logins %}
+                <div class="activity-item">
+                    <div class="activity-avatar">
+                        {{ user.username|slice:":1"|upper }}
+                    </div>
+                    <div class="activity-details">
+                        <div class="activity-user">{{ user.username }}</div>
+                        <div class="activity-info">
+                            <span class="role-badge role-{{ user.role }}">{{ user.role|title }}</span>
+                            {% if user.staffof %}
+                            <span class="ms-2">{{ user.staffof.name }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="activity-time">
+                        {{ user.last_login|date:"M d, Y H:i" }}
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-center py-4">
+                    <p class="text-muted">No recent login activity</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Most Active Staff -->
+    <div class="col-xl-6">
+        <div class="chart-container">
+            <h5 class="chart-title">Most Active Staff</h5>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Role</th>
+                            <th>Restaurant</th>
+                            <th>Orders Completed</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for staff in active_staff %}
+                        <tr>
+                            <td>{{ staff.username }}</td>
+                            <td><span class="role-badge role-{{ staff.role }}">{{ staff.role|title }}</span></td>
+                            <td>{{ staff.staffof.name|default:"N/A" }}</td>
+                            <td>{{ staff.orders_completed }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center">No active staff data available</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // User Registrations Chart
+        const regCtx = document.getElementById('userRegistrationChart').getContext('2d');
+        const registrationChart = new Chart(regCtx, {
+            type: 'line',
+            data: {
+                labels: {{ time_periods|safe }},
+                datasets: [{
+                    label: 'New Users',
+                    data: {{ registration_counts|safe }},
+                    backgroundColor: 'rgba(67, 103, 255, 0.1)',
+                    borderColor: 'rgba(67, 103, 255, 1)',
+                    borderWidth: 2,
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                aspectRatio: 2,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        enabled: true,
+                        mode: 'index',
+                        intersect: false,
+                        callbacks: {
+                            label: function(context) {
+                                return 'Users: ' + context.raw;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        },
+                        ticks: {
+                            precision: 0,
+                            maxTicksLimit: 5
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            maxTicksLimit: 7,
+                            maxRotation: 0,
+                            minRotation: 0
+                        }
+                    }
+                }
+            }
+        });
+
+        // User Role Distribution Chart
+        const roleCtx = document.getElementById('userRoleChart').getContext('2d');
+        
+        // Extract data from the users_by_role in context
+        const roleLabels = [];
+        const roleCounts = [];
+        const roleColors = [];
+        
+        {% for role_data in users_by_role %}
+        roleLabels.push('{{ role_data.role|title }}');
+        roleCounts.push({{ role_data.count }});
+        
+        // Assign colors based on role
+        {% if role_data.role == 'superadmin' %}
+        roleColors.push('rgba(220, 53, 69, 0.8)');
+        {% elif role_data.role == 'admin' %}
+        roleColors.push('rgba(32, 201, 151, 0.8)');
+        {% elif role_data.role == 'owner' %}
+        roleColors.push('rgba(255, 193, 7, 0.8)');
+        {% elif role_data.role == 'agent' %}
+        roleColors.push('rgba(13, 110, 253, 0.8)');
+        {% else %}
+        roleColors.push('rgba(108, 117, 125, 0.8)');
+        {% endif %}
+        {% endfor %}
+        
+        const roleChart = new Chart(roleCtx, {
+            type: 'doughnut',
+            data: {
+                labels: roleLabels,
+                datasets: [{
+                    data: roleCounts,
+                    backgroundColor: roleColors,
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                aspectRatio: 1.5,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            boxWidth: 12,
+                            padding: 10,
+                            font: {
+                                size: 11
+                            }
+                        }
+                    }
+                },
+                cutout: '70%'
+            }
+        });
+    });
+</script>
+{% endblock %} 
