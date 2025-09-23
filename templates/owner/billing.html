@@ -1,0 +1,630 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Billing Plans - Your Service</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary-color: #8b5cf6;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --dark-color: #1f2937;
+            --light-bg: #f8fafc;
+            --white: #ffffff;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-500: #64748b;
+            --gray-700: #334155;
+            --gray-900: #0f172a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--light-bg) 0%, #e0e7ff 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: var(--gray-700);
+            min-height: 100vh;
+        }
+
+        /* Enhanced Navbar */
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.2);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 0;
+        }
+
+        .navbar-brand {
+            color: var(--white) !important;
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-brand:hover {
+            color: rgba(255, 255, 255, 0.9) !important;
+            transform: translateX(-2px);
+        }
+
+        .navbar-brand i {
+            font-size: 1.2rem;
+        }
+
+        .navbar-text {
+            color: var(--white) !important;
+            font-weight: 700;
+            font-size: 1.3rem;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Page Header */
+        .page-header {
+            text-align: center;
+            padding: 3rem 0 2rem;
+            background: linear-gradient(135deg, transparent 0%, rgba(99, 102, 241, 0.05) 100%);
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-subtitle {
+            font-size: 1.1rem;
+            color: var(--gray-500);
+            font-weight: 400;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Enhanced Billing Cards */
+        .billing-card {
+            background: var(--white);
+            border-radius: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid var(--gray-200);
+            position: relative;
+            overflow: hidden;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .billing-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .billing-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.2);
+        }
+
+        .billing-card:hover::before {
+            opacity: 1;
+        }
+
+        .card-body {
+            padding: 2rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Plan Header */
+        .plan-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+        }
+
+        .plan-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin: 0;
+            line-height: 1.3;
+        }
+
+        .plan-badge {
+            background: linear-gradient(135deg, var(--success-color), #059669);
+            color: var(--white);
+            padding: 0.4rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+        }
+
+        .plan-badge.popular {
+            background: linear-gradient(135deg, var(--warning-color), #d97706);
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+        }
+
+        /* Enhanced Price Display */
+        .plan-price {
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--primary-color);
+            margin: 1rem 0 1.5rem;
+            display: flex;
+            align-items: baseline;
+            gap: 0.3rem;
+        }
+
+        .plan-price .currency {
+            font-size: 1.5rem;
+            color: var(--gray-500);
+            font-weight: 600;
+        }
+
+        .plan-price .period {
+            font-size: 1rem;
+            color: var(--gray-500);
+            font-weight: 400;
+        }
+
+        /* Plan Description */
+        .plan-description {
+            color: var(--gray-500);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        /* Plan Features */
+        .plan-features {
+            flex-grow: 1;
+            margin-bottom: 2rem;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 0;
+            color: var(--gray-700);
+            font-size: 0.9rem;
+        }
+
+        .feature-icon {
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, var(--success-color), #059669);
+            color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            flex-shrink: 0;
+        }
+
+        /* Enhanced Buttons */
+        .plan-button {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: var(--white);
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .plan-button:hover {
+            background: linear-gradient(135deg, var(--primary-dark), var(--secondary-color));
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+            color: var(--white);
+            text-decoration: none;
+        }
+
+        .plan-button.outline {
+            background: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            box-shadow: none;
+        }
+
+        .plan-button.outline:hover {
+            background: var(--primary-color);
+            color: var(--white);
+        }
+
+        /* Popular Plan Highlighting */
+        .billing-card.popular {
+            transform: scale(1.05);
+            border: 2px solid var(--primary-color);
+            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.3);
+        }
+
+        .billing-card.popular::before {
+            opacity: 1;
+            height: 6px;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: var(--white);
+            border-radius: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            color: var(--gray-300);
+            margin-bottom: 1rem;
+        }
+
+        .empty-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-text {
+            color: var(--gray-500);
+            font-size: 1rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .plan-price {
+                font-size: 2.5rem;
+            }
+
+            .billing-card.popular {
+                transform: none;
+                margin-top: 1rem;
+            }
+
+            .card-body {
+                padding: 1.5rem;
+            }
+
+            .navbar-text {
+                font-size: 1.1rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .page-header {
+                padding: 2rem 0 1rem;
+            }
+
+            .page-title {
+                font-size: 1.8rem;
+            }
+
+            .plan-header {
+                flex-direction: column;
+                gap: 0.5rem;
+                align-items: flex-start;
+            }
+
+            .plan-price {
+                font-size: 2.2rem;
+            }
+        }
+
+        /* Loading Animation */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--gray-300);
+            border-radius: 50%;
+            border-top: 2px solid var(--primary-color);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        /* Additional Mobile Optimizations */
+        @media (max-width: 480px) {
+            .container {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+
+            .billing-card {
+                margin-bottom: 1rem;
+            }
+
+            .plan-button {
+                width: 100%;
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Enhanced Navigation Bar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'button' %}">
+                <i class="fas fa-arrow-left"></i>
+
+            </a>
+            <span class="navbar-text">
+                <i class="fas fa-credit-card me-2"></i>
+                Billing Plans
+            </span>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="container">
+            <h3 class="page-title">Choose Your Plan</h3>
+
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container mb-5">
+        <div class="row g-4">
+            {% for plan in billing_plans %}
+            {% if plan.active %}
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="billing-card {% if plan.is_popular %}popular{% endif %} fade-in-up">
+                    <div class="card-body">
+                        <div class="plan-header">
+                            <h3 class="plan-name">{{ plan.name }}</h3>
+                            {% if plan.is_popular %}
+                            <span class="plan-badge popular">
+                                <i class="fas fa-star me-1"></i>Popular
+                            </span>
+                            {% elif plan.is_recommended %}
+                            <span class="plan-badge">
+                                <i class="fas fa-thumbs-up me-1"></i>Best Value
+                            </span>
+                            {% endif %}
+                        </div>
+
+                        <div class="plan-price">
+                            <span class="currency">₹</span>
+                            {{ plan.price|floatformat:0 }}
+                            <span class="period">/month</span>
+                        </div>
+
+                        {% if plan.description %}
+                        <p class="plan-description">{{ plan.description }}</p>
+                        {% endif %}
+
+                        {% if plan.features %}
+                        <div class="plan-features">
+                            <ul class="feature-list">
+                                {% for feature in plan.features %}
+                                <li class="feature-item">
+                                    <div class="feature-icon">
+                                        <i class="fas fa-check"></i>
+                                    </div>
+                                    {{ feature }}
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+
+                        <div class="mt-auto">
+                            {% if plan.is_current %}
+                            <a href="#" class="plan-button outline w-100">
+                                <i class="fas fa-check-circle me-2"></i>
+                                Current Plan
+                            </a>
+                            {% else %}
+                            <a href="#" class="plan-button w-100">
+                                <i class="fas fa-rocket me-2"></i>
+                                Choose {{ plan.name }}
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            {% empty %}
+            <div class="col-12">
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-credit-card"></i>
+                    </div>
+                    <h3 class="empty-title">No Billing Plans Available</h3>
+                    <p class="empty-text">We're currently updating our billing plans. Please check back soon for
+                        exciting new options!</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Additional Information Section -->
+        {% if billing_plans %}
+        <div class="row mt-5">
+            <div class="col-12">
+                <div class="billing-card">
+                    <div class="card-body text-center">
+                        <h4 class="mb-3">
+                            <i class="fas fa-shield-alt text-success me-2"></i>
+                            All Plans Include
+                        </h4>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <i class="fas fa-lock text-primary mb-2" style="font-size: 2rem;"></i>
+                                <h6>Secure & Safe</h6>
+                                <small class="text-muted">256-bit SSL encryption</small>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <i class="fas fa-headset text-primary mb-2" style="font-size: 2rem;"></i>
+                                <h6>24/7 Support</h6>
+                                <small class="text-muted">Always here to help</small>
+                                <h6>Contact for Plan Related Help</h6>
+                                <a href="tel:+918799878583" class="btn btn-success btn-contact">
+                                    <i class="fas fa-headset"></i>
+                                    +91 8799 878 583
+                                </a>
+                            </div>
+                            <!-- <div class="col-md-4 mb-3">
+                                <i class="fas fa-sync-alt text-primary mb-2" style="font-size: 2rem;"></i>
+                                <h6>Cancel Anytime</h6>
+                                <small class="text-muted">No long-term contracts</small>
+                            </div> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Animate cards on scroll
+            const cards = document.querySelectorAll('.billing-card');
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver(function (entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animationDelay = '0s';
+                        entry.target.classList.add('fade-in-up');
+                    }
+                });
+            }, observerOptions);
+
+            cards.forEach(card => {
+                observer.observe(card);
+            });
+
+            // Add loading state to buttons
+            const planButtons = document.querySelectorAll('.plan-button:not(.outline)');
+            planButtons.forEach(button => {
+                button.addEventListener('click', function (e) {
+                    if (!this.classList.contains('outline')) {
+                        const originalText = this.innerHTML;
+                        this.innerHTML = '<span class="loading-spinner me-2"></span>Processing...';
+                        this.style.pointerEvents = 'none';
+
+                        // Reset after 3 seconds if no navigation occurs
+                        setTimeout(() => {
+                            this.innerHTML = originalText;
+                            this.style.pointerEvents = 'auto';
+                        }, 3000);
+                    }
+                });
+            });
+
+            // Smooth scroll for internal links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
