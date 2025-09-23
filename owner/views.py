@@ -4,6 +4,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.http import JsonResponse
 from django.contrib import messages
 from app.models import *
+from superadmin.models import BillingPlans
 from django.db.models import Sum, Count
 from django.utils import timezone
 from datetime import datetime, timedelta, date
@@ -868,3 +869,75 @@ def payment(request):
         upi = None
 
     return render(request, 'owner/paymentsetting.html', {'upi': upi})
+
+@login_required
+def owner_billing(request):
+    billing_plans = BillingPlans.objects.all()
+    context = {'billing_plans' : billing_plans}
+    return render(request, 'owner/billing.html', context=context)
+# views.py
+
+# @login_required
+# def owner_billing(request):
+#     # Sample billing data - replace with your actual model data
+#     billing_plans = [
+#         {
+#             'id': 1,
+#             'name': 'Starter',
+#             'price': 299.00,
+#             'description': 'Perfect for small businesses and individuals getting started',
+#             'features': [
+#                 'Up to 5 users',
+#                 '10GB storage',
+#                 'Basic support',
+#                 'Mobile app access',
+#                 'Email integration'
+#             ],
+#             'is_popular': False,
+#             'is_recommended': False,
+#             'is_current': False
+#         },
+#         {
+#             'id': 2,
+#             'name': 'Professional',
+#             'price': 799.00,
+#             'description': 'Ideal for growing teams and businesses with advanced needs',
+#             'features': [
+#                 'Up to 25 users',
+#                 '100GB storage',
+#                 'Priority support',
+#                 'Advanced analytics',
+#                 'API access',
+#                 'Custom integrations',
+#                 'Team collaboration tools'
+#             ],
+#             'is_popular': True,
+#             'is_recommended': False,
+#             'is_current': True
+#         },
+#         {
+#             'id': 3,
+#             'name': 'Enterprise',
+#             'price': 1499.00,
+#             'description': 'Complete solution for large organizations with custom requirements',
+#             'features': [
+#                 'Unlimited users',
+#                 '1TB storage',
+#                 '24/7 dedicated support',
+#                 'Custom reporting',
+#                 'White-label options',
+#                 'Advanced security',
+#                 'SLA guarantee',
+#                 'Custom development'
+#             ],
+#             'is_popular': False,
+#             'is_recommended': True,
+#             'is_current': False
+#         }
+#     ]
+    
+#     context = {
+#         'billing_plans': billing_plans
+#     }
+    
+#     return render(request, 'owner/billing.html', context)

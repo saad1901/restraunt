@@ -1,11 +1,8 @@
-# Ignore database files
 *.sqlite3
 *.db
 
-# Ignore migrations folders
 app/migrations/
 
-# Ignore settings file
 restrauntapp/settings.py
 
 myapp/
@@ -17,3 +14,4 @@ venv/
 
 __pycache__/
 *.py[cod]
++

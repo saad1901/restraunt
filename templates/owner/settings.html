@@ -142,12 +142,29 @@
       font-size: 0.95rem;
     }
 
-    .settings-icon.bg-purple { background-color: var(--primary); }
-    .settings-icon.bg-green { background-color: var(--success); }
-    .settings-icon.bg-yellow { background-color: var(--warning); }
-    .settings-icon.bg-red { background-color: var(--danger); }
-    .settings-icon.bg-blue { background-color: var(--info); }
-    .settings-icon.bg-gray { background-color: #64748b; }
+    .settings-icon.bg-purple {
+      background-color: var(--primary);
+    }
+
+    .settings-icon.bg-green {
+      background-color: var(--success);
+    }
+
+    .settings-icon.bg-yellow {
+      background-color: var(--warning);
+    }
+
+    .settings-icon.bg-red {
+      background-color: var(--danger);
+    }
+
+    .settings-icon.bg-blue {
+      background-color: var(--info);
+    }
+
+    .settings-icon.bg-gray {
+      background-color: #64748b;
+    }
 
     .arrow-icon {
       color: #94a3b8;
@@ -259,6 +276,13 @@
             <i class="fa-solid fa-wallet"></i>
           </div>
           <span class="settings-item-text">Payment Methods</span>
+          <i class="fas fa-chevron-right ms-auto arrow-icon"></i>
+        </a>
+        <a href="{% url 'owner_billing' %}" class="list-group-item d-flex align-items-center">
+          <div class="settings-icon bg-success">
+            <i class="fa-solid fa-dollar"></i>
+          </div>
+          <span class="settings-item-text">Billing</span>
           <i class="fas fa-chevron-right ms-auto arrow-icon"></i>
         </a>
       </ul>
