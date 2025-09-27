@@ -968,7 +968,7 @@ def cashfree_webhook(request):
 
     if payment_status == "PAID":
         try:
-            hotel = Hotel.objects.filter(id = 2).first()
+            hotel = Hotel.objects.filter(id = 1).first()
         except:
             print("something bad happened")
         hotel.expiry = date.today() + timedelta(days=30)
