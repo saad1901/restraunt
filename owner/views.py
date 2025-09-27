@@ -948,3 +948,29 @@ def owner_billing(request):
 #     }
     
 #     return render(request, 'owner/billing.html', context)
+
+from payments import pay_link_customer
+
+@login_required
+def get_payment(request):
+    response = pay_link_customer.create_payment_link(52)
+    # context = {
+    #     'cashfree' : response
+    # }
+    return render(request, 'owner/paypage.html', response)
+
+
+@csrf_exempt
+def cashfree_webhook(request):
+    data = json.loads(request.body)
+    order_id = data.get("order_id")
+    payment_status = data.get("order_status")
+
+    if payment_status == "PAID":
+        try:
+            hotel = Hotel.objects.filter(id = 2).first()
+        except:
+            print("something bad happened")
+        hotel.expiry = date.today() + timedelta(days=30)
+        hotel.save()
+    return JsonResponse({"status": "ok"})

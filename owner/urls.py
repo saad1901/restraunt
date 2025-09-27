@@ -40,6 +40,8 @@ urlpatterns = [
     path('settings/table/add/', add_table, name='add_table'),
     path('settings/table/edit/', edit_table, name='edit_table'),
     path('settings/table/delete/<int:table_id>/', delete_table, name='delete_table'),
-    path('settings/billing', owner_billing, name='owner_billing'),
-    path('payment/', payment, name='payment')
-]
+    path('settings/billing/', owner_billing, name='owner_billing'),
+    path('payment/', payment, name='payment'),
+    path('getlink/', get_payment, name='get_pay_link'),
+    path('cashfree_webhook/', cashfree_webhook, name="cashfree_webhook")
+]   
