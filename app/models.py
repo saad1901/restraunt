@@ -2,7 +2,10 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.conf import settings
 from decimal import Decimal
+from datetime import date, timedelta
 
+def default_expiry():
+    return date.today() + timedelta(days=10)
 
 class Hotel(models.Model):
     name = models.CharField(max_length=255, unique=True)
@@ -14,6 +17,7 @@ class Hotel(models.Model):
     # ownername = models.CharField(max_length=255)
     # owneremail = models.EmailField(max_length=255)
     # ownerphone = models.CharField(max_length=15)
+    expiry = models.DateField(default=default_expiry)
 
     def __str__(self):
         return self.name
