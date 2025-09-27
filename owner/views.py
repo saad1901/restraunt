@@ -61,7 +61,8 @@ def owner(request):
         upi = []
     
     # Get subscription status and agent contact info
-    subscription_active = hotel.status
+    expiry = hotel.expiry
+    subscription_active = hotel.expiry >= date.today()
     agent_name = hotel.agent.first_name if hotel.agent else "NOAGENT"
     agent_cell = hotel.agent.phone if hotel.agent else "NOAGENT"
     
@@ -77,7 +78,8 @@ def owner(request):
         'items': items,
         'subscription_active': subscription_active,
         'agent_name': agent_name,
-        'agent_cell': agent_cell
+        'agent_cell': agent_cell,
+        'expiry' : expiry
     }
     
     return render(request, 'owner/home.html', context)
@@ -593,7 +595,13 @@ def custom_period(request):
 
 @login_required
 def button(request):
-    return render(request, 'owner/settings.html')
+    hotel = Hotel.objects.get(id=request.user.staffof.id)
+    context = {
+        'expiry' : hotel.expiry,
+        'expired' : hotel.expiry < date.today(),
+        'name' : hotel.name
+    }
+    return render(request, 'owner/settings.html', context=context)
 
 def table(request):
     # hotel = Hotel.objects.get(id=request.user.staffof.id)
@@ -875,7 +883,6 @@ def owner_billing(request):
     billing_plans = BillingPlans.objects.all()
     context = {'billing_plans' : billing_plans}
     return render(request, 'owner/billing.html', context=context)
-# views.py
 
 # @login_required
 # def owner_billing(request):

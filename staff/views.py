@@ -7,7 +7,8 @@ from django.contrib.auth.decorators import login_required
 @login_required
 def home(request): 
     hotel = Hotel.objects.get(id=request.user.staffof.id)
-    if not hotel.status:
+
+    if hotel.expiry < date.today():
         agent_cell = hotel.agent.phone if hotel.agent else "NOAGENT"
         agent_name = hotel.agent.first_name if hotel.agent else "NOAGENT"
         return render(request, 'auth/notallowed.html', {'agent_cell':agent_cell, 'agent_name':agent_name})
