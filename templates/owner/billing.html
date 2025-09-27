@@ -504,7 +504,7 @@
                                 Current Plan
                             </a>
                             {% else %}
-                            <a href="#" class="plan-button w-100">
+                            <a href="{% url 'get_pay_link' %}" class="plan-button w-100">
                                 <i class="fas fa-rocket me-2"></i>
                                 Choose {{ plan.name }}
                             </a>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Complete Your Payment</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #4CAF50;
+      --primary-hover: #45a049;
+      --background-color: #f5f5f5;
+      --card-bg: #ffffff;
+      --text-color: #2c3e50;
+      --subtle-text: #7f8c8d;
+      --border-color: #e0e0e0;
+      --timer-color: #e74c3c;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: var(--background-color);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 24px;
+      color: var(--text-color);
+    }
+
+    .payment-card {
+      width: 100%;
+      max-width: 400px;
+      background: var(--card-bg);
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+      padding: 30px;
+      text-align: center;
+      box-sizing: border-box;
+      border: 1px solid var(--border-color);
+    }
+
+    .header {
+      margin-bottom: 24px;
+    }
+
+    .title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text-color);
+      margin: 0;
+    }
+
+    .subtitle {
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--subtle-text);
+      margin: 8px 0 0;
+    }
+
+    .info-section {
+      margin-bottom: 24px;
+    }
+
+    .description {
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--text-color);
+      margin-bottom: 12px;
+    }
+    
+    .helpline {
+      font-size: 0.9rem;
+      color: var(--subtle-text);
+    }
+
+    .timer-container {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      background: #fdf3f2;
+      border: 1px solid #f9e1e0;
+    }
+
+    #countdown-timer {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--timer-color);
+      margin-right: 8px;
+    }
+    
+    .timer-label {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--timer-color);
+    }
+
+    .pay-btn {
+      display: inline-block;
+      width: 70%;
+      padding: 16px 24px;
+      background: var(--primary-color);
+      color: var(--card-bg);
+      font-size: 1.1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.3s ease, transform 0.1s ease;
+      box-shadow: 0 4px 10px rgba(76, 175, 80, 0.3);
+    }
+
+    .pay-btn:hover {
+      background: var(--primary-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(76, 175, 80, 0.4);
+    }
+
+    @media (max-width: 480px) {
+      .payment-card {
+        padding: 24px;
+      }
+      .title {
+        font-size: 1.8rem;
+      }
+      .pay-btn {
+        width: 80%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="payment-card">
+    <header class="header">
+      <h1 class="title">Complete Your Payment</h1>
+      <p class="subtitle">Cloudbits Pvt Ltd</p>
+    </header>
+
+    <div class="info-section">
+      <div class="timer-container">
+        <span id="countdown-timer">05:00</span>
+        <span class="timer-label">minutes remaining</span>
+      </div>
+      <p class="description">
+        Please complete your payment within the next 5 minutes to confirm your subscription.
+        You will be redirected to a secure payment gateway.
+      </p>
+      <p class="helpline">Helpline: +91-12345-67890</p>
+    </div>
+
+    <a href="{{ link_url }}" target="_blank" class="pay-btn" aria-label="Pay Now via Cashfree">Pay Now</a>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const timerDisplay = document.getElementById('countdown-timer');
+      const duration = 5 * 60; // 5 minutes in seconds
+      let timeLeft = duration;
+
+      function updateTimer() {
+        const minutes = Math.floor(timeLeft / 60);
+        let seconds = timeLeft % 60;
+        seconds = seconds < 10 ? '0' + seconds : seconds;
+        timerDisplay.textContent = `${minutes}:${seconds}`;
+
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          timerDisplay.textContent = "00:00";
+        }
+        timeLeft--;
+      }
+
+      updateTimer();
+      const timerInterval = setInterval(updateTimer, 1000);
+    });
+  </script>
+</body>
+</html>
