@@ -43,5 +43,5 @@ urlpatterns = [
     path('settings/billing/', owner_billing, name='owner_billing'),
     path('payment/', payment, name='payment'),
     path('getlink/', get_payment, name='get_pay_link'),
-    path('cashfree_webhook/', cashfree_webhook, name="cashfree_webhook")
+    path('cashfree_webhook', cashfree_webhook, name="cashfree_webhook")
 ]   
