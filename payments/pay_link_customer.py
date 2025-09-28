@@ -27,7 +27,7 @@ def create_payment_link(user, amount=499):
         "customer_details": {
             "customer_name": user.last_name or 'No_Name',
             "customer_email": user.email or "nomail@hotel.in",
-            "customer_phone": user.phone or 0000000000,
+            "customer_phone": user.phone,
         },
         "link_notify": {
             "send_email": True,
