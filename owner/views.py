@@ -1,7 +1,7 @@
 from django.core.exceptions import ObjectDoesNotExist
 import calendar
 from django.shortcuts import get_object_or_404, redirect, render
-from django.http import JsonResponse
+from django.http import HttpResponseBadRequest, JsonResponse
 from django.contrib import messages
 from app.models import *
 from superadmin.models import BillingPlans
@@ -18,7 +18,7 @@ from django.db.models.functions import ExtractHour
 from django.contrib.auth import get_user_model
 import json
 from django.views.decorators.csrf import csrf_exempt
-from payments import pay_link_customer
+from payments.pay_link_customer import create_payment_link
 
 @login_required
 def owner(request):
@@ -884,37 +884,67 @@ def payment(request):
 @login_required
 def owner_billing(request):
     billing_plans = BillingPlans.objects.all()
-    context = {'billing_plans' : billing_plans}
-    return render(request, 'owner/billing.html', context=context)
+    return render(request, 'owner/billing.html', {'billing_plans': billing_plans})
+
 
 @login_required
 def get_payment(request, plan_id):
     try:
-        plan = BillingPlans.objects.get(id = plan_id)
-        response = pay_link_customer.create_payment_link(request.user, plan.price)
-    except:
-        response = {}
-    return render(request, 'owner/paypage.html', response)
+        plan = BillingPlans.objects.get(id=plan_id)
+    except BillingPlans.DoesNotExist:
+        # print(f"Plan {plan_id} does not exist")
+        return HttpResponseBadRequest("Invalid plan selected.")
+
+    hotel = getattr(request.user, 'staffof', None)
+    if not hotel:
+        # print(f"User {request.user} has no hotel assigned")
+        return HttpResponseBadRequest("This user is not linked to a hotel.")
+
+    try:
+        response = create_payment_link(request.user, plan.price)
+        payment_link = response.get("link_url")
+        if not payment_link:
+            # print("Payment link missing in Cashfree response:", response)
+            return HttpResponseBadRequest("Could not create payment link.")
+    except Exception as e:
+        # print("Error creating payment link:", e)
+        return HttpResponseBadRequest("Payment error")
+    # print(response)
+    return render(request, 'owner/paypage.html', {'link_url': payment_link})
+
 
 @csrf_exempt
 def cashfree_webhook(request):
-    data = json.loads(request.body)
-    order_id = data.get("order_id")
-    payment_status = data.get("payment_status")
-    print("Webhook data:", data)
+    try:
+        data = json.loads(request.body)
+        order_id = data.get("order_id")
+        payment_status = data.get("payment_status")
+        print("Webhook data:", data)
+    except Exception as e:
+        print("Webhook parsing error:", e)
+        return JsonResponse({"status": "failed", "reason": "invalid payload"}, status=400)
 
     try:
         payment = PaymentRecord.objects.get(order_id=order_id)
     except PaymentRecord.DoesNotExist:
         return JsonResponse({"status": "failed", "reason": "Unknown order_id"}, status=400)
 
-    if payment_status == "SUCCESS" and payment.status != "SUCCESS":
+    # Avoid double-processing
+    if payment.status != "SUCCESS" and payment_status == "SUCCESS":
         hotel = payment.hotel
-        if hotel.expiry and hotel.expiry >= date.today(): hotel.expiry = hotel.expiry + timedelta(days=30)
-        else: hotel.expiry = date.today() + timedelta(days=30)
+        if not hotel:
+            return JsonResponse({"status": "failed", "reason": "Hotel not found"}, status=400)
+
+        # Extend expiry: if active, add to current expiry; else start from today
+        if hotel.expiry and hotel.expiry >= date.today():
+            hotel.expiry += timedelta(days=30)
+        else:
+            hotel.expiry = date.today() + timedelta(days=30)
+
         hotel.save()
         payment.status = "SUCCESS"
         payment.save()
-        print(hotel.name, "is now active until", hotel.expiry)
+
+        print(f"{hotel.name} is now active until {hotel.expiry}")
 
     return JsonResponse({"status": "ok"})
