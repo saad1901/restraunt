@@ -18,7 +18,7 @@ from django.db.models.functions import ExtractHour
 from django.contrib.auth import get_user_model
 import json
 from django.views.decorators.csrf import csrf_exempt
-from payments.pay_link_customer import create_payment_link
+from payments import pay_link_customer
 
 @login_required
 def owner(request):
@@ -901,10 +901,10 @@ def get_payment(request, plan_id):
         return HttpResponseBadRequest("This user is not linked to a hotel.")
 
     try:
-        response = create_payment_link(request.user, plan.price)
+        response = pay_link_customer.create_payment_link(request.user, plan.price)
         payment_link = response.get("link_url")
         if not payment_link:
-            # print("Payment link missing in Cashfree response:", response)
+            print("Payment link missing in Cashfree response:", response)
             return HttpResponseBadRequest("Could not create payment link.")
     except Exception as e:
         # print("Error creating payment link:", e)
