@@ -976,18 +976,6 @@
             </div>
         </div>
     </nav>
-    {% if not upi or not upi.upiid %}
-    <div class="alert alert-danger d-flex align-items-center justify-content-between" role="alert"
-        style="margin: 16px 0; font-size: 1.05rem;">
-        <div>
-            <i class="fas fa-exclamation-triangle me-2"></i>
-            <strong>UPI Not Configured:</strong>
-        </div>
-        <a href="{%url 'payment'%}" class="btn btn-danger btn-sm ms-3">
-            <i class="fas fa-plus me-1"></i> Add
-        </a>
-    </div>
-    {% endif %}
 
     <!-- CSRF Token -->
     <input type="hidden" id="csrfToken" value="{{ csrf_token }}">
@@ -1005,6 +993,20 @@
                 <span class="value warning">{{ tot }}</span>
             </div>
         </div>
+
+    {% if not upi or not upi.upiid %}
+    <div class="alert alert-danger d-flex align-items-center justify-content-between" role="alert"
+        style="margin: 10px 0; font-size: 1.05rem;">
+        <div>
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <strong>UPI Not Configured:</strong>
+        </div>
+        <a href="{%url 'payment'%}" 
+       style="display: inline-block; width: 35%; background-color: #d50808; color: white; text-align: center; padding: 10px 0; border-radius: 6px; font-weight: 600; text-decoration: none;">
+        ADD UPI
+    </a>
+    </div>
+    {% endif %}
 
 {% if not subscription_active %}
 <div style="background: #ffe6e6; border-left: 6px solid #ff4d4d; padding: 20px; border-radius: 8px; margin-bottom: 20px; color: #333;">

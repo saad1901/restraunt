@@ -934,10 +934,11 @@ def cashfree_webhook(request):
             return JsonResponse({"status": "failed", "reason": "Hotel not found"}, status=400)
 
         # Extend expiry: if active, add to current expiry; else start from today
+        plan = BillingPlans.objects.get(price=payment.amount)
         if hotel.expiry and hotel.expiry >= date.today():
-            hotel.expiry += timedelta(days=30)
+            hotel.expiry += timedelta(days=plan.expiry_days)
         else:
-            hotel.expiry = date.today() + timedelta(days=30)
+            hotel.expiry = date.today() + timedelta(days=plan.expiry_days)
 
         hotel.save()
         payment.status = "SUCCESS"
