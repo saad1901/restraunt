@@ -3,9 +3,15 @@ from datetime import datetime
 from django.conf import settings
 from app.models import PaymentRecord
 
-def create_payment_link(user, amount=499):
-    url = "https://sandbox.cashfree.com/pg/links"
 
+def create_payment_link(user, amount=499):
+    hotel = getattr(user, 'staffof', None)
+    if not hotel:
+        raise ValueError("User is not linked to a hotel.")
+
+    order_id = f"hotel_{hotel.id}_{datetime.now().strftime('%Y%m%d%H%M%S')}"
+
+    url = "https://sandbox.cashfree.com/pg/links"
     headers = {
         "x-client-id": settings.CASHFREE_CLIENT_ID,
         "x-client-secret": settings.CASHFREE_CLIENT_SECRET,
@@ -13,18 +19,15 @@ def create_payment_link(user, amount=499):
         "Content-Type": "application/json",
     }
 
-    # unique order id linked to your user/hotel
-    order_id = f"hotel_{user.hotel.id}_{datetime.now().strftime('%Y%m%d%H%M%S')}"
-
     data = {
         "link_id": order_id,
         "link_amount": amount,
         "link_currency": "INR",
         "link_purpose": "Subscription Payment",
         "customer_details": {
-            "customer_name": user.get_full_name(),
-            "customer_email": user.email,
-            "customer_phone": user.profile.phone,  # assuming you store phone
+            "customer_name": user.last_name or 'No_Name',
+            "customer_email": user.email or "nomail@hotel.in",
+            "customer_phone": user.phone or 0000000000,
         },
         "link_notify": {
             "send_email": True,
@@ -36,11 +39,12 @@ def create_payment_link(user, amount=499):
         },
     }
 
-    response = requests.post(url, headers=headers, json=data).json()
+    response = requests.post(url, headers=headers, json=data, verify=False).json()
 
+    # Save PaymentRecord
     PaymentRecord.objects.create(
         user=user,
-        hotel=user.hotel,
+        hotel=hotel,
         order_id=order_id,
         amount=amount,
         status="PENDING"
