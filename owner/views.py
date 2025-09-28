@@ -909,7 +909,14 @@ def get_payment(request, plan_id):
     except Exception as e:
         # print("Error creating payment link:", e)
         return HttpResponseBadRequest("Payment error")
-    # print(response)
+    
+    print("Plan:", plan)
+    print("Hotel:", getattr(request.user, 'staffof', None))
+    print("Cashfree response:", response)
+
+    print("-----------------------------------------------")
+    print(response)
+    print("-----------------------------------------------")
     return render(request, 'owner/paypage.html', {'link_url': payment_link})
 
 
