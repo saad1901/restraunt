@@ -883,7 +883,7 @@ def payment(request):
 
 @login_required
 def owner_billing(request):
-    billing_plans = BillingPlans.objects.all()
+    billing_plans = BillingPlans.objects.all().order_by('price')
     return render(request, 'owner/billing.html', {'billing_plans': billing_plans})
 
 
