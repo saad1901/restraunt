@@ -18,6 +18,7 @@ from django.db.models.functions import ExtractHour
 from django.contrib.auth import get_user_model
 import json
 from django.views.decorators.csrf import csrf_exempt
+from payments import pay_link_customer
 
 @login_required
 def owner(request):
@@ -878,99 +879,42 @@ def payment(request):
 
     return render(request, 'owner/paymentsetting.html', {'upi': upi})
 
+###################### FINANCE #########################
+
 @login_required
 def owner_billing(request):
     billing_plans = BillingPlans.objects.all()
     context = {'billing_plans' : billing_plans}
     return render(request, 'owner/billing.html', context=context)
 
-# @login_required
-# def owner_billing(request):
-#     # Sample billing data - replace with your actual model data
-#     billing_plans = [
-#         {
-#             'id': 1,
-#             'name': 'Starter',
-#             'price': 299.00,
-#             'description': 'Perfect for small businesses and individuals getting started',
-#             'features': [
-#                 'Up to 5 users',
-#                 '10GB storage',
-#                 'Basic support',
-#                 'Mobile app access',
-#                 'Email integration'
-#             ],
-#             'is_popular': False,
-#             'is_recommended': False,
-#             'is_current': False
-#         },
-#         {
-#             'id': 2,
-#             'name': 'Professional',
-#             'price': 799.00,
-#             'description': 'Ideal for growing teams and businesses with advanced needs',
-#             'features': [
-#                 'Up to 25 users',
-#                 '100GB storage',
-#                 'Priority support',
-#                 'Advanced analytics',
-#                 'API access',
-#                 'Custom integrations',
-#                 'Team collaboration tools'
-#             ],
-#             'is_popular': True,
-#             'is_recommended': False,
-#             'is_current': True
-#         },
-#         {
-#             'id': 3,
-#             'name': 'Enterprise',
-#             'price': 1499.00,
-#             'description': 'Complete solution for large organizations with custom requirements',
-#             'features': [
-#                 'Unlimited users',
-#                 '1TB storage',
-#                 '24/7 dedicated support',
-#                 'Custom reporting',
-#                 'White-label options',
-#                 'Advanced security',
-#                 'SLA guarantee',
-#                 'Custom development'
-#             ],
-#             'is_popular': False,
-#             'is_recommended': True,
-#             'is_current': False
-#         }
-#     ]
-    
-#     context = {
-#         'billing_plans': billing_plans
-#     }
-    
-#     return render(request, 'owner/billing.html', context)
-
-from payments import pay_link_customer
-
 @login_required
-def get_payment(request):
-    response = pay_link_customer.create_payment_link(52)
-    # context = {
-    #     'cashfree' : response
-    # }
+def get_payment(request, plan_id):
+    try:
+        plan = BillingPlans.objects.get(id = plan_id)
+        response = pay_link_customer.create_payment_link(request.user, plan.price)
+    except:
+        response = False
     return render(request, 'owner/paypage.html', response)
-
 
 @csrf_exempt
 def cashfree_webhook(request):
     data = json.loads(request.body)
     order_id = data.get("order_id")
-    payment_status = data.get("order_status")
+    payment_status = data.get("payment_status")
+    print("Webhook data:", data)
 
-    if payment_status == "PAID":
-        try:
-            hotel = Hotel.objects.filter(id = 1).first()
-        except:
-            print("something bad happened")
-        hotel.expiry = date.today() + timedelta(days=30)
+    try:
+        payment = PaymentRecord.objects.get(order_id=order_id)
+    except PaymentRecord.DoesNotExist:
+        return JsonResponse({"status": "failed", "reason": "Unknown order_id"}, status=400)
+
+    if payment_status == "SUCCESS" and payment.status != "SUCCESS":
+        hotel = payment.hotel
+        if hotel.expiry and hotel.expiry >= date.today(): hotel.expiry = hotel.expiry + timedelta(days=30)
+        else: hotel.expiry = date.today() + timedelta(days=30)
         hotel.save()
+        payment.status = "SUCCESS"
+        payment.save()
+        print(hotel.name, "is now active until", hotel.expiry)
+
     return JsonResponse({"status": "ok"})
