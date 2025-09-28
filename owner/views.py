@@ -904,28 +904,19 @@ def get_payment(request, plan_id):
         response = pay_link_customer.create_payment_link(request.user, plan.price)
         payment_link = response.get("link_url")
         if not payment_link:
-            print("Payment link missing in Cashfree response:", response)
+            # print("Payment link missing in Cashfree response:", response)
             return HttpResponseBadRequest("Could not create payment link.")
     except Exception as e:
         # print("Error creating payment link:", e)
         return HttpResponseBadRequest("Payment error")
-    
-    print("Plan:", plan)
-    print("Hotel:", getattr(request.user, 'staffof', None))
-    print("Cashfree response:", response)
-
-    print("-----------------------------------------------")
-    print(response)
-    print("-----------------------------------------------")
     return render(request, 'owner/paypage.html', {'link_url': payment_link})
-
 
 @csrf_exempt
 def cashfree_webhook(request):
     try:
         data = json.loads(request.body)
-        order_id = data.get("order_id")
-        payment_status = data.get("payment_status")
+        order_id = data["data"]["order"]["order_tags"]["link_id"]  # use your internal order_id
+        payment_status = data["data"]["payment"]["payment_status"]
         print("Webhook data:", data)
     except Exception as e:
         print("Webhook parsing error:", e)
@@ -955,3 +946,40 @@ def cashfree_webhook(request):
         print(f"{hotel.name} is now active until {hotel.expiry}")
 
     return JsonResponse({"status": "ok"})
+
+
+# @csrf_exempt
+# def cashfree_webhook(request):
+#     try:
+#         data = json.loads(request.body)
+#         order_id = data.get("order_id")
+#         payment_status = data.get("payment_status")
+#         print("Webhook data:", data)
+#     except Exception as e:
+#         print("Webhook parsing error:", e)
+#         return JsonResponse({"status": "failed", "reason": "invalid payload"}, status=400)
+
+#     try:
+#         payment = PaymentRecord.objects.get(order_id=order_id)
+#     except PaymentRecord.DoesNotExist:
+#         return JsonResponse({"status": "failed", "reason": "Unknown order_id"}, status=400)
+
+#     # Avoid double-processing
+#     if payment.status != "SUCCESS" and payment_status == "SUCCESS":
+#         hotel = payment.hotel
+#         if not hotel:
+#             return JsonResponse({"status": "failed", "reason": "Hotel not found"}, status=400)
+
+#         # Extend expiry: if active, add to current expiry; else start from today
+#         if hotel.expiry and hotel.expiry >= date.today():
+#             hotel.expiry += timedelta(days=30)
+#         else:
+#             hotel.expiry = date.today() + timedelta(days=30)
+
+#         hotel.save()
+#         payment.status = "SUCCESS"
+#         payment.save()
+
+#         print(f"{hotel.name} is now active until {hotel.expiry}")
+
+#     return JsonResponse({"status": "ok"})
