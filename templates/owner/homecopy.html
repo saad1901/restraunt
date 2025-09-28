@@ -1,0 +1,51 @@
+this is the code of collapsable not paid card of owner home Page
+
+    <!-- Subscription Warning - Shows when subscription is not active -->
+    {% if not subscription_active %}
+    <div class="subscription-warning collapsed" id="subscriptionWarning">
+        <div class="toggle-btn" onclick="toggleWarning()">
+            <i class="fas fa-chevron-left" id="warningToggleIcon"></i>
+        </div>
+        <div class="warning-content">
+            <div class="warning-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="warning-message">
+                <h4>Subscription Expired</h4>
+            </div>
+
+            {% if agent_cell and agent_cell != 'NOAGENT' %}
+            <a href="tel:+91{{agent_cell}}" class="phone-contact text-white text-decoration-none">
+                <div class="phone-contact-title">
+                    <i class="fas fa-user-tie"></i> Your Agent
+                </div>
+                <div class="phone-number">
+                    <i class="fas fa-phone-alt"></i> +91 {{agent_cell}}
+                </div>
+                <div class="d-flex align-items-center mt-1">
+                    <small class="me-2">{{agent_name}}</small>
+                    <span class="badge bg-light text-danger ms-auto">Call Now</span>
+                </div>
+            </a>
+            {% endif %}
+
+            <a href="tel:+918799878583"
+                class="phone-contact text-white text-decoration-none {% if agent_cell != 'NOAGENT' %}mt-2{% endif %}">
+                <div class="phone-contact-title">
+                    <i class="fas fa-headset"></i> Admin Support
+                </div>
+                <div class="phone-number">
+                    <i class="fas fa-phone-alt"></i> +91 8799 878 583
+                </div>
+                <div class="d-flex align-items-center mt-1">
+                    <small class="me-2">Mon-Sat, 9AM-6PM</small>
+                    <span class="badge bg-light text-danger ms-auto">Call Now</span>
+                </div>
+            </a>
+
+            <button class="btn btn-outline-light w-100 mt-3" onclick="toggleWarning()">
+                <i class="fas fa-times me-2"></i> Hide Warning
+            </button>
+        </div>
+    </div>
+    {% endif %}
