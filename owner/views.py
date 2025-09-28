@@ -893,7 +893,7 @@ def get_payment(request, plan_id):
         plan = BillingPlans.objects.get(id = plan_id)
         response = pay_link_customer.create_payment_link(request.user, plan.price)
     except:
-        response = False
+        response = {}
     return render(request, 'owner/paypage.html', response)
 
 @csrf_exempt
