@@ -12,6 +12,7 @@ from django.contrib import messages
 from app.sendmail import sendemail
 from django.db.models import Count
 from django.utils import timezone
+from .models import BillingPlans
 from django.conf import settings
 from django.db import connection
 import subprocess
@@ -1290,3 +1291,11 @@ def logs(request):
         messages.error(request, "You do not have permission to access this page.")
         return redirect('home')
     return render(request, 'superadmin/logs.html')
+
+@login_required
+def adminplans(request):
+    billing_plans = BillingPlans.objects.all().order_by('price')
+    context = {
+        'billing_plans' : billing_plans
+    }
+    return render(request, 'superadmin/finance/bills.html', context=context)

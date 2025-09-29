@@ -950,7 +950,7 @@ def cashfree_webhook(request):
 
 @login_required
 def bill_history(request):
-    records = PaymentRecord.objects.filter(hotel=request.user.staffof)
+    records = PaymentRecord.objects.filter(hotel=request.user.staffof).order_by('-created_at')
     context = {
         'records' : records
     }
