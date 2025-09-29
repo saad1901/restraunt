@@ -420,7 +420,22 @@
                     <i class="fas fa-user-plus"></i>
                     <span>Add Agent</span>
                 </a>
-                
+
+                <div class="sidebar-divider"></div>
+                <div class="sidebar-heading">Plans and Bills</div>
+                <a href="{% url 'adminplans' %}" class="nav-link {% if 'promotions' in request.path %}active{% endif %}">
+                    <i class="fas fa-tags"></i>
+                    <span>Hotel Plans</span>
+                </a>
+                <a href="{% url 'home' %}" class="nav-link {% if 'email-campaigns' in request.path %}active{% endif %}">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                    <span>Billing History</span>
+                </a>
+                <a href="{% url 'home' %}" class="nav-link {% if 'email-campaigns' in request.path %}active{% endif %}">
+                    <i class="fa-solid fa-coins"></i>
+                    <span>Finance</span>
+                </a>
+
                 <div class="sidebar-divider"></div>
                 <div class="sidebar-heading">Analytics & Reports</div>
                 <a href="{% url 'analytics_dashboard' %}" class="nav-link {% if 'analytics' in request.path %}active{% endif %}">
@@ -450,7 +465,7 @@
                     <i class="fas fa-file-alt"></i>
                     <span>System Logs</span>
                 </a>
-                
+
                 <div class="sidebar-divider"></div>
                 <div class="sidebar-heading">Marketing</div>
                 <a href="{% url 'home' %}" class="nav-link {% if 'promotions' in request.path %}active{% endif %}">
@@ -461,7 +476,7 @@
                     <i class="fas fa-envelope"></i>
                     <span>Email Campaigns</span>
                 </a>
-                
+                            
                 <div class="sidebar-divider"></div>
                 <div class="sidebar-heading">Account</div>
                 <a href="{% url 'logout' %}" class="nav-link">
