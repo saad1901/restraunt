@@ -948,6 +948,13 @@ def cashfree_webhook(request):
 
     return JsonResponse({"status": "ok"})
 
+@login_required
+def bill_history(request):
+    records = PaymentRecord.objects.filter(hotel=request.user.staffof)
+    context = {
+        'records' : records
+    }
+    return render(request, 'owner/bill_history.html', context)
 
 # @csrf_exempt
 # def cashfree_webhook(request):
