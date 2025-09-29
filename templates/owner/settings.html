@@ -211,7 +211,7 @@
   </nav>
 
   <div style="margin-left: 20px; margin-top: 10px;">
-  Plan Expiring on
+    Plan Expiring on
     <span class="{% if expired %}text-danger{% else %}text-success{% endif %} fw-bold">
       {{ expiry }}
     </span>
@@ -295,6 +295,14 @@
           <span class="settings-item-text">Billing</span>
           <i class="fas fa-chevron-right ms-auto arrow-icon"></i>
         </a>
+        <a href="{% url 'billhistory' %}" class="list-group-item d-flex align-items-center">
+          <div class="settings-icon bg-purple">
+            <i class="fas fa-history"></i>
+          </div>
+          <span class="settings-item-text">Bill History</span>
+          <i class="fas fa-chevron-right ms-auto arrow-icon"></i>
+        </a>
+
       </ul>
     </div>
 

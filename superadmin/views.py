@@ -245,6 +245,7 @@ def system_operations(request):
                 except Exception as e:
                     results['status'] = "error"
                     results['error'] = f"Error restarting PythonAnywhere application: {str(e)}"
+                    return redirect('home')
         
         except Exception as e:
             results['status'] = "error"
