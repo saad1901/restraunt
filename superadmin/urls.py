@@ -2,7 +2,7 @@ from django.urls import path
 from .views import *
 
 urlpatterns = [
-    path('home/', home, name='home'),
+    path('', home, name='home'),
     path('git_pull', git_pull, name='git_pull'),
     path('system/', system_operations, name='system_operations'),
     path('system/database/', database_management, name='database_management'),
@@ -22,5 +22,6 @@ urlpatterns = [
     path('users/toggle-status/<int:user_id>/', toggle_user_status, name='toggle_user_status'),
     path('restaurant/view/<int:hotel_id>/', view_restaurant, name='view_restaurant'),
     path('toggle/<int:hotel_id>/', toggle_hotel_status, name='toggle_hotel_status'),
-    path('adminplans/', adminplans, name='adminplans')   
+    path('adminplans/', adminplans, name='adminplans'),
+    path('deleteplan/<int:plan_id>/', delete_plan, name='delete_plan')  
 ]

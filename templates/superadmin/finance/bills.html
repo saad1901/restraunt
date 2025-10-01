@@ -286,7 +286,7 @@
 <div class="modal fade" id="addPlanModal" tabindex="-1" aria-labelledby="addPlanModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <form method="post" action="#" id="addPlanForm">
+            <form method="post" id="addPlanForm">
                 {% csrf_token %}
                 <div class="modal-header">
                     <h5 class="modal-title" id="addPlanModalLabel">
@@ -424,42 +424,31 @@
         </div>
     </div>
 </div>
+
+<!-- Toast Container (positioned in top-right corner) -->
+<div aria-live="polite" aria-atomic="true" class="position-relative">
+    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1100;">
+        {% for message in messages %}
+        <div class="toast align-items-center text-bg-{{ message.tags }} border-0 mb-2" 
+             role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    {{ message }}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" 
+                        data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+
 {% endblock %}
 
 {% block script %}
 <script>
-    // Add Plan Form submission with AJAX
-    document.getElementById('addPlanForm').addEventListener('submit', function (e) {
-        e.preventDefault();
-
-        const formData = new FormData(this);
-
-        fetch(this.action, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-            }
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Close modal and reload page
-                    bootstrap.Modal.getInstance(document.getElementById('addPlanModal')).hide();
-                    location.reload();
-                } else {
-                    // Handle validation errors
-                    console.error('Form errors:', data.errors);
-                    // You can display errors in the modal here
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                // Fallback to regular form submission
-                this.submit();
-            });
-    });
-
+ 
     // Edit Plan Form submission with AJAX
     document.getElementById('editPlanForm').addEventListener('submit', function (e) {
         e.preventDefault();
@@ -508,7 +497,7 @@
     // Delete plan function with confirmation
     function deletePlan(planId) {
         if (confirm('Are you sure you want to delete this billing plan? This action cannot be undone.')) {
-            fetch(`/billing/plans/delete/${planId}/`, {
+            fetch(`/superadmin/deleteplan/${planId}/`, {
                 method: 'POST',
                 headers: {
                     'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
@@ -537,6 +526,15 @@
 
     document.getElementById('editPlanModal').addEventListener('hidden.bs.modal', function () {
         document.getElementById('editPlanForm').reset();
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const toastElList = [].slice.call(document.querySelectorAll('.toast'))
+        toastElList.map(function (toastEl) {
+            const option = { delay: 3000 }   // auto hide after 3s
+            const toast = new bootstrap.Toast(toastEl, option)
+            toast.show()
+        })
     });
 </script>
 {% endblock %}

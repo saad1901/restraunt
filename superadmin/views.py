@@ -1294,8 +1294,45 @@ def logs(request):
 
 @login_required
 def adminplans(request):
+    if request.user.role != 'superadmin':
+        return redirect('owner_login')
+    
     billing_plans = BillingPlans.objects.all().order_by('price')
+
+    if request.method == "POST":
+        name = request.POST.get("name")
+        price = request.POST.get("price")
+        expiry_days = request.POST.get("expiry_days")
+        description = request.POST.get("description")
+        active = request.POST.get("active") == "on"   # checkbox returns "on" if checked
+
+        if not name or not price or not expiry_days:
+            messages.error(request, "Please fill in all required fields.")
+            return redirect("plans_page")
+
+        BillingPlans.objects.create(
+            name=name,
+            price=price,
+            expiry_days=expiry_days,
+            description=description,
+            active=active
+        )
+
+        messages.success(request, f"Plan '{name}' created successfully!")
+        return redirect('adminplans') 
+        
     context = {
         'billing_plans' : billing_plans
     }
+
     return render(request, 'superadmin/finance/bills.html', context=context)
+
+@require_POST
+def delete_plan(request, plan_id):
+    try:
+        plan = get_object_or_404(BillingPlans, id=plan_id)
+        plan.delete()
+        messages.success(request, "Plan deleted successfully.")
+        return JsonResponse({"success": True, "message": "Plan deleted successfully."})
+    except Exception as e:
+        return JsonResponse({"success": False, "message": str(e)})
