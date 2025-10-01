@@ -435,6 +435,10 @@
                     <i class="fa-solid fa-coins"></i>
                     <span>Finance</span>
                 </a>
+                <a href="{% url 'home' %}" class="nav-link {% if 'email-campaigns' in request.path %}active{% endif %}">
+                    <i class="fa-solid fa-money-check-dollar"></i>
+                    <span>Shares (agents and investors share)</span>
+                </a>
 
                 <div class="sidebar-divider"></div>
                 <div class="sidebar-heading">Analytics & Reports</div>

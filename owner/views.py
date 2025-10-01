@@ -304,8 +304,6 @@ def set_order_started(request):
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)}, status=400)
     
-
-
 @login_required
 def add_category(request):
     hotel = Hotel.objects.get(id=request.user.staffof.id)
