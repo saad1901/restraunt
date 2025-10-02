@@ -884,7 +884,6 @@ def owner_billing(request):
     billing_plans = BillingPlans.objects.all().order_by('price')
     return render(request, 'owner/billing.html', {'billing_plans': billing_plans})
 
-
 @login_required
 def get_payment(request, plan_id):
     try:
@@ -913,11 +912,9 @@ def get_payment(request, plan_id):
 def cashfree_webhook(request):
     try:
         data = json.loads(request.body)
-        order_id = data["data"]["order"]["order_tags"]["link_id"]  # use your internal order_id
-        payment_status = data["data"]["payment"]["payment_status"]
-        print("Webhook data:", data)
+        order_id = data["data"]["order"]["order_tags"]["link_id"]  # internal order_id
+        payment_status = data["data"]["payment"]["payment_status"]  # e.g. SUCCESS / FAILED / CANCELLED
     except Exception as e:
-        print("Webhook parsing error:", e)
         return JsonResponse({"status": "failed", "reason": "invalid payload"}, status=400)
 
     try:
@@ -925,26 +922,26 @@ def cashfree_webhook(request):
     except PaymentRecord.DoesNotExist:
         return JsonResponse({"status": "failed", "reason": "Unknown order_id"}, status=400)
 
-    # Avoid double-processing
-    if payment.status != "SUCCESS" and payment_status == "SUCCESS":
-        hotel = payment.hotel
-        if not hotel:
-            return JsonResponse({"status": "failed", "reason": "Hotel not found"}, status=400)
+    if payment.status != payment_status:
+        if payment_status == "SUCCESS":
+            hotel = payment.hotel
+            if not hotel:
+                return JsonResponse({"status": "failed", "reason": "Hotel not found"}, status=400)
 
-        # Extend expiry: if active, add to current expiry; else start from today
-        plan = BillingPlans.objects.get(price=payment.amount)
-        if hotel.expiry and hotel.expiry >= date.today():
-            hotel.expiry += timedelta(days=plan.expiry_days)
-        else:
-            hotel.expiry = date.today() + timedelta(days=plan.expiry_days)
+            plan = BillingPlans.objects.get(price=payment.amount)
+            if hotel.expiry and hotel.expiry >= date.today():
+                hotel.expiry += timedelta(days=plan.expiry_days)
+            else:
+                hotel.expiry = date.today() + timedelta(days=plan.expiry_days)
 
-        hotel.save()
-        payment.status = "SUCCESS"
-        payment.save()
+            hotel.save()
+            print(f"{hotel.name} is now active until {hotel.expiry}")
 
-        print(f"{hotel.name} is now active until {hotel.expiry}")
+        payment.status = payment_status
+        payment.save(update_fields=["status"])
 
     return JsonResponse({"status": "ok"})
+
 
 @login_required
 def bill_history(request):
