@@ -1,4 +1,4 @@
-from app.models import User, Hotel, Table, MenuCategory, MenuItem, Order
+from app.models import User, Hotel, Table, MenuCategory, MenuItem, Order, PaymentRecord
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
@@ -34,8 +34,9 @@ def home(request):
     owners_count = User.objects.filter(role='owner').count()
     agents_count = User.objects.filter(role='agent').count()
     
-    # Calculate active hotels count directly in the view
-    active_hotels_count = hotels.filter(status=True).count()
+    total_earning = PaymentRecord.objects.filter(status="SUCCESS").aggregate(total=Sum('amount'))['total'] or 0
+
+    # active_hotels_count = hotels.filter(status=True).count()
     
     if request.method == 'POST' and 'q' in request.POST:
         query = request.POST.get('q', '').strip()
@@ -46,7 +47,7 @@ def home(request):
         'hotels': hotels,
         'owners_count': owners_count,
         'agents_count': agents_count,
-        'active_hotels_count': active_hotels_count,
+        'total_earning': total_earning,
     }
     return render(request, 'superadmin/home.html', context)
 
