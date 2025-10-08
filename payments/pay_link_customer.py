@@ -13,7 +13,7 @@ def create_payment_link(user, amount):
     customer_name = (user.first_name + " " + user.last_name).strip() or user.username
 
     # url = "https://sandbox.cashfree.com/pg/links"
-    url = "https://api.cashfree.com/pg"
+    url = "https://api.cashfree.com/pg/orders"
     headers = {
         "x-client-id": settings.CASHFREE_CLIENT_ID,
         "x-client-secret": settings.CASHFREE_CLIENT_SECRET,
