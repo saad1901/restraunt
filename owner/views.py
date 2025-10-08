@@ -900,6 +900,7 @@ def get_payment(request, plan_id):
     try:
         response = pay_link_customer.create_payment_link(request.user, plan.price)
         payment_link = response.get("link_url")
+        print(response)
         if not payment_link:
             # print("Payment link missing in Cashfree response:", response)
             return HttpResponseBadRequest("Could not create payment link.")
