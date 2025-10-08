@@ -856,7 +856,7 @@ def settings(request):
 #         trend = day_revenue - previous_revenue
 #         if previous_revenue > 0:
 #             trend_percent = abs(int((trend / previous_revenue) * 100))
-#         else:
+#         else:z
 #             trend_percent = 0
         
 #         # Track statistics
