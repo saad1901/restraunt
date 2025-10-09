@@ -12,16 +12,16 @@ def create_payment_link(user, amount):
     phone = str(getattr(user, 'phone', '') or '8799878583')
     customer_name = (user.first_name + " " + user.last_name).strip() or user.username
 
-    url = "https://sandbox.cashfree.com/pg/links"
+    url = settings.CASHFREE_BASE_URL
     headers = {
         "x-client-id": settings.CASHFREE_CLIENT_ID,
         "x-client-secret": settings.CASHFREE_CLIENT_SECRET,
-        "x-api-version": "2025-01-01",
+        "x-api-version": settings.CASHFREE_API_VERSION,
         "Content-Type": "application/json",
     }
+
     data = {
-        "link_id": order_id,
-        "link_amount": amount,
+        "link_amount": float(amount),
         "link_currency": "INR",
         "link_purpose": "Subscription Payment",
         "customer_details": {
@@ -38,14 +38,20 @@ def create_payment_link(user, amount):
             "notify_url": "https://hotelsoftware.pythonanywhere.com/owner/cashfree_webhook",
         },
     }
-    response = requests.post(url, headers=headers, json=data).json()
+
+    try:
+        response = requests.post(url, headers=headers, json=data, timeout=15)
+        res_json = response.json()
+    except Exception as e:
+        res_json = {"status": "failed", "reason": str(e)}
 
     PaymentRecord.objects.create(
         user=user,
         hotel=hotel,
         order_id=order_id,
         amount=amount,
-        status="PENDING"
+        status="PENDING",
+        api_response=res_json,
     )
 
-    return response
+    return res_json
