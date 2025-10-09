@@ -19,6 +19,8 @@ from django.contrib.auth import get_user_model
 import json
 from django.views.decorators.csrf import csrf_exempt
 from payments import pay_link_customer
+import json, hmac, hashlib, base64
+from django.conf import settings
 
 @login_required
 def owner(request):
@@ -916,13 +918,6 @@ def get_payment(request, plan_id):
         # print("Error creating payment link:", e)
         return HttpResponseBadRequest("Payment error")
     return render(request, 'owner/paypage.html', {'link_url': payment_link})
-
-import json, hmac, hashlib, base64
-from datetime import date, timedelta
-from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
-from django.conf import settings
-from app.models import PaymentRecord, BillingPlans
 
 def verify_signature(payload, header_signature, secret_key):
     computed_signature = base64.b64encode(
