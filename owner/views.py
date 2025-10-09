@@ -947,7 +947,8 @@ def cashfree_webhook(request):
 
     # 3. Update your local payment record
     try:
-        payment = PaymentRecord.objects.get(order_id=order_id or order_id == "CFPay_U1mgll3c0e9g_ehdcjjbtckf")
+        return JsonResponse({"status": "ok"})
+        payment = PaymentRecord.objects.get(order_id=order_id)
     except PaymentRecord.DoesNotExist:
         return JsonResponse({"status": "failed", "reason": "unknown order_id"}, status=400)
 
