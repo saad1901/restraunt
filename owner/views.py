@@ -927,30 +927,26 @@ def verify_signature(payload, header_signature, secret_key):
 
 @csrf_exempt
 def cashfree_webhook(request):
+    import json
+    from django.http import JsonResponse
+    from app.models import PaymentRecord, BillingPlans
+    from datetime import date, timedelta
 
-    signature = request.headers.get("x-webhook-signature")
-    if not verify_signature(request.body, signature, settings.CASHFREE_CLIENT_SECRET):
-        # return JsonResponse({"status": "failed", "reason": "invalid signature"}, status=400)
-        pass
-
-    # 2. Parse payload safely
     try:
         payload = json.loads(request.body)
         order = payload.get("data", {}).get("order", {})
-        order_id = order.get("order_id")
-        payment_status = order.get("transaction_status")
+        order_id = order.get("order_id")  # Use this as your PaymentRecord.order_id
+        payment_status = order.get("transaction_status")  # SUCCESS / FAILED / etc.
     except Exception:
         return JsonResponse({"status": "failed", "reason": "invalid payload"}, status=400)
 
     if not order_id or not payment_status:
         return JsonResponse({"status": "failed", "reason": "missing fields"}, status=400)
 
-    # 3. Update your local payment record
     try:
-        return JsonResponse({"status": "ok"})
         payment = PaymentRecord.objects.get(order_id=order_id)
     except PaymentRecord.DoesNotExist:
-        return JsonResponse({"status": "failed", "reason": "unknown order_id"}, status=400)
+        return JsonResponse({"status": "failed", "reason": "Unknown order_id"}, status=400)
 
     if payment.status != payment_status:
         payment.status = payment_status
