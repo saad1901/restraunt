@@ -16,9 +16,11 @@ from django.contrib.auth.hashers import make_password
 from django.db.models import Count
 from django.db.models.functions import ExtractHour
 from django.contrib.auth import get_user_model
-import json
 from django.views.decorators.csrf import csrf_exempt
 from payments import pay_link_customer
+import json, hmac, hashlib, base64
+from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
 
 @login_required
 def owner(request):
@@ -909,81 +911,50 @@ def get_payment(request, plan_id):
         return HttpResponseBadRequest("Payment error")
     return render(request, 'owner/paypage.html', {'link_url': payment_link})
 
+def verify_signature(payload, header_signature, secret_key):
+    computed_signature = base64.b64encode(
+        hmac.new(secret_key.encode(), payload, hashlib.sha256).digest()
+    ).decode()
+    return computed_signature == header_signature
+
 @csrf_exempt
 def cashfree_webhook(request):
+    # 1. Verify webhook signature
+    signature = request.headers.get("x-webhook-signature")
+    if not verify_signature(request.body, signature, settings.CASHFREE_CLIENT_SECRET):
+        return JsonResponse({"status": "failed", "reason": "invalid signature"}, status=400)
+
+    # 2. Parse payload safely
     try:
-        data = json.loads(request.body)
-        order_id = data["data"]["order"]["order_tags"]["link_id"]  # internal order_id
-        payment_status = data["data"]["payment"]["payment_status"]  # e.g. SUCCESS / FAILED / CANCELLED
-    except Exception as e:
+        payload = json.loads(request.body)
+        order = payload.get("data", {}).get("order", {})
+        order_id = order.get("order_id")
+        payment_status = order.get("transaction_status")
+    except Exception:
         return JsonResponse({"status": "failed", "reason": "invalid payload"}, status=400)
 
+    if not order_id or not payment_status:
+        return JsonResponse({"status": "failed", "reason": "missing fields"}, status=400)
+
+    # 3. Update your local payment record
     try:
         payment = PaymentRecord.objects.get(order_id=order_id)
     except PaymentRecord.DoesNotExist:
-        return JsonResponse({"status": "failed", "reason": "Unknown order_id"}, status=400)
+        return JsonResponse({"status": "failed", "reason": "unknown order_id"}, status=400)
 
     if payment.status != payment_status:
-        if payment_status == "SUCCESS":
-            hotel = payment.hotel
-            if not hotel:
-                return JsonResponse({"status": "failed", "reason": "Hotel not found"}, status=400)
-
-            plan = BillingPlans.objects.get(price=payment.amount)
-            if hotel.expiry and hotel.expiry >= date.today():
-                hotel.expiry += timedelta(days=plan.expiry_days)
-            else:
-                hotel.expiry = date.today() + timedelta(days=plan.expiry_days)
-
-            hotel.save()
-            print(f"{hotel.name} is now active until {hotel.expiry}")
-
         payment.status = payment_status
         payment.save(update_fields=["status"])
 
+        if payment_status == "SUCCESS":
+            hotel = payment.hotel
+            if hotel:
+                plan = BillingPlans.objects.filter(price=payment.amount).first()
+                if plan:
+                    if hotel.expiry and hotel.expiry >= date.today():
+                        hotel.expiry += timedelta(days=plan.expiry_days)
+                    else:
+                        hotel.expiry = date.today() + timedelta(days=plan.expiry_days)
+                    hotel.save()
+
     return JsonResponse({"status": "ok"})
-
-
-@login_required
-def bill_history(request):
-    records = PaymentRecord.objects.filter(hotel=request.user.staffof).order_by('-created_at')
-    context = {
-        'records' : records
-    }
-    return render(request, 'owner/bill_history.html', context)
-
-# @csrf_exempt
-# def cashfree_webhook(request):
-#     try:
-#         data = json.loads(request.body)
-#         order_id = data.get("order_id")
-#         payment_status = data.get("payment_status")
-#         print("Webhook data:", data)
-#     except Exception as e:
-#         print("Webhook parsing error:", e)
-#         return JsonResponse({"status": "failed", "reason": "invalid payload"}, status=400)
-
-#     try:
-#         payment = PaymentRecord.objects.get(order_id=order_id)
-#     except PaymentRecord.DoesNotExist:
-#         return JsonResponse({"status": "failed", "reason": "Unknown order_id"}, status=400)
-
-#     # Avoid double-processing
-#     if payment.status != "SUCCESS" and payment_status == "SUCCESS":
-#         hotel = payment.hotel
-#         if not hotel:
-#             return JsonResponse({"status": "failed", "reason": "Hotel not found"}, status=400)
-
-#         # Extend expiry: if active, add to current expiry; else start from today
-#         if hotel.expiry and hotel.expiry >= date.today():
-#             hotel.expiry += timedelta(days=30)
-#         else:
-#             hotel.expiry = date.today() + timedelta(days=30)
-
-#         hotel.save()
-#         payment.status = "SUCCESS"
-#         payment.save()
-
-#         print(f"{hotel.name} is now active until {hotel.expiry}")
-
-#     return JsonResponse({"status": "ok"})
