@@ -1,0 +1,39 @@
+{
+	"cart_details": null,
+	"cf_order_id": "4752646288",
+	"created_at": "2025-10-08T21:32:04+05:30",
+	"customer_details": {
+		"customer_id": "3",
+		"customer_name": "Syed Sohail",
+		"customer_email": "owner@tastybits.com",
+		"customer_phone": "9898888998",
+		"customer_uid": null
+	},
+	"entity": "order",
+	"order_amount": 25.0,
+	"order_currency": "INR",
+	"order_expiry_time": "2025-11-07T21:32:04+05:30",
+	"order_id": "hotel_2_20251008213203",
+	"order_meta": {
+		"notify_url": "https://hotelsoftware.pythonanywhere.com/owner/cashfree_webhook",
+		"payment_methods": null,
+		"payment_methods_filters": null,
+		"return_url": "https://hotelsoftware.pythonanywhere.com/owner/"
+	},
+	"order_note": "Subscription Payment",
+	"order_splits": [],
+	"order_status": "ACTIVE",
+	"order_tags": null,
+	"payment_session_id": "session_-R_vdWOjuaBNDqoA5p1d8tBDotcehuUkTK0_SvTZIFAukXkQR3eATjKlOpdHp2GA2RYEtTzPGcS35SEK9gp1u3IMgQfLY9p6F3-qvSUBWSYJ8iLur58WS2yX4kIpayment",
+	"products": {
+		"one_click_checkout": {
+			"enabled": false,
+			"conditions": []
+		},
+		"verify_pay": {
+			"enabled": false,
+			"conditions": []
+		}
+	},
+	"terminal_data": null
+}
