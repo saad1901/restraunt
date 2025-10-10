@@ -330,6 +330,31 @@
             box-shadow: var(--shadow-md);
         }
 
+        .order-card.active {
+            box-shadow: 0 8px 24px rgba(79, 70, 229, 0.15), 0 1.5px 6px rgba(0, 0, 0, 0.08);
+            border-color: var(--info-color);
+            transition: box-shadow 0.3s, border-color 0.3s;
+        }
+
+        .order-card.skeleton {
+            background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.2s infinite linear;
+            min-height: 120px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-sm);
+        }
+
+        @keyframes skeleton-loading {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
         .table-name {
             font-weight: 600;
             color: var(--primary-color);
@@ -1319,7 +1344,40 @@
     </div>
 
     <!-- Toast Container -->
-    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11000" id="toastContainer"></div>
+    <div id="toastContainer" class="position-fixed top-0 end-0 p-3" style="z-index:11000" aria-live="polite"></div>
+
+    <style>
+        @media (max-width: 768px) {
+            #toastContainer {
+                right: 50%;
+                left: 50%;
+                transform: translateX(-50%);
+                top: 0;
+                width: 90vw;
+                max-width: 400px;
+            }
+        }
+
+        .toast-success {
+            background: var(--success-color) !important;
+            color: var(--light-text) !important;
+        }
+
+        .toast-danger {
+            background: var(--danger-color) !important;
+            color: var(--light-text) !important;
+        }
+
+        .toast-warning {
+            background: var(--warning-color) !important;
+            color: var(--light-text) !important;
+        }
+
+        .toast-info {
+            background: var(--info-color) !important;
+            color: var(--light-text) !important;
+        }
+    </style>
 
     <!-- Loading Spinner Overlay -->
     <div class="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-50 d-none"
@@ -1580,7 +1638,7 @@
             // Create a timestamp to prevent caching
             const timestamp = new Date().getTime();
 
-            fetch('/ajax/get_orders/?t=' + timestamp, {
+            fetch('/owner/ajax/get_orders/?t=' + timestamp, {
                 method: 'GET',
                 headers: {
                     'X-CSRFToken': csrfToken,
@@ -1718,7 +1776,7 @@
                         itemElement.style.height = '0';
                         itemElement.style.padding = '0';
                         itemElement.style.margin = '0';
-                        itemElement.style.overflow = 'hidden';
+                        itemElement.style.border = 'none';
 
                         // Remove after animation completes
                         setTimeout(() => {
@@ -2310,7 +2368,7 @@
 
             // Process the update on the server
             const csrfToken = document.getElementById('csrfToken').value;
-            fetch('/update_quantity/', {
+            fetch('/owner/update_quantity/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -2406,7 +2464,15 @@
                 bootstrap.Modal.getInstance(document.getElementById('completeModal')).hide();
 
                 if (data.success) {
-                    setTimeout(() => location.reload(), 500);
+                    // Remove the order card from the DOM immediately
+                    const orderCard = document.getElementById(`order-${currentOrderId}`);
+                    if (orderCard) {
+                        orderCard.classList.add('fade-out');
+                        setTimeout(() => {
+                            if (orderCard.parentElement) orderCard.parentElement.remove();
+                        }, 500); // Match animation duration
+                    }
+                    showToast('Order completed successfully', 'success');
                 }
             } catch (error) {
                 console.error('Error:', error);
@@ -2440,7 +2506,16 @@
 
                 const data = await response.json();
                 if (data.success) {
-                    setTimeout(() => location.reload(), 500);
+                    // Remove the order card from the DOM immediately
+                    const orderCard = document.getElementById(`order-${orderId}`);
+                    if (orderCard) {
+                        // Optionally add fade-out animation
+                        orderCard.classList.add('fade-out');
+                        setTimeout(() => {
+                            if (orderCard.parentElement) orderCard.parentElement.remove();
+                        }, 500); // Match animation duration
+                    }
+                    showToast('Order deleted successfully', 'success');
                 }
             } catch (error) {
                 console.error('Error:', error);
@@ -2528,6 +2603,22 @@
                 .catch(error => {
                     // Optionally handle error silently
                 });
+        }
+
+        // Add swipe gesture detection for mobile
+        function addSwipeListeners(card, onDelete, onComplete) {
+            let startX = null;
+            card.addEventListener('touchstart', function(e) {
+                startX = e.touches[0].clientX;
+            });
+            card.addEventListener('touchend', function(e) {
+                if (startX === null) return;
+                let endX = e.changedTouches[0].clientX;
+                let diff = endX - startX;
+                if (diff < -60) onDelete(); // swipe left to delete
+                if (diff > 60) onComplete(); // swipe right to complete
+                startX = null;
+            });
         }
     </script>
 </body>

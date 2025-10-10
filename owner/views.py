@@ -223,8 +223,7 @@ def delete_order(request):
 def update_quantity(request):
     try:
         hotel = Hotel.objects.get(id=request.user.staffof.id)
-        
-        # Check if hotel subscription is active
+
         if not hotel.status:
             return JsonResponse({
                 "success": False, 
