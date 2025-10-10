@@ -312,6 +312,13 @@
         <h6><i class="fas fa-user-circle me-2"></i>Account</h6>
       </div>
       <ul class="list-group list-group-flush">
+        <a href="{% url 'hotel_profile' %}" class="list-group-item d-flex align-items-center danger">
+          <div class="settings-icon bg-dark">
+            <i class="fa-solid fa-user"></i>
+          </div>
+          <span class="settings-item-text">Hotel Profile</span>
+          <i class="fas fa-chevron-right ms-auto arrow-icon"></i>
+        </a>
         <a href="{% url 'logout' %}" class="list-group-item d-flex align-items-center danger">
           <div class="settings-icon bg-red">
             <i class="fas fa-sign-out-alt"></i>

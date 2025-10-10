@@ -41,6 +41,7 @@ urlpatterns = [
     path('settings/table/edit/', edit_table, name='edit_table'),
     path('settings/table/delete/<int:table_id>/', delete_table, name='delete_table'),
     path('settings/billing/', owner_billing, name='owner_billing'),
+    path('settings/hotel_profile/', hotel_profile, name='hotel_profile'),
     path('payment/', payment, name='payment'),
     path('getlink/<int:plan_id>', get_payment, name='get_pay_link'),
     path('cashfree_webhook', cashfree_webhook, name="cashfree_webhook"),
