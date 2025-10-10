@@ -901,16 +901,17 @@ def get_payment(request, plan_id):
     except BillingPlans.DoesNotExist:
         # print(f"Plan {plan_id} does not exist")
         return HttpResponseBadRequest("Invalid plan selected.")
-
+    # print(1)
     hotel = getattr(request.user, 'staffof', None)
     if not hotel:
         # print(f"User {request.user} has no hotel assigned")
         return HttpResponseBadRequest("This user is not linked to a hotel.")
 
     try:
+        # print(2)
         response = pay_link_customer.create_payment_link(request.user, plan.price)
-        payment_link = response.get("link_url")
         print(response)
+        payment_link = response.get("link_url")
         if not payment_link:
             # print("Payment link missing in Cashfree response:", response)
             return HttpResponseBadRequest("Could not create payment link.")
@@ -964,39 +965,3 @@ def cashfree_webhook(request):
                     hotel.save()
 
     return JsonResponse({"status": "ok"})
-
-# @csrf_exempt
-# def cashfree_webhook(request):
-#     try:
-#         data = json.loads(request.body)
-#         order_id = data.get("order_id")
-#         payment_status = data.get("payment_status")
-#         print("Webhook data:", data)
-#     except Exception as e:
-#         print("Webhook parsing error:", e)
-#         return JsonResponse({"status": "failed", "reason": "invalid payload"}, status=400)
-
-#     try:
-#         payment = PaymentRecord.objects.get(order_id=order_id)
-#     except PaymentRecord.DoesNotExist:
-#         return JsonResponse({"status": "failed", "reason": "Unknown order_id"}, status=400)
-
-#     # Avoid double-processing
-#     if payment.status != "SUCCESS" and payment_status == "SUCCESS":
-#         hotel = payment.hotel
-#         if not hotel:
-#             return JsonResponse({"status": "failed", "reason": "Hotel not found"}, status=400)
-
-#         # Extend expiry: if active, add to current expiry; else start from today
-#         if hotel.expiry and hotel.expiry >= date.today():
-#             hotel.expiry += timedelta(days=30)
-#         else:
-#             hotel.expiry = date.today() + timedelta(days=30)
-
-#         hotel.save()
-#         payment.status = "SUCCESS"
-#         payment.save()
-
-#         print(f"{hotel.name} is now active until {hotel.expiry}")
-
-#     return JsonResponse({"status": "ok"})
