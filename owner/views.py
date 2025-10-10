@@ -608,6 +608,7 @@ def table(request):
     tables = Table.objects.filter(hotel=request.user.staffof).order_by('name')
     hotel = request.user.staffof
     owner = hotel.owner if hasattr(hotel, 'owner') else None
+    tables_list = list(tables.values('id', 'name'))
     return render(request, 'owner/table.html', {'tables': tables, 'owner': owner})
 
 def category(request):
@@ -886,6 +887,31 @@ def bill_history(request):
     }
     return render(request, 'owner/bill_history.html', context)
 
+@login_required
+def hotel_profile(request):
+    hotel = request.user.staffof
+    owner = hotel.owner if hotel else None
+    User = get_user_model()
+    message = None
+
+    if request.method == 'POST':
+        # Update hotel info
+        hotel.name = request.POST.get('hotel_name', hotel.name)
+        hotel.address = request.POST.get('hotel_address', hotel.address)
+        hotel.save()
+        # Update owner info
+        if owner:
+            owner.phone = request.POST.get('owner_phone', owner.phone)
+            owner.city = request.POST.get('owner_city', owner.city)
+            owner.save()
+        message = 'Profile updated successfully.'
+
+    context = {
+        'hotel': hotel,
+        'owner': owner,
+        'message': message,
+    }
+    return render(request, 'owner/hotel_profile.html', context)
 ###################### FINANCE #########################
 
 @login_required
