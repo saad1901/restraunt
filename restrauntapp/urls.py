@@ -14,7 +14,7 @@ urlpatterns = [
     path('agent/', include('agent.urls')),
     path('site/', include('frontsite.urls')),
     path('auth/', include('authn.urls')),
-    path('demo/', include('demo.urls')),
+    # path('demo/', include('demo.urls')),
 
     path('register/owner/', owner_register, name='owner_register'),
     path('register/hotel/', hotel_register, name='hotel_register'),
