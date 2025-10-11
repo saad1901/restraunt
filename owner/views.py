@@ -20,9 +20,6 @@ from django.views.decorators.csrf import csrf_exempt
 from payments import pay_link_customer
 import json, hmac, hashlib, base64
 
-
-
-
 @login_required
 def owner(request):
     if request.user.role != 'owner':
@@ -957,31 +954,40 @@ def verify_signature(payload, header_signature, secret_key):
 
 @csrf_exempt
 def cashfree_webhook(request):
+    if request.method != "POST":
+        pass
 
     try:
         payload = json.loads(request.body)
-        order = payload.get("data", {}).get("order", {})
-        order_id = order.get("order_id")  # Use this as your PaymentRecord.order_id
-        payment_status = order.get("transaction_status")  # SUCCESS / FAILED / etc.
-    except Exception:
-        return JsonResponse({"status": "failed", "reason": "invalid payload"}, status=400)
+        print("-----------------------------------")
+        print("Webhook payload:", payload)
+        print("-----------------------------------")
+    except Exception as e:
+        return JsonResponse({"status": "failed", "reason": f"{e} invalid payload"}, status=400)
+
+    data = payload.get("data", {})
+    order = data.get("order", {})
+    payment = data.get("payment", {})
+
+    order_id = order.get("order_tags", {}).get("link_id")
+    payment_status = payment.get("payment_status")
 
     if not order_id or not payment_status:
         return JsonResponse({"status": "failed", "reason": "missing fields"}, status=400)
 
     try:
-        payment = PaymentRecord.objects.get(order_id=order_id)
+        payment_record = PaymentRecord.objects.get(order_id=order_id)
     except PaymentRecord.DoesNotExist:
-        return JsonResponse({"status": "failed", "reason": "Unknown order_id"}, status=400)
+        return JsonResponse({"status": "failed", "reason": "unknown order_id"}, status=400)
 
-    if payment.status != payment_status:
-        payment.status = payment_status
-        payment.save(update_fields=["status"])
+    if payment_record.status != payment_status:
+        payment_record.status = payment_status
+        payment_record.save(update_fields=["status"])
 
         if payment_status == "SUCCESS":
-            hotel = payment.hotel
+            hotel = payment_record.hotel
             if hotel:
-                plan = BillingPlans.objects.filter(price=payment.amount).first()
+                plan = BillingPlans.objects.filter(price=payment_record.amount).first()
                 if plan:
                     if hotel.expiry and hotel.expiry >= date.today():
                         hotel.expiry += timedelta(days=plan.expiry_days)
