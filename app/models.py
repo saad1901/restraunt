@@ -20,7 +20,7 @@ class Hotel(models.Model):
     expiry = models.DateField(default=default_expiry)
 
     def __str__(self):
-        return self.name
+        return f"({self.id}) {self.name}"
 
 class User(AbstractUser):
     ROLE_CHOICES = [
@@ -36,7 +36,7 @@ class User(AbstractUser):
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='staff')
     staffof = models.ForeignKey(Hotel, on_delete=models.CASCADE, blank=True, null=True)
     def __str__(self):
-        return f"{self.username}"
+        return f"({self.id}) {self.username}"
 
 class Table(models.Model):
     hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE)  # Link table to hotel
