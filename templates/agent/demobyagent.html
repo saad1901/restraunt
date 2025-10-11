@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>See Demo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Subtle button animation */
+    .btn {
+      transition: all 0.2s ease-in-out;
+      transform: translateY(0);
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-100">
+
+  <!-- Navbar -->
+  <nav class="bg-white/80 backdrop-blur border-b border-gray-200 shadow-sm sticky top-0 z-10">
+    <div class="max-w-5xl mx-auto px-4">
+      <div class="flex items-center h-16">
+        <a href="#" class="inline-flex items-center text-gray-700 hover:text-blue-600 transition font-medium">
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" stroke-width="2"
+               viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 19l-7-7 7-7" />
+          </svg>
+          Back
+        </a>
+        <div class="flex-1 flex justify-center">
+          <span class="font-bold text-xl text-gray-800 tracking-wide">See Demo</span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="flex items-center justify-center min-h-[80vh] px-4">
+    <div class="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 text-center border border-gray-100">
+      <h1 class="text-3xl font-extrabold text-gray-800 mb-10 tracking-tight">See Demo</h1>
+      
+      <div class="space-y-4">
+        <a href="#" class="btn block w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-xl">
+          Login Owner
+        </a>
+        <a href="#" class="btn block w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-3 rounded-xl">
+          Waiter Owner
+        </a>
+        <a href="#" class="btn block w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 rounded-xl">
+          Menu by QR
+        </a>
+        <a href="#" class="btn block w-full bg-slate-700 hover:bg-slate-800 text-white font-medium py-3 rounded-xl">
+          Website Page
+        </a>
+      </div>
+
+      <!-- Info Note -->
+      <div class="mt-8">
+        <p class="text-red-600 font-semibold text-base bg-red-50 rounded-lg py-2 px-3 inline-block">
+          ⚠️ आपको वास्तविक ऐप में लॉगिन करना आवश्यक है
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="text-center text-gray-500 text-sm py-4">
+    © 2025 Demo Interface. All rights reserved.
+  </footer>
+
+</body>
+</html>
