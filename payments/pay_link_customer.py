@@ -37,29 +37,28 @@ def create_payment_link(user, amount):
             "send_sms": True,
         },
         "link_meta": {
-            "return_url": "https://hotelsoftware.pythonanywhere.com/owner/",
-            "notify_url": "https://hotelsoftware.pythonanywhere.com/owner/cashfree_webhook",
+            "return_url": settings.CASHFREE_return_url,
+            "notify_url": settings.CASHFREE_notify_url,
         },
     }
 
     try:
         response = requests.post(url, headers=headers, json=data, timeout=15)
         # print("STATUS:", response.status_code)
-        # print("RESPONSE:", response.text)
+        print("RESPONSE:", response.text)
         res_json = response.json()
     except Exception as e:
         res_json = {"status": "failed", "reason": str(e)}
 
+    print("test")
     PaymentRecord.objects.create(
         user=user,
         hotel=hotel,
         order_id=order_id,
         amount=amount,
         status="PENDING",
-        api_response=res_json,
     )
-
-    return res_json
+    return res_json.get("link_url")
 
 # import requests
 # from datetime import datetime
