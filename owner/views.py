@@ -959,9 +959,6 @@ def cashfree_webhook(request):
 
     try:
         payload = json.loads(request.body)
-        print("-----------------------------------")
-        print("Webhook payload:", payload)
-        print("-----------------------------------")
     except Exception as e:
         return JsonResponse({"status": "failed", "reason": f"{e} invalid payload"}, status=400)
 
