@@ -41,7 +41,7 @@ def redirection(request):
     elif user.role == 'staff':
         return redirect('waiterhome')
     elif user.role == 'agent':
-        print('x')
+        # print('x')
         return redirect('agenthome')
     else:
         return redirect('owner_login')
