@@ -933,8 +933,9 @@ def get_payment(request, plan_id):
         return redirect('owner_billing')
 
     try:
-        response = pay_link_customer.create_payment_link(request.user, plan.price)
-        payment_link = response.get("link_url")
+        payment_link = pay_link_customer.create_payment_link(request.user, plan.price)
+
+        # payment_link = response.get("link_url")
         if not payment_link:
             messages.error(request, "Unable to create payment link. Please try again later.")
             return redirect('owner_billing')
