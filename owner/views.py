@@ -924,26 +924,29 @@ def get_payment(request, plan_id):
     try:
         plan = BillingPlans.objects.get(id=plan_id)
     except BillingPlans.DoesNotExist:
-        # print(f"Plan {plan_id} does not exist")
-        return HttpResponseBadRequest("Invalid plan selected.")
-    # print(1)
+        messages.error(request, "Invalid plan selected. Please choose a valid plan.")
+        return redirect('owner_billing')
+
     hotel = getattr(request.user, 'staffof', None)
     if not hotel:
-        # print(f"User {request.user} has no hotel assigned")
-        return HttpResponseBadRequest("This user is not linked to a hotel.")
+        messages.error(request, "Your account is not linked to any hotel. Please contact support.")
+        return redirect('owner_billing')
 
     try:
-        # print(2)
         response = pay_link_customer.create_payment_link(request.user, plan.price)
-        print(response)
         payment_link = response.get("link_url")
         if not payment_link:
-            # print("Payment link missing in Cashfree response:", response)
-            return HttpResponseBadRequest("Could not create payment link.")
+            messages.error(request, "Unable to create payment link. Please try again later.")
+            return redirect('owner_billing')
+            
+        return render(request, 'owner/paypage.html', {
+            'link_url': payment_link,
+            'plan': plan
+        })
+        
     except Exception as e:
-        # print("Error creating payment link:", e)
-        return HttpResponseBadRequest("Payment error")
-    return render(request, 'owner/paypage.html', {'link_url': payment_link})
+        messages.error(request, f"Payment processing error. Please try again later or contact support.")
+        return redirect('owner_billing')
 
 def verify_signature(payload, header_signature, secret_key):
     computed_signature = base64.b64encode(
