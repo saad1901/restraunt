@@ -24,7 +24,7 @@ from django.conf import settings
 
 
 def owner(request):
-    hotel = Hotel.objects.get(id=2)
+    hotel = Hotel.objects.get(id=1)
     
     # Get current date in Indian timezone
     india_tz = timezone.get_current_timezone()
@@ -89,7 +89,7 @@ def owner(request):
 def submit_order(request):
     if request.method == "POST":
         try:
-            hotel = Hotel.objects.get(id=2)
+            hotel = Hotel.objects.get(id=1)
             # Check if hotel subscription is active
             if not hotel.status:
                 return JsonResponse({
@@ -106,7 +106,7 @@ def submit_order(request):
                 table = Table.objects.get(id=table_id)
                 if not table.occupied:
                     # Create a new order for a free table
-                    order = Order.objects.create(table=table, total=0, hotel=hotel, completedby=request.user, order_type='table')
+                    order = Order.objects.create(table=table, total=0, hotel=hotel, completedby=1, order_type='table')
                     table.occupied = True
                     table.save()
                     total_price = 0
@@ -115,14 +115,14 @@ def submit_order(request):
                         order = Order.objects.get(table=table, completed=False, hotel=hotel)
                         total_price = order.total
                     except Order.DoesNotExist:
-                        order = Order.objects.create(table=table, total=0, hotel=hotel, completedby=request.user, order_type='table')
+                        order = Order.objects.create(table=table, total=0, hotel=hotel, completedby=1, order_type='table')
                         total_price = 0
             elif order_type == "online":
                 online_source = data.get("online_source")
                 if not online_source or not items:
                     return JsonResponse({"success": False, "message": "Invalid order details. Missing online source or items."})
                 # Create order with no table, set order_type and online_source (assume model has these fields)
-                order = Order.objects.create(table=None, total=0, hotel=hotel, completedby=request.user, order_type='online', online_source=online_source)
+                order = Order.objects.create(table=None, total=0, hotel=hotel, completedby=1, order_type='online', online_source=online_source)
                 total_price = 0
             else:
                 return JsonResponse({"success": False, "message": "Invalid order type."})
@@ -146,7 +146,7 @@ def submit_order(request):
 @require_POST
 def complete_order(request):
     try:
-        hotel = Hotel.objects.get(id=2)
+        hotel = Hotel.objects.get(id=1)
         
         # Check if hotel subscription is active
         if not hotel.status:
@@ -188,7 +188,7 @@ def complete_order(request):
 @require_POST
 def delete_order(request):
     try:
-        hotel = Hotel.objects.get(id=2)
+        hotel = Hotel.objects.get(id=1)
         
         # Check if hotel subscription is active
         if not hotel.status:
@@ -220,7 +220,7 @@ def delete_order(request):
 @require_POST
 def update_quantity(request):
     try:
-        hotel = Hotel.objects.get(id=2)
+        hotel = Hotel.objects.get(id=1)
 
         if not hotel.status:
             return JsonResponse({
@@ -305,7 +305,7 @@ def set_order_started(request):
     
 
 def add_category(request):
-    hotel = Hotel.objects.get(id=2)
+    hotel = Hotel.objects.get(id=1)
     if request.method == 'POST':
         name = request.POST.get('category_name')
         icon = request.POST.get('category_icon')
@@ -348,7 +348,7 @@ def delete_category(request, category_id):
 
 # 
 def add_menu_item(request):
-    hotel = Hotel.objects.get(id=2)
+    hotel = Hotel.objects.get(id=1)
     if request.method == 'POST':
         # Get values directly from POST request
         name = request.POST.get('item_name')
@@ -369,7 +369,7 @@ def add_menu_item(request):
 
 # 
 def edit_menu_item(request):
-    # hotel = Hotel.objects.get(id=2)
+    # hotel = Hotel.objects.get(id=1)
     if request.method == 'POST':
         menu_item = get_object_or_404(MenuItem, id=request.POST.get('item_id'))
         
@@ -400,7 +400,7 @@ def delete_menu_item(request, item_id):
     
 
 def add_table(request):
-    # hotel = Hotel.objects.get(id=2)
+    # hotel = Hotel.objects.get(id=1)
     if request.method == "POST":
         name = request.POST.get("table_number")
         if name:
@@ -429,11 +429,8 @@ def delete_table(request, table_id):
 
 
 def ajax_get_orders(request):
-
-    if request.user.role != 'owner':
-        return JsonResponse({"success": False, "message": "Unauthorized"})
     
-    hotel = Hotel.objects.get(id=2)
+    hotel = Hotel.objects.get(id=1)
     
     # Get active orders
     orders = Order.objects.filter(completed=False, hotel=hotel)
@@ -593,7 +590,7 @@ def custom_period(request):
 
 
 def button(request):
-    hotel = Hotel.objects.get(id=2)
+    hotel = Hotel.objects.get(id=1)
     context = {
         'expiry' : hotel.expiry,
         'expired' : hotel.expiry < date.today(),
@@ -602,7 +599,7 @@ def button(request):
     return render(request, 'owner/settings.html', context=context)
 
 def table(request):
-    # hotel = Hotel.objects.get(id=2)
+    # hotel = Hotel.objects.get(id=1)
     tables = Table.objects.filter(hotel=2).order_by('name')
     hotel = 2
     owner = hotel.owner if hasattr(hotel, 'owner') else None
@@ -610,12 +607,12 @@ def table(request):
     return render(request, 'owner/table.html', {'tables': tables, 'owner': owner})
 
 def category(request):
-    # hotel = Hotel.objects.get(id=2)
+    # hotel = Hotel.objects.get(id=1)
     categories = MenuCategory.objects.filter(hotel=2)
     return render(request, 'owner/category.html', {'categories':categories})
 
 def item(request):
-    # hotel = Hotel.objects.get(id=2)
+    # hotel = Hotel.objects.get(id=1)
     items = MenuItem.objects.filter(hotel=2).order_by('category')
     categories = MenuCategory.objects.filter(hotel=2)
     return render(request, 'owner/items.html', {'menu_items':items, 'categories':categories})
@@ -783,14 +780,14 @@ def timeanalysis(request):
 
 def staff(request):
     User = get_user_model()
-    hotel = Hotel.objects.get(id=2)
+    hotel = Hotel.objects.get(id=1)
     staff_members = User.objects.filter(staffof=hotel)
     return render(request, 'owner/addstaff.html', {'staff_members':staff_members})
 
 from django.contrib.auth import get_user_model
 # 
 def add_staff(request):
-    hotel = Hotel.objects.get(id=2)
+    hotel = Hotel.objects.get(id=1)
     User = get_user_model()
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -841,7 +838,7 @@ def delete_staff(request):
 def payment(request):
     # Get the hotel associated with the current user
     try:
-        hotel = Hotel.objects.get(id=2)
+        hotel = Hotel.objects.get(id=1)
     except ObjectDoesNotExist:
         messages.error(request, "Unable to find your hotel details. Please contact support.")
         return redirect('button')
@@ -925,13 +922,13 @@ def get_payment(request, plan_id):
         messages.error(request, "Invalid plan selected. Please choose a valid plan.")
         return redirect('owner_billing')
 
-    hotel = getattr(request.user, 'staffof', None)
+    hotel = getattr(1, 'staffof', None)
     if not hotel:
         messages.error(request, "Your account is not linked to any hotel. Please contact support.")
         return redirect('owner_billing')
 
     try:
-        response = pay_link_customer.create_payment_link(request.user, plan.price)
+        response = pay_link_customer.create_payment_link(1, plan.price)
         payment_link = response.get("link_url")
         if not payment_link:
             messages.error(request, "Unable to create payment link. Please try again later.")
@@ -954,10 +951,6 @@ def verify_signature(payload, header_signature, secret_key):
 
 @csrf_exempt
 def cashfree_webhook(request):
-    import json
-    from django.http import JsonResponse
-    from app.models import PaymentRecord, BillingPlans
-    from datetime import date, timedelta
 
     try:
         payload = json.loads(request.body)
