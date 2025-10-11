@@ -16,11 +16,12 @@ from django.contrib.auth.hashers import make_password
 from django.db.models import Count
 from django.db.models.functions import ExtractHour
 from django.contrib.auth import get_user_model
-import json
 from django.views.decorators.csrf import csrf_exempt
 from payments import pay_link_customer
 import json, hmac, hashlib, base64
-from django.conf import settings
+
+
+
 
 @login_required
 def owner(request):
@@ -934,7 +935,6 @@ def get_payment(request, plan_id):
 
     try:
         payment_link = pay_link_customer.create_payment_link(request.user, plan.price)
-
         # payment_link = response.get("link_url")
         if not payment_link:
             messages.error(request, "Unable to create payment link. Please try again later.")
@@ -946,7 +946,7 @@ def get_payment(request, plan_id):
         })
         
     except Exception as e:
-        messages.error(request, f"Payment processing error. Please try again later or contact support.")
+        messages.error(request, f"Payment processing error. {e}")
         return redirect('owner_billing')
 
 def verify_signature(payload, header_signature, secret_key):
@@ -957,10 +957,6 @@ def verify_signature(payload, header_signature, secret_key):
 
 @csrf_exempt
 def cashfree_webhook(request):
-    import json
-    from django.http import JsonResponse
-    from app.models import PaymentRecord, BillingPlans
-    from datetime import date, timedelta
 
     try:
         payload = json.loads(request.body)
