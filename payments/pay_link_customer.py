@@ -37,7 +37,7 @@ def create_payment_link(user, amount):
             "send_sms": True,
         },
         "link_meta": {
-            "return_url": settings.CASHFREE_NOTIFY_URL,
+            "return_url": settings.CASHFREE_RETURN_URL,
             "notify_url": settings.CASHFREE_NOTIFY_URL,
         },
     }
