@@ -1397,7 +1397,7 @@
     <div class="bottom-action-bar">
         <button class="bottom-action" {% if subscription_active %}data-bs-toggle="modal" data-bs-target="#newOrderModal"
             {% else %}onclick="showSubscriptionAlert()" {% endif %}>
-            <i class="fas {% if subscription_active %}fa-plus-circle{% else %}fa-lock{% endif %}"></i>
+            <i class="fas {% if subscription_active %}fa-plus-circle{% else %}fa-solid fa-lock fa-fade{% endif %}"></i>
             <span>New Order</span>
         </button>
         <button class="bottom-action" data-bs-toggle="modal" data-bs-target="#statsModal">
