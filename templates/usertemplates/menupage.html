@@ -549,14 +549,11 @@
         function checkout() {
             if (totalItems > 0) {
                 alert(`Proceeding to checkout with ${totalItems} items for ₹${totalAmount}`);
-                // Add your checkout logic here
             }
         }
 
-        // Veg toggler logic
         function toggleVeg() {
             const vegOnly = document.getElementById('vegToggle').checked;
-            // For each menu-item, show/hide based on food_type
             document.querySelectorAll('.category').forEach(function(category) {
                 let anyVisible = false;
                 category.querySelectorAll('.menu-item').forEach(function(item) {
