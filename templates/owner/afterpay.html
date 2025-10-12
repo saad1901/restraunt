@@ -19,7 +19,7 @@
             padding: 20px;
         }
         .success-card {
-            max-width: 480px;
+            max-width: 500px;
             padding: 40px 30px;
             border-radius: 24px;
             box-shadow: 0 8px 35px rgba(60,40,160,0.15);
@@ -35,7 +35,7 @@
         .success-icon {
             font-size: 80px;
             margin-bottom: 18px;
-            animation: glowIcon 2s infinite alternate;
+            /* animation: glowIcon 2s infinite alternate; */
             user-select: none;
         }
         .success-icon.text-success {
@@ -85,8 +85,8 @@
             font-weight: 700;
         }
         .btn-download, .btn-home, .btn-refresh {
-            padding-left: 28px;
-            padding-right: 28px;
+            padding-left: 20px;
+            padding-right: 20px;
             font-size: 17px;
             font-weight: 600;
             border-radius: 16px;
@@ -94,7 +94,7 @@
             user-select: none;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 5px;
             border: none;
             cursor: pointer;
         }
@@ -188,7 +188,7 @@
         <div class="success-card shadow">
             {% if payment.status == "SUCCESS" or payment.status == "COMPLETED" %}
                 <div class="success-icon text-success" role="img" aria-label="Payment successful">
-                    <i class="fa fa-check-circle"></i>
+                    <i class="fa-solid fa-circle-check fa-fade" style="color: #04d800;"></i>
                 </div>
                 <div class="friendly-msg" role="alert">
                     Congratulations! <br>Your payment was successful.
@@ -214,7 +214,7 @@
             {% endif %}
 
             <div class="transaction-details" aria-label="Transaction Details">
-                <p><strong>Order ID:</strong> {{ payment.order_id }}</p>
+                <p><strong>ID:</strong> {{ payment.order_id }}</p>
                 <p><strong>Amount:</strong> ₹{{ payment.amount }}</p>
                 <p><strong>Status:</strong> {{ payment.status }}</p>
                 <p><strong>Date:</strong> {{ payment.created_at|date:"d M Y, h:i A" }}</p>
@@ -226,7 +226,7 @@
                 </a>
                 {% if payment.status == "SUCCESS" or payment.status == "COMPLETED" %}
                     <a href="#" class="btn btn-download button-icons" role="button" tabindex="0">
-                        <i class="fa fa-file-arrow-down" aria-hidden="true"></i> Download Receipt
+                        <i class="fa fa-file-arrow-down" aria-hidden="true"></i>Receipt
                     </a>
                 {% endif %}
             </div>
