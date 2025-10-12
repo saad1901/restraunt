@@ -3,7 +3,7 @@ from .policy_views import *
 from .views import *
 
 urlpatterns = [
-    path('home/', homepage, name='frontsite'),      
+    path('', homepage, name='frontsite'),      
     path('terms/', terms_view, name='terms'),
     path('privacy/', privacy_view, name='privacy'),
     path('cookies/', cookies_view, name='cookies'),
