@@ -269,19 +269,6 @@
   <div class="payment-card">
     <div class="security-badge" role="status" aria-live="polite">Secure Payment</div>
 
-    <header class="header">
-      <h1 class="title">Complete Your Payment</h1>
-      <p class="hotel-name">{{ hotel.name }}</p>
-      {% if hotel.address %}
-      <p class="hotel-address">{{ hotel.address }}</p>
-      {% endif %}
-    </header>
-
-    <div class="timer-container" role="timer" aria-live="assertive" aria-atomic="true">
-      <span id="countdown-timer">05:00</span>
-      <span>left</span>
-    </div>
-
     <div class="info-card" role="region" aria-label="Payment Details">
       <div class="info-row">
         <span class="info-label">Plan Selected</span>
@@ -326,10 +313,10 @@
         <div class="payment-icon">
           <img src="https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg" alt="Visa" loading="lazy" />
         </div>
-        <div class="payment-icon">
+        <!-- <div class="payment-icon">
           <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="MasterCard"
             loading="lazy" />
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
