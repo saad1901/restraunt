@@ -1,0 +1,243 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Payment Status</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Bootstrap & FontAwesome -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" />
+    <style>
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Inter', sans-serif;
+            padding: 20px;
+        }
+        .success-card {
+            max-width: 480px;
+            padding: 40px 30px;
+            border-radius: 24px;
+            box-shadow: 0 8px 35px rgba(60,40,160,0.15);
+            background: #fff;
+            animation: popIn 0.7s cubic-bezier(0.78, 0.14, 0.15, 0.87);
+            text-align: center;
+        }
+        @keyframes popIn {
+            0% { transform: scale(0.94); opacity: 0; }
+            80% { transform: scale(1.02); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .success-icon {
+            font-size: 80px;
+            margin-bottom: 18px;
+            animation: glowIcon 2s infinite alternate;
+            user-select: none;
+        }
+        .success-icon.text-success {
+            color: #36ce60;
+            text-shadow: 0 0 25px #8beca2;
+        }
+        .success-icon.text-warning {
+            color: #f39c12;
+            text-shadow: 0 0 25px #f7cc85;
+        }
+        @keyframes glowIcon {
+            0% { text-shadow: 0 0 16px; }
+            100% { text-shadow: 0 0 40px; }
+        }
+        .friendly-msg {
+            font-size: 20px;
+            font-weight: 600;
+            color: #414876;
+            margin-bottom: 14px;
+            line-height: 1.3;
+            user-select: text;
+        }
+        .friendly-msg.text-warning {
+            color: #f39c12;
+        }
+        p.description {
+            color: #47595e;
+            margin-bottom: 20px;
+            font-size: 1rem;
+            line-height: 1.5;
+            user-select: text;
+        }
+        .transaction-details {
+            text-align: left;
+            margin-bottom: 24px;
+            border-top: 1px solid #e9ecef;
+            padding-top: 20px;
+            color: #495057;
+            letter-spacing: 0.02em;
+            user-select: text;
+        }
+        .transaction-details p {
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+        strong {
+            font-weight: 700;
+        }
+        .btn-download, .btn-home, .btn-refresh {
+            padding-left: 28px;
+            padding-right: 28px;
+            font-size: 17px;
+            font-weight: 600;
+            border-radius: 16px;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            user-select: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-download {
+            background: linear-gradient(90deg, #7869e6 0%, #41c6e2 100%);
+            color: #fff;
+            box-shadow: 0 5px 15px rgba(65,198,226,0.3);
+        }
+        .btn-download:hover {
+            background: linear-gradient(90deg, #41c6e2 0%, #7869e6 100%);
+            box-shadow: 0 6px 20px rgba(65,198,226,0.45);
+        }
+        .btn-home {
+            background: linear-gradient(90deg, #feb47b 0%, #ff7e5f 100%);
+            color: #fff;
+            box-shadow: 0 5px 15px rgba(255,126,95,0.25);
+        }
+        .btn-home:hover {
+            background: linear-gradient(90deg, #ff7e5f 0%, #feb47b 100%);
+            box-shadow: 0 6px 20px rgba(255,126,95,0.4);
+        }
+        .btn-refresh {
+            background: #f0f0f0;
+            color: #333;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        .btn-refresh:hover {
+            background: #e2e2e2;
+        }
+        .btn-home:focus, .btn-download:focus, .btn-refresh:focus {
+            outline: 3px solid #36ce60;
+            outline-offset: 3px;
+        }
+        .button-icons i {
+            font-size: 20px;
+        }
+        .container > div + div {
+            margin-top: 32px;
+        }
+        .customer-care {
+            background: linear-gradient(90deg, #fdf6e3 0%, #e1f5fa 100%);
+            padding: 20px 18px;
+            border-radius: 18px;
+            box-shadow: 0 2px 12px rgba(69,131,213,0.12);
+            text-align: center;
+            animation: fadeUp 1.2s 0.5s backwards;
+            user-select: none;
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(12px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+        .customer-care i.fa-headset {
+            font-size: 42px;
+            color: #427eb7;
+            margin-bottom: 14px;
+        }
+        .customer-care h5 {
+            margin-bottom: 8px;
+            font-weight: 700;
+            color: #2b3c77;
+            letter-spacing: 0.03em;
+        }
+        .customer-care p {
+            font-size: 0.9rem;
+            color: #41576b;
+            margin-bottom: 8px;
+            user-select: text;
+        }
+        .contact-phone {
+            font-size: 19px;
+            font-weight: 600;
+            color: #3a48a6;
+            text-decoration: none;
+            transition: color 0.2s, text-decoration 0.2s;
+            user-select: text;
+        }
+        .contact-phone:hover,
+        .contact-phone:focus {
+            color: #285889;
+            text-decoration: underline;
+            outline: none;
+        }
+        .fa {
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="success-card shadow">
+            {% if payment.status == "SUCCESS" or payment.status == "COMPLETED" %}
+                <div class="success-icon text-success" role="img" aria-label="Payment successful">
+                    <i class="fa fa-check-circle"></i>
+                </div>
+                <div class="friendly-msg" role="alert">
+                    Congratulations! <br>Your payment was successful.
+                </div>
+                <p class="description">
+                    Thank you for your purchase. Your plan is now active.
+                </p>
+            {% else %}
+                <div class="success-icon text-warning" role="img" aria-label="Payment pending">
+                    <i class="fa fa-clock"></i>
+                </div>
+                <div class="friendly-msg text-warning" role="alert">
+                    Payment Pending Verification
+                </div>
+                <p class="description">
+                    Your payment is being processed. Within a few minutes, your plan will be activated.
+                </p>
+                <div class="mt-3 d-flex justify-content-center">
+                    <button class="btn btn-refresh" onclick="location.reload();" aria-label="Refresh payment status">
+                        <i class="fa fa-sync-alt"></i> Refresh Status
+                    </button>
+                </div>
+            {% endif %}
+
+            <div class="transaction-details" aria-label="Transaction Details">
+                <p><strong>Order ID:</strong> {{ payment.order_id }}</p>
+                <p><strong>Amount:</strong> ₹{{ payment.amount }}</p>
+                <p><strong>Status:</strong> {{ payment.status }}</p>
+                <p><strong>Date:</strong> {{ payment.created_at|date:"d M Y, h:i A" }}</p>
+            </div>
+
+            <div class="mt-3 d-flex justify-content-center gap-3">
+                <a href="{% url 'owner' %}" class="btn btn-home button-icons" role="button" tabindex="0">
+                    <i class="fa fa-home" aria-hidden="true"></i> Home
+                </a>
+                {% if payment.status == "SUCCESS" or payment.status == "COMPLETED" %}
+                    <a href="#" class="btn btn-download button-icons" role="button" tabindex="0">
+                        <i class="fa fa-file-arrow-down" aria-hidden="true"></i> Download Receipt
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="customer-care">
+            <i class="fa fa-headset fa-2x" aria-hidden="true"></i>
+            <h5>Need Help?</h5>
+            <p>Our support is available 24/7.</p>
+            <p>💬 Support: <a href="tel:+918799878583" class="contact-phone" aria-label="Call support">+91-8799878583</a></p>
+        </div>
+    </div>
+</body>
+</html>

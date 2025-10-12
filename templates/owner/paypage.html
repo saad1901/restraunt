@@ -1,185 +1,366 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Complete Your Payment</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Secure Payment - {{ hotel.name }}</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
   <style>
     :root {
       --primary-color: #4CAF50;
-      --primary-hover: #45a049;
-      --background-color: #f5f5f5;
-      --card-bg: #ffffff;
+      --primary-hover: #43a047;
+      --gradient-bg: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
       --text-color: #2c3e50;
       --subtle-text: #7f8c8d;
       --border-color: #e0e0e0;
-      --timer-color: #e74c3c;
+      --card-bg: #ffffff;
+      --success-color: #27ae60;
+      --danger-color: #e74c3c;
+      --shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.3s ease;
     }
 
     body {
       margin: 0;
-      font-family: 'Inter', sans-serif;
-      background: var(--background-color);
+      min-height: 100vh;
+      background: var(--gradient-bg);
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
-      padding: 24px;
+      padding: 20px;
       color: var(--text-color);
     }
 
     .payment-card {
       width: 100%;
-      max-width: 400px;
+      max-width: 480px;
       background: var(--card-bg);
-      border-radius: 12px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-      padding: 30px;
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      padding: 40px 32px;
       text-align: center;
-      box-sizing: border-box;
       border: 1px solid var(--border-color);
+      backdrop-filter: blur(6px);
+      animation: fadeUp 0.5s ease;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .security-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #e8f5e9;
+      color: var(--success-color);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border: 1px solid #c8e6c9;
+      margin-bottom: 20px;
+      user-select: none;
+    }
+
+    .security-badge::before {
+      content: "🔒";
+      font-size: 1.1rem;
     }
 
     .header {
-      margin-bottom: 24px;
+      border-bottom: 2px solid #f3f3f3;
+      padding-bottom: 18px;
+      margin-bottom: 28px;
     }
 
     .title {
-      font-size: 2rem;
+      font-size: 1.75rem;
       font-weight: 700;
-      color: var(--text-color);
-      margin: 0;
+      margin: 0 0 8px 0;
+      letter-spacing: 0.02em;
     }
 
-    .subtitle {
-      font-size: 1rem;
-      font-weight: 500;
+    .hotel-name {
+      color: var(--primary-color);
+      font-weight: 600;
+      font-size: 1.15rem;
+    }
+
+    .hotel-address {
       color: var(--subtle-text);
-      margin: 8px 0 0;
-    }
-
-    .info-section {
-      margin-bottom: 24px;
-    }
-
-    .description {
-      font-size: 1rem;
-      line-height: 1.6;
-      color: var(--text-color);
-      margin-bottom: 12px;
-    }
-    
-    .helpline {
       font-size: 0.9rem;
+      margin-top: 4px;
+    }
+
+    .info-card {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 18px;
+      text-align: left;
+      margin-bottom: 24px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 1px 6px rgba(0, 0, 0, 0.07);
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .info-row:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .info-label {
+      font-size: 0.88rem;
       color: var(--subtle-text);
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .info-value {
+      font-size: 1rem;
+      color: var(--text-color);
+      font-weight: 700;
+      text-align: right;
+    }
+
+    .amount-highlight {
+      font-size: 1.6rem;
+      color: var(--primary-color);
+      font-weight: 800;
     }
 
     .timer-container {
+      background: #fff5f5;
+      border: 2px solid #ffe3e3;
+      border-radius: 10px;
+      padding: 12px 20px;
       display: inline-flex;
       align-items: center;
-      justify-content: center;
-      margin-bottom: 20px;
-      padding: 8px 16px;
-      border-radius: 8px;
-      background: #fdf3f2;
-      border: 1px solid #f9e1e0;
+      margin-bottom: 28px;
+      box-shadow: 0 3px 9px rgba(255, 0, 0, 0.12);
+      user-select: none;
     }
 
     #countdown-timer {
-      font-size: 1.2rem;
-      font-weight: 600;
-      color: var(--timer-color);
-      margin-right: 8px;
-    }
-    
-    .timer-label {
-      font-size: 0.9rem;
-      font-weight: 500;
-      color: var(--timer-color);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--danger-color);
+      margin-right: 10px;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.03em;
     }
 
     .pay-btn {
-      display: inline-block;
-      width: 70%;
-      padding: 16px 24px;
+      width: 100%;
+      padding: 20px 24px;
       background: var(--primary-color);
-      color: var(--card-bg);
-      font-size: 1.1rem;
-      font-weight: 600;
       border: none;
-      border-radius: 8px;
+      border-radius: 14px;
+      color: white;
+      font-size: 1.25rem;
+      font-weight: 700;
       cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      box-shadow: 0 10px 30px rgba(76, 175, 80, 0.5);
       text-decoration: none;
-      transition: background 0.3s ease, transform 0.1s ease;
-      box-shadow: 0 4px 10px rgba(76, 175, 80, 0.3);
+      position: relative;
+      overflow: hidden;
     }
 
     .pay-btn:hover {
       background: var(--primary-hover);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 15px rgba(76, 175, 80, 0.4);
+      transform: translateY(-4px);
+      box-shadow: 0 14px 40px rgba(76, 175, 80, 0.6);
+    }
+
+    .pay-btn:active {
+      transform: translateY(-1px);
+    }
+
+    .footer-info {
+      margin-top: 28px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .footer-info p {
+      color: var(--subtle-text);
+      font-size: 0.9rem;
+      margin: 8px 0;
+      user-select: none;
+    }
+
+    .payment-methods {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    .payment-icon img {
+      width: 56px;
+      height: auto;
+      object-fit: contain;
+      filter: grayscale(40%);
+      transition: filter 0.3s ease, transform 0.3s ease;
+      cursor: default;
+    }
+
+    .payment-icon img:hover {
+      filter: none;
+      transform: scale(1.08);
     }
 
     @media (max-width: 480px) {
-      .payment-card {
-        padding: 24px;
-      }
       .title {
-        font-size: 1.8rem;
+        font-size: 1.5rem;
       }
-      .pay-btn {
-        width: 80%;
+
+      .amount-highlight {
+        font-size: 1.4rem;
+      }
+
+      .timer-container {
+        padding: 10px 16px;
+        margin-bottom: 20px;
+      }
+
+      #countdown-timer {
+        font-size: 1.3rem;
+        margin-right: 8px;
       }
     }
   </style>
 </head>
+
 <body>
   <div class="payment-card">
+    <div class="security-badge" role="status" aria-live="polite">Secure Payment</div>
+
     <header class="header">
       <h1 class="title">Complete Your Payment</h1>
-      <p class="subtitle">Cloudbits Pvt Ltd</p>
+      <p class="hotel-name">{{ hotel.name }}</p>
+      {% if hotel.address %}
+      <p class="hotel-address">{{ hotel.address }}</p>
+      {% endif %}
     </header>
 
-    <div class="info-section">
-      <div class="timer-container">
-        <span id="countdown-timer">05:00</span>
-        <span class="timer-label">minutes remaining</span>
-      </div>
-      <p class="description">
-        Please complete your payment within the next 5 minutes to confirm your subscription.
-        You will be redirected to a secure payment gateway.
-      </p>
-      <p class="helpline">Helpline: +91-8799878583</p>
+    <div class="timer-container" role="timer" aria-live="assertive" aria-atomic="true">
+      <span id="countdown-timer">05:00</span>
+      <span>left</span>
     </div>
 
-    <a href="{{ link_url }}" target="_blank" class="pay-btn" aria-label="Pay Now via Cashfree">Pay Now</a>
+    <div class="info-card" role="region" aria-label="Payment Details">
+      <div class="info-row">
+        <span class="info-label">Plan Selected</span>
+        <span class="info-value">{{ plan.name }}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Subscriber</span>
+        <span class="info-value">{{ payer.get_full_name|default:payer.username }}</span>
+      </div>
+      {% if payer.phone %}
+      <div class="info-row">
+        <span class="info-label">Phone</span>
+        <span class="info-value" style="font-size: 0.85rem;">{{ payer.phone }}</span>
+      </div>
+      {% endif %}
+      <div class="info-row" style="flex-direction: column; align-items: flex-end;">
+        <span class="info-label" style="align-self: flex-start;">Amount to Pay</span>
+        <span class="info-value amount-highlight">₹{{ plan.price }}</span>
+        <small style="font-style: italic; color: var(--subtle-text); font-weight: normal; margin-top: 2px;">for
+          {{plan.expiry_days}} days</small>
+      </div>
+
+    </div>
+
+    <a href="{{ link_url }}" target="_blank" class="pay-btn" aria-label="Proceed to secure payment">
+      <span>Pay ₹{{ plan.price }} Now</span>
+      <span aria-hidden="true">➜</span>
+    </a>
+
+    <div class="footer-info">
+      <p>💬 Support: <a href="tel:+918799878583" style="color: inherit; text-decoration: none;">+91-8799878583</a></p>
+
+      <div class="payment-methods" aria-label="Accepted Payment Methods">
+        <div class="payment-icon">
+          <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/bhim-upi-icon.svg"
+            alt="UPI Logo" loading="lazy" />
+        </div>
+        <div class="payment-icon">
+          <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/rupay-logo-icon.svg"
+            alt="RuPay Logo" loading="lazy" />
+        </div>
+        <div class="payment-icon">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg" alt="Visa" loading="lazy" />
+        </div>
+        <div class="payment-icon">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="MasterCard"
+            loading="lazy" />
+        </div>
+      </div>
+    </div>
   </div>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const timerDisplay = document.getElementById('countdown-timer');
-      const duration = 5 * 60; // 5 minutes in seconds
-      let timeLeft = duration;
+      let timeLeft = 5 * 60;
 
       function updateTimer() {
         const minutes = Math.floor(timeLeft / 60);
-        let seconds = timeLeft % 60;
-        seconds = seconds < 10 ? '0' + seconds : seconds;
+        const seconds = (timeLeft % 60).toString().padStart(2, '0');
         timerDisplay.textContent = `${minutes}:${seconds}`;
-
+        if (timeLeft <= 60) {
+          timerDisplay.style.color = 'var(--danger-color)';
+        }
         if (timeLeft <= 0) {
-          clearInterval(timerInterval);
+          clearInterval(interval);
           timerDisplay.textContent = "00:00";
+          const btn = document.querySelector('.pay-btn');
+          btn.style.opacity = '0.5';
+          btn.style.pointerEvents = 'none';
+          btn.innerText = 'Session Expired';
         }
         timeLeft--;
       }
 
       updateTimer();
-      const timerInterval = setInterval(updateTimer, 1000);
+      const interval = setInterval(updateTimer, 1000);
     });
   </script>
 </body>
+
 </html>

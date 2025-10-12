@@ -918,6 +918,14 @@ def owner_billing(request):
     return render(request, 'owner/billing.html', {'billing_plans': billing_plans})
 
 @login_required
+def afterpay(request):
+    payment = PaymentRecord.objects.filter(user_id = request.user).order_by('-created_at').first()
+    context = {
+        'payment' : payment
+    }
+    return render(request, 'owner/afterpay.html', context)
+
+@login_required
 def get_payment(request, plan_id):
     try:
         plan = BillingPlans.objects.get(id=plan_id)
@@ -932,14 +940,15 @@ def get_payment(request, plan_id):
 
     try:
         payment_link = pay_link_customer.create_payment_link(request.user, plan.price)
-        # payment_link = response.get("link_url")
         if not payment_link:
             messages.error(request, "Unable to create payment link. Please try again later.")
             return redirect('owner_billing')
             
         return render(request, 'owner/paypage.html', {
-            'link_url': payment_link,
-            'plan': plan
+        'link_url': payment_link,
+        'plan': plan,
+        'payer': request.user,       # Add payer to context
+        'hotel': hotel       # Add hotel to context
         })
         
     except Exception as e:

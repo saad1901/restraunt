@@ -45,5 +45,6 @@ urlpatterns = [
     path('payment/', payment, name='payment'),
     path('getlink/<int:plan_id>', get_payment, name='get_pay_link'),
     path('cashfree_webhook', cashfree_webhook, name="cashfree_webhook"),
-    path('billhistory', bill_history, name='billhistory')
+    path('billhistory', bill_history, name='billhistory'),
+    path('afterpay', afterpay, name="afterpay")
 ]   
