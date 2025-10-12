@@ -61,5 +61,5 @@ def create_payment_link(user, amount):
         status="PENDING",
         payment_link=payment_link
     )
-    return 
+    return payment_link
 
