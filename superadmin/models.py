@@ -10,3 +10,6 @@ class BillingPlans(models.Model):
     active = models.BooleanField(default=True)
     description = models.TextField(blank=True, null=True)
     expiry_days = models.IntegerField(default=30)
+    
+    def __str__(self):
+        return f"{self.name} | {self.price}"
