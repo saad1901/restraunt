@@ -45,11 +45,9 @@ def create_payment_link(user, amount):
     try:
         response = requests.post(url, headers=headers, json=data, timeout=15)
         # print("STATUS:", response.status_code)
-        print("RESPONSE:", response.text)
+        # print("RESPONSE:", response.text)
         res_json = response.json()
-        print('test1')
-    except Exception as e:
-        print('test2')
+    except Exception as e:   
         res_json = {"status": "failed", "reason": str(e)}
 
     payment_link = res_json.get("link_url")
