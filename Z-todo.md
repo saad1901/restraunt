@@ -1,0 +1,2 @@
+- add another user type, cashier , can be created by owner itself from login
+- 

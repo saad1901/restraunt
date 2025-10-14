@@ -373,7 +373,7 @@
     </div>
 
     <div class="page-footer">
-      <p class="mb-0">{{ request.user.staffof.name }} • Version 1.0.0</p>
+      <p class="mb-0">•• {{ request.user.staffof.name }} ••</p>
     </div>
   </div>
 
@@ -457,96 +457,118 @@
         });
       });
 
-      document.getElementById('generateQRCodesPDF').addEventListener('click', async function() {
-        try {
-          const { jsPDF } = window.jspdf;
-          const doc = new jsPDF({ unit: 'pt', format: 'a4' });
-          const tables = [
-            {% for table in tables %}
-              { name: `{{ table.name|escapejs }}` },
-            {% endfor %}
-          ];
-          const hotelName = `{{ request.user.staffof.name|escapejs }}`;
-          const ownerPhone = `{{ owner.phone|default:'' }}`;
-          const qrUrl = `{{ request.scheme }}://{{ request.get_host }}/user/getmenu/{{ request.user.staffof.id }}`;
-          const pageWidth = doc.internal.pageSize.getWidth();
-          const pageHeight = doc.internal.pageSize.getHeight();
-          const margin = 32;
-          const cardW = 260, cardH = 320;
-          const qrSize = 120;
-          const qrBorderPad = 14;
-          const cardBg = '#f5f7fa';
-          const fontSizeTitle = 22;
-          const fontSizeTable = 15;
-          const fontSizePhone = 11;
-          const fontColor = '#22223b';
-          const accentColor = '#3f51b5';
-          const greyBorder = '#b0b0b0';
-          // 2 columns, 2 rows per page
-          const cols = 2, rows = 2;
-          const xSpacing = (pageWidth - 2 * margin - cols * cardW) / (cols - 1);
-          const ySpacing = (pageHeight - 2 * margin - rows * cardH) / (rows - 1);
-          for (let i = 0; i < tables.length; i++) {
-            const pageIdx = Math.floor(i / (cols * rows));
-            const idxInPage = i % (cols * rows);
-            const row = Math.floor(idxInPage / cols);
-            const col = idxInPage % cols;
-            if (i > 0 && idxInPage === 0) {
-              doc.addPage();
-            }
-            const x = margin + col * (cardW + xSpacing);
-            const y = margin + row * (cardH + ySpacing);
-            // Card background (sharp corners)
-            doc.setFillColor(cardBg);
-            doc.rect(x, y, cardW, cardH, 'F');
-            // Hotel Name
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(fontSizeTitle);
-            doc.setTextColor(accentColor);
-            doc.text(hotelName, x + cardW / 2, y + 38, { align: 'center' });
-            // Underline hotel name
-            const nameWidth = doc.getTextWidth(hotelName);
-            doc.setDrawColor(accentColor);
-            doc.setLineWidth(1);
-            doc.line(x + (cardW - nameWidth) / 2, y + 42, x + (cardW + nameWidth) / 2, y + 42);
-            // QR code border (sharp)
-            const qrBorderX = x + (cardW - qrSize - 2 * qrBorderPad) / 2;
-            const qrBorderY = y + 54;
-            doc.setDrawColor(greyBorder);
-            doc.setLineWidth(1.5);
-            doc.rect(qrBorderX, qrBorderY, qrSize + 2 * qrBorderPad, qrSize + 2 * qrBorderPad, 'S');
-            // QR code
-            const qrImgUrl = getQRCodeDataUrl(qrUrl, qrSize);
-            const img = await new Promise(resolve => {
-              const image = new window.Image();
-              image.crossOrigin = 'Anonymous';
-              image.onload = () => resolve(image);
-              image.src = qrImgUrl;
-            });
-            doc.addImage(img, 'PNG', qrBorderX + qrBorderPad, qrBorderY + qrBorderPad, qrSize, qrSize);
-            // Divider
-            doc.setDrawColor(accentColor);
-            doc.setLineWidth(1.2);
-            doc.line(x + 24, qrBorderY + qrSize + 2 * qrBorderPad + 14, x + cardW - 24, qrBorderY + qrSize + 2 * qrBorderPad + 14);
-            // Table Name
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(fontSizeTable);
-            doc.setTextColor(fontColor);
-            doc.text(tables[i].name, x + cardW / 2, qrBorderY + qrSize + 2 * qrBorderPad + 38, { align: 'center' });
-            // Owner phone number
-            if (ownerPhone) {
-              doc.setFont('helvetica', 'normal');
-              doc.setFontSize(fontSizePhone);
-              doc.setTextColor('#888888');
-              doc.text('Call Owner: ' + ownerPhone, x + cardW / 2, qrBorderY + qrSize + 2 * qrBorderPad + 56, { align: 'center' });
-            }
-          }
-          doc.save('table_qrcodes.pdf');
-        } catch (err) {
-          console.error('QR PDF generation error:', err);
-          alert('Failed to generate QR PDF. See console for details.');
-        }
+document.getElementById('generateQRCodesPDF').addEventListener('click', async function() {
+  try {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+
+    const tables = [
+      {% for table in tables %}
+        { name: `{{ table.name|escapejs }}` },
+      {% endfor %}
+    ];
+
+    const hotelName = `{{ request.user.staffof.name|escapejs }}`;
+    const ownerPhone = `{{ owner.phone|default:'' }}`;
+    const qrUrl = `{{ request.scheme }}://{{ request.get_host }}/user/getmenu/{{ request.user.staffof.id }}`;
+
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const margin = 32;
+    const cardW = 280, cardH = 360; // slightly bigger for padding and instructions
+    const qrSize = 130;
+    const qrBorderPad = 16;
+    const cardBg = '#ffffff';
+    const cardShadow = '#cccccc';
+    const fontColorPrimary = '#222222';
+    const fontColorSecondary = '#555555';
+    const accentColor = '#0057b8'; // fresh blue tone
+    const greyBorder = '#bbbbbb';
+
+    // 2 columns, 2 rows per page
+    const cols = 2, rows = 2;
+    const xSpacing = (pageWidth - 2 * margin - cols * cardW) / (cols - 1);
+    const ySpacing = (pageHeight - 2 * margin - rows * cardH) / (rows - 1);
+
+    for (let i = 0; i < tables.length; i++) {
+      const pageIdx = Math.floor(i / (cols * rows));
+      const idxInPage = i % (cols * rows);
+      const row = Math.floor(idxInPage / cols);
+      const col = idxInPage % cols;
+
+      if (i > 0 && idxInPage === 0) {
+        doc.addPage();
+      }
+
+      const x = margin + col * (cardW + xSpacing);
+      const y = margin + row * (cardH + ySpacing);
+
+      // Card background with rounded corners and shadow
+      doc.setFillColor(cardBg);
+      doc.setDrawColor(cardShadow);
+      doc.setLineWidth(0.3);
+      doc.roundedRect(x, y, cardW, cardH, 12, 12, 'F');
+
+      // Hotel name (header)
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(24);
+      doc.setTextColor(accentColor);
+      doc.text(hotelName, x + cardW / 2, y + 48, { align: 'center' });
+
+      // Divider line under hotel name
+      doc.setDrawColor(accentColor);
+      doc.setLineWidth(1.5);
+      const nameWidth = doc.getTextWidth(hotelName);
+      doc.line(x + (cardW - nameWidth) / 2, y + 54, x + (cardW + nameWidth) / 2, y + 54);
+
+      // QR code border with rounded corners
+      const qrBorderX = x + (cardW - qrSize - 2 * qrBorderPad) / 2;
+      const qrBorderY = y + 70;
+      doc.setDrawColor(greyBorder);
+      doc.setLineWidth(1.2);
+      doc.roundedRect(qrBorderX, qrBorderY, qrSize + 2 * qrBorderPad, qrSize + 2 * qrBorderPad, 8, 8, 'S');
+
+      // QR code image
+      const qrImgUrl = getQRCodeDataUrl(qrUrl, qrSize);
+      const img = await new Promise(resolve => {
+        const image = new window.Image();
+        image.crossOrigin = 'Anonymous';
+        image.onload = () => resolve(image);
+        image.src = qrImgUrl;
       });
+      doc.addImage(img, 'PNG', qrBorderX + qrBorderPad, qrBorderY + qrBorderPad, qrSize, qrSize);
+
+      // Table Name
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(18);
+      doc.setTextColor(fontColorPrimary);
+      doc.text(tables[i].name, x + cardW / 2, qrBorderY + qrSize + 2 * qrBorderPad + 50, { align: 'center' });
+
+      // Owner phone with icon - slightly smaller, secondary color
+      if (ownerPhone) {
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(12);
+        doc.setTextColor(fontColorSecondary);
+        doc.text('Owner Contact: ' + ownerPhone, x + cardW / 2, qrBorderY + qrSize + 2 * qrBorderPad + 72, { align: 'center' });
+      }
+
+      // Instruction text for scanning
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'italic');
+      doc.setTextColor(fontColorSecondary);
+      const instruction = 'Scan this QR code to view the menu and order.';
+      doc.text(instruction, x + cardW / 2, qrBorderY + qrSize + 2 * qrBorderPad + 92, { align: 'center' });
+    }
+
+    // Save the PDF
+    doc.save('Table_QRCodes.pdf');
+
+  } catch (err) {
+    console.error('QR PDF generation error:', err);
+    alert('Failed to generate QR PDF. See console for details.');
+  }
+});
+
     });
   </script>
 </body>

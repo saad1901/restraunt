@@ -48,9 +48,11 @@ def create_payment_link(user, amount):
         # print("RESPONSE:", response.text)
         res_json = response.json()
     except Exception as e:   
+        print(e)
         res_json = {"status": "failed", "reason": str(e)}
 
     payment_link = res_json.get("link_url")
+    print("link :", res_json, payment_link)
     PaymentRecord.objects.create(
         user=user,
         hotel=hotel,

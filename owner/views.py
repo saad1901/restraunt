@@ -53,7 +53,6 @@ def owner(request):
         hotel=request.user.staffof
     ).count()
     
-    # Get categories and menu items for the new order modal
     categories = MenuCategory.objects.filter(hotel=request.user.staffof)
     items = MenuItem.objects.filter(hotel=request.user.staffof).order_by('category')
     try:

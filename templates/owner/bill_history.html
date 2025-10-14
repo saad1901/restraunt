@@ -125,11 +125,11 @@
         </div>
 
         <div class="mt-2 mt-md-0 text-md-end">
-          {% if record.status == 'SUCCESS' %}
+          {% if record.status == 'SUCCESS'%}
             <a href="{{ record.payment_link }}" target="_blank" class="btn-action btn btn-success">
               <i class="fas fa-check-circle"></i>Receipt
             </a>
-          {% elif record.status == 'PENDING' %}
+          {% elif record.status == 'PENDING' and record.payment_link %}
             <a href="{{ record.payment_link }}" target="_blank" class="btn-action btn btn-primary">
               <i class="fas fa-credit-card"></i> Pay Now
             </a>
