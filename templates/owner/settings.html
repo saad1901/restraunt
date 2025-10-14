@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,35 +7,36 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
   <style>
+    /* New, cleaner color palette */
     :root {
-      --primary: #4f46e5;
-      --primary-light: rgba(79, 70, 229, 0.1);
-      --primary-dark: #4338ca;
-      --success: #10b981;
-      --danger: #ef4444;
-      --warning: #f59e0b;
-      --info: #0ea5e9;
-      --bg-color: #f8fafc;
-      --text-color: #334155;
+      --primary: #5a54f0; /* Softer, more modern purple */
+      --primary-light: rgba(90, 84, 240, 0.1);
+      --primary-dark: #4b45d9;
+      --success: #198754;
+      --danger: #dc3545;
+      --warning: #ffc107;
+      --info: #0d6efd;
+      --bg-color: #f4f7f9; /* Lighter, more elegant background */
+      --text-color: #212529;
+      --subtle-text: #6c757d;
       --card-bg: #ffffff;
-      --border-color: #e2e8f0;
-      --hover-bg: #f1f5f9;
+      --border-color: #e9ecef;
+      --hover-bg: #e9ecef;
       --radius: 0.75rem;
-      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
     }
 
     body {
       background-color: var(--bg-color);
-      font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
       color: var(--text-color);
-      line-height: 1.5;
+      line-height: 1.6;
     }
 
-    /* Navbar Styles */
+    /*--- Navbar Styles ---*/
     .navbar {
       background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-      box-shadow: var(--shadow-md);
+      box-shadow: var(--shadow-sm);
       padding: 0.75rem 1rem;
       position: sticky;
       top: 0;
@@ -44,72 +44,65 @@
     }
 
     .navbar-brand {
-      font-size: 1.25rem;
+      font-size: 1.2rem;
       font-weight: 600;
       color: white;
     }
 
     .btn-back {
-      background: none;
-      border: none;
       color: white;
-      font-size: 1.25rem;
+      font-size: 1.2rem;
+      transition: all 0.2s ease;
       display: flex;
       align-items: center;
-      justify-content: center;
-      width: 2rem;
-      height: 2rem;
-      border-radius: 50%;
-      transition: background-color 0.2s;
     }
 
     .btn-back:hover {
-      background-color: rgba(255, 255, 255, 0.1);
+      color: #e0e0e0;
     }
 
-    .btn-back:focus {
-      outline: none;
-      box-shadow: none;
-    }
-
-    /* Settings Container */
+    /*--- Settings Container ---*/
     .settings-container {
-      max-width: 768px;
-      margin: 0 auto;
-      padding: 1.5rem 1rem;
+      max-width: 800px; /* Wider container for a more desktop-friendly look */
+      margin: 2rem auto;
+      padding: 0 1rem;
     }
 
-    /* Card & List Group Styles */
+    /*--- Card & List Group Styles ---*/
     .settings-card {
-      border: none;
+      border: 1px solid var(--border-color); /* Added a subtle border */
       border-radius: var(--radius);
       overflow: hidden;
       background: var(--card-bg);
       box-shadow: var(--shadow-sm);
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
     }
 
     .settings-card .card-header {
       background-color: var(--card-bg);
       border-bottom: 1px solid var(--border-color);
-      padding: 1rem 1.25rem;
+      padding: 1.25rem 1.5rem; /* Increased padding */
     }
 
     .settings-card .card-header h6 {
       margin: 0;
-      color: var(--text-color);
+      color: var(--subtle-text);
       font-weight: 600;
-      font-size: 0.875rem;
+      font-size: 0.85rem;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.08em;
     }
 
     .settings-card .list-group-item {
       border: none;
       border-bottom: 1px solid var(--border-color);
       background: var(--card-bg);
-      padding: 0.875rem 1.25rem;
+      padding: 1rem 1.5rem;
       transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      text-decoration: none; /* Remove underline from links */
+      color: var(--text-color);
     }
 
     .settings-card .list-group-item:last-child {
@@ -121,20 +114,22 @@
       transform: translateX(4px);
     }
 
-    .settings-card .list-group-item.danger:hover {
-      background-color: rgba(239, 68, 68, 0.1);
-    }
-
     .settings-icon {
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 2.25rem;
-      height: 2.25rem;
+      width: 2.5rem;
+      height: 2.5rem;
       border-radius: 50%;
-      margin-right: 1rem;
+      margin-right: 1.25rem;
       font-size: 1rem;
       color: white;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+      transition: transform 0.2s ease;
+    }
+
+    .list-group-item:hover .settings-icon {
+      transform: scale(1.05); /* Zoom effect on hover */
     }
 
     .settings-item-text {
@@ -142,33 +137,9 @@
       font-size: 0.95rem;
     }
 
-    .settings-icon.bg-purple {
-      background-color: var(--primary);
-    }
-
-    .settings-icon.bg-green {
-      background-color: var(--success);
-    }
-
-    .settings-icon.bg-yellow {
-      background-color: var(--warning);
-    }
-
-    .settings-icon.bg-red {
-      background-color: var(--danger);
-    }
-
-    .settings-icon.bg-blue {
-      background-color: var(--info);
-    }
-
-    .settings-icon.bg-gray {
-      background-color: #64748b;
-    }
-
     .arrow-icon {
-      color: #94a3b8;
-      transition: transform 0.2s;
+      color: var(--subtle-text);
+      transition: transform 0.2s, color 0.2s;
     }
 
     .list-group-item:hover .arrow-icon {
@@ -176,66 +147,95 @@
       color: var(--primary);
     }
 
-    .list-group-item.danger:hover .arrow-icon {
-      color: var(--danger);
-    }
+    /* Color adjustments for icons to match a professional palette */
+    .settings-icon.bg-purple { background-color: #675ef0; }
+    .settings-icon.bg-green { background-color: #28a745; }
+    .settings-icon.bg-yellow { background-color: #ffc107; }
+    .settings-icon.bg-red { background-color: #dc3545; }
+    .settings-icon.bg-blue { background-color: #0d6efd; }
+    .settings-icon.bg-gray { background-color: #6c757d; }
+    .settings-icon.bg-success { background-color: #198754; }
+
+   .expiry-section .badge {
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  box-shadow: 0 4px 8px rgb(0 0 0 / 0.1);
+  cursor: default;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.expiry-section .badge i {
+  font-size: 1.25rem;
+}
+
+.expiry-section .badge.active {
+  background-color: #0da5f1; /* light blue */
+  color: #ffffff; /* blue-600 */
+}
+
+.expiry-section .badge.expired {
+  background-color: #ff5c57; /* light red */
+  color: #ffffff; /* red-600 */
+}
+
+.expiry-section .badge:hover {
+  box-shadow: 0 8px 16px rgb(0 0 0 / 0.15);
+  transform: translateY(-2px);
+}
 
     /* Footer */
     .settings-footer {
       text-align: center;
-      padding: 1rem;
-      color: #64748b;
+      padding: 2rem 1rem;
+      color: var(--subtle-text);
       font-size: 0.875rem;
     }
 
-    .settings-footer a {
-      color: var(--primary);
-      text-decoration: none;
-    }
-
-    .settings-footer a:hover {
-      text-decoration: underline;
+    .settings-footer p {
+      margin-bottom: 0.25rem;
     }
   </style>
 </head>
-
 <body>
-  <!-- Navbar with Back Button and Title -->
   <nav class="navbar">
     <div class="container-fluid">
-      <a class="btn-back me-2" href="{% url 'owner' %}" title="Back">
+      <a class="btn-back me-2" href="{% url 'owner' %}" aria-label="Back">
         <i class="fas fa-arrow-left"></i>
       </a>
       <span class="navbar-brand">Settings</span>
     </div>
   </nav>
 
-  <div style="margin-left: 20px; margin-top: 10px;">
-    Plan Expiring on
-    <span class="{% if expired %}text-danger{% else %}text-success{% endif %} fw-bold">
-      {{ expiry }}
-    </span>
-  </div>
-
-
-
-
-  <!-- Main Content -->
   <div class="settings-container">
-    <!-- Management Section -->
-    <div class="settings-card shadow-sm mb-4">
+<div class="expiry-section d-flex align-items-center gap-2" style="margin-bottom: 10px;">
+  {% if expired %}
+  <span class="badge expired px-3 py-2 d-flex align-items-center">
+    <i class="fas fa-exclamation-triangle me-2"></i> Plan Expired on {{ expiry }}
+  </span>
+  {% else %}
+  <span class="badge active px-3 py-2 d-flex align-items-center">
+    <i class="fas fa-hourglass-half me-2"></i> Plan valid until {{ expiry }}
+  </span>
+  {% endif %}
+</div>
+
+
+    <div class="settings-card">
       <div class="card-header">
         <h6><i class="fas fa-sliders me-2"></i>Restaurant Management</h6>
       </div>
       <ul class="list-group list-group-flush">
-        <a class="list-group-item d-flex align-items-center" href="{% url 'staff' %}">
+        <a class="list-group-item" href="{% url 'staff' %}">
           <div class="settings-icon bg-purple">
-            <i class="fa-solid fa-user"></i>
+            <i class="fa-solid fa-user-group"></i>
           </div>
           <span class="settings-item-text">Staff Management</span>
           <i class="fas fa-chevron-right ms-auto arrow-icon"></i>
         </a>
-        <a href="{% url 'table' %}" class="list-group-item d-flex align-items-center">
+        <a href="{% url 'table' %}" class="list-group-item">
           <div class="settings-icon bg-green">
             <i class="fas fa-chair"></i>
           </div>
@@ -245,21 +245,20 @@
       </ul>
     </div>
 
-    <!-- Menu Section -->
-    <div class="settings-card shadow-sm mb-4">
+    <div class="settings-card">
       <div class="card-header">
         <h6><i class="fas fa-utensils me-2"></i>Menu Configuration</h6>
       </div>
       <ul class="list-group list-group-flush">
-        <a href="{% url 'category' %}" class="list-group-item d-flex align-items-center">
-          <div class="settings-icon bg-yellow">
+        <a href="{% url 'category' %}" class="list-group-item">
+          <div class="settings-icon bg-warning">
             <i class="fas fa-list"></i>
           </div>
           <span class="settings-item-text">Menu Categories</span>
           <i class="fas fa-chevron-right ms-auto arrow-icon"></i>
         </a>
-        <a href="{% url 'item' %}" class="list-group-item d-flex align-items-center">
-          <div class="settings-icon bg-red">
+        <a href="{% url 'item' %}" class="list-group-item">
+          <div class="settings-icon bg-danger">
             <i class="fas fa-utensils"></i>
           </div>
           <span class="settings-item-text">Menu Items</span>
@@ -268,60 +267,56 @@
       </ul>
     </div>
 
-    <!-- Finance Section -->
-    <div class="settings-card shadow-sm mb-4">
+    <div class="settings-card">
       <div class="card-header">
         <h6><i class="fas fa-chart-line me-2"></i>Financial Tools</h6>
       </div>
       <ul class="list-group list-group-flush">
-        <a href="{% url 'reports' %}" class="list-group-item d-flex align-items-center">
-          <div class="settings-icon bg-blue">
+        <a href="{% url 'reports' %}" class="list-group-item">
+          <div class="settings-icon bg-info">
             <i class="fas fa-chart-bar"></i>
           </div>
           <span class="settings-item-text">Sales Reports</span>
           <i class="fas fa-chevron-right ms-auto arrow-icon"></i>
         </a>
-        <a href="{% url 'payment' %}" class="list-group-item d-flex align-items-center">
+        <a href="{% url 'payment' %}" class="list-group-item">
           <div class="settings-icon bg-gray">
             <i class="fa-solid fa-wallet"></i>
           </div>
           <span class="settings-item-text">Payment Methods</span>
           <i class="fas fa-chevron-right ms-auto arrow-icon"></i>
         </a>
-        <a href="{% url 'owner_billing' %}" class="list-group-item d-flex align-items-center">
+        <a href="{% url 'owner_billing' %}" class="list-group-item">
           <div class="settings-icon bg-success">
-            <i class="fa-solid fa-indian-rupee-sign fa-fade"></i>
+            <i class="fa-solid fa-indian-rupee-sign"></i>
           </div>
           <span class="settings-item-text">Billing</span>
           <i class="fas fa-chevron-right ms-auto arrow-icon"></i>
         </a>
-        <a href="{% url 'billhistory' %}" class="list-group-item d-flex align-items-center">
+        <a href="{% url 'billhistory' %}" class="list-group-item">
           <div class="settings-icon bg-purple">
             <i class="fas fa-history"></i>
           </div>
           <span class="settings-item-text">Bill History</span>
           <i class="fas fa-chevron-right ms-auto arrow-icon"></i>
         </a>
-
       </ul>
     </div>
 
-    <!-- Account Section -->
-    <div class="settings-card shadow-sm">
+    <div class="settings-card">
       <div class="card-header">
         <h6><i class="fas fa-user-circle me-2"></i>Account</h6>
       </div>
       <ul class="list-group list-group-flush">
-        <a href="{% url 'hotel_profile' %}" class="list-group-item d-flex align-items-center danger">
+        <a href="{% url 'hotel_profile' %}" class="list-group-item">
           <div class="settings-icon bg-dark">
-        
-          <i class="fa-solid fa-user"></i>
+            <i class="fa-solid fa-hotel"></i>
           </div>
           <span class="settings-item-text">Hotel Profile</span>
           <i class="fas fa-chevron-right ms-auto arrow-icon"></i>
         </a>
-        <a href="{% url 'logout' %}" class="list-group-item d-flex align-items-center danger">
-          <div class="settings-icon bg-red">
+        <a href="{% url 'logout' %}" class="list-group-item">
+          <div class="settings-icon bg-danger">
             <i class="fas fa-sign-out-alt"></i>
           </div>
           <span class="settings-item-text text-danger">Logout</span>
@@ -330,14 +325,11 @@
       </ul>
     </div>
 
-    <!-- Footer -->
     <div class="settings-footer">
-      <p class="mb-1">{{ name }}</p>
-      <p class="mb-0">Version 7.0.0</p>
+      <p>{{ name }}</p>
     </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>
