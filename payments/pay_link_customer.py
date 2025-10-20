@@ -53,13 +53,14 @@ def create_payment_link(user, amount):
 
     payment_link = res_json.get("link_url")
     print("link :", res_json, payment_link)
-    PaymentRecord.objects.create(
-        user=user,
-        hotel=hotel,
-        order_id=order_id,
-        amount=amount,
-        status="PENDING",
-        payment_link=payment_link
-    )
+    if payment_link:
+        PaymentRecord.objects.create(
+            user=user,
+            hotel=hotel,
+            order_id=order_id,
+            amount=amount,
+            status="PENDING",
+            payment_link=payment_link
+        )
     return payment_link
 
