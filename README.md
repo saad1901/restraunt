@@ -1,62 +1,94 @@
-# Restaurant App - System Operations
+# Restaurant Management System
 
-## Application Link
+> Complete restaurant operations platform with web and mobile interfaces
 
-- Access the live web application here: [Restaurant Management System](https://hotelsoftware.pythonanywhere.com/)
-- Access the HomePage of web application here: [Restaurant Management Adv](https://hotelsoftware.pythonanywhere.com/homepage/)
+## 📚 Complete Documentation
 
-## APK Download
+**👉 [View Full Documentation](DOCUMENTATION/README.md)** - Comprehensive guides for developers, admins, and managers
 
-Download the mobile application for Android devices:
-- **[Download Restaurant App APK](https://median.co/share/zjembl#apk)**
+---
+
+## 🌐 Live Application
+
+- **Web App:** [https://hotelsoftware.pythonanywhere.com/](https://hotelsoftware.pythonanywhere.com/)
+- **Homepage:** [https://hotelsoftware.pythonanywhere.com/homepage/](https://hotelsoftware.pythonanywhere.com/homepage/)
+
+## 📱 Mobile App
+
+- **Download APK:** [Restaurant App APK](https://median.co/share/zjembl#apk)
 - **File Size:** ~25 MB
-- **Minimum Android Version:** 6.0 (API level 23)
+- **Min Android:** 6.0 (API 23)
 - **Last Updated:** July 2025
 
-## Project Overview
+## ✨ Key Features
 
-This Restaurant Management System provides a comprehensive solution for restaurant operations with both web and mobile interfaces.
+- **Order Management** - Real-time order tracking and processing
+- **Menu Management** - Dynamic menu with categories and pricing
+- **Inventory System** - Stock tracking with transaction audit trail
+- **Table Management** - Dining table organization and occupancy tracking
+- **Billing & Payments** - Cashfree payment gateway + UPI integration
+- **Staff Management** - Role-based access control (5 roles)
+- **Analytics** - Sales, revenue, and peak hours reporting
+- **Multi-tenancy** - Support for multiple restaurants on single platform
+- **Mobile App** - Cross-platform Android application
+- **Real-time Updates** - AJAX-based live order status
+- **System Admin** - Database backups, user management, monitoring
 
-### Key Features
+## 🛠 Tech Stack
 
-- **Order Management** - Track and process customer orders in real-time
-- **Menu Management** - Add, edit, and organize restaurant menu items
-- **Table Management** - Monitor table availability and reservations
-- **Staff Dashboard** - Role-based access for different staff members
-- **System Operations** - Administrative controls and server management
-- **Cross-Platform** - Available as both web application and Android APK
+| Component | Technology |
+|-----------|-----------|
+| **Backend** | Django 5.2.6 (Python) |
+| **Database** | SQLite (dev) / MySQL/PostgreSQL (prod) |
+| **Frontend** | HTML, CSS, JavaScript |
+| **Mobile** | Cordova (Android APK) |
+| **Payments** | Cashfree API |
+| **SMS** | Twilio API |
+| **Hosting** | PythonAnywhere |
 
-### Technology Stack
+## 🚀 Quick Start
 
-- **Backend:** Django (Python web framework)
-- **Frontend:** HTML, CSS, JavaScript
-- **Mobile:** Android APK
-- **Deployment:** PythonAnywhere hosting
-- **API Integration:** RESTful services for mobile app connectivity
+### For Web Application
+No setup needed - visit [https://hotelsoftware.pythonanywhere.com/](https://hotelsoftware.pythonanywhere.com/)
 
-### System Requirements
+### For Local Development
+```bash
+git clone <repo_url>
+cd restrauntapp
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py runserver
+```
+Access: `http://localhost:8000/`
 
-**Web Application:**
-- Modern web browser (Chrome, Firefox, Safari, Edge)
-- Internet connection
-- Responsive design supports desktop, tablet, and mobile browsers
+### For Mobile App
+Download APK and install on Android 6.0+
 
-**Mobile Application:**
-- Android 6.0 or higher
-- 50 MB free storage space
-- Internet connection for real-time synchronization
+---
 
-### Installation
+## 📖 Documentation Structure
 
-**Web Access:**
-Simply visit the application link above - no installation required.
+| Document | Purpose |
+|----------|---------|
+| [00_PROJECT_OVERVIEW](DOCUMENTATION/00_PROJECT_OVERVIEW.md) | Project scope & architecture |
+| [01_MODULES_DETAILED](DOCUMENTATION/01_MODULES_DETAILED.md) | Code & module breakdown |
+| [02_FEATURES_COMPLETE](DOCUMENTATION/02_FEATURES_COMPLETE.md) | All features documented |
+| [03_ROLES_PERMISSIONS](DOCUMENTATION/03_ROLES_PERMISSIONS.md) | User roles & access control |
+| [04_DATABASE_API](DOCUMENTATION/04_DATABASE_API.md) | Database schema & API endpoints |
+| [05_INSTALLATION_DEPLOYMENT](DOCUMENTATION/05_INSTALLATION_DEPLOYMENT.md) | Setup & deployment guides |
+| [06_FILE_STRUCTURE](DOCUMENTATION/06_FILE_STRUCTURE.md) | Project layout |
+| [07_QUICK_REFERENCE](DOCUMENTATION/07_QUICK_REFERENCE.md) | Quick lookup tables |
 
-**Mobile Installation:**
-1. Download the APK file from the link above
-2. Enable "Unknown sources" in Android settings if prompted
-3. Install the APK file
-4. Launch the Restaurant App
+**👉 [Full Documentation Index](DOCUMENTATION/README.md)**
 
-The application provides seamless synchronization between web and mobile platforms, allowing staff to manage restaurant operations from any device.
+---
 
-last updated : 27/08/2025
+## 👥 User Roles
+
+- **SuperAdmin** - Full system control
+- **Owner** - Restaurant management (orders, menu, staff, reports)
+- **Agent** - Partner/distributor management
+- **Staff** - Waiter/kitchen staff (view orders)
+- **Customer** - Browse menu & place orders
