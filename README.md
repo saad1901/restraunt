@@ -11,7 +11,7 @@
 ## 🌐 Live Application
 
 - **Web App:** [https://hotelsoftware.pythonanywhere.com/](https://hotelsoftware.pythonanywhere.com/)
-- **Homepage:** [https://hotelsoftware.pythonanywhere.com/homepage/](https://hotelsoftware.pythonanywhere.com/site/)
+- **Homepage:** [https://hotelsoftware.pythonanywhere.com/site/](https://hotelsoftware.pythonanywhere.com/site/)
 
 ## 📱 Mobile App
 
