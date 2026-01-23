@@ -21,3 +21,6 @@ venv/
 # Docs / temp
 LINKEDIN_CONTENT.md
 response.json
+
+# Others
+myapp/
