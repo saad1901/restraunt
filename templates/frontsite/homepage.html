@@ -1,0 +1,1862 @@
+{% extends 'Baseimages/base_public.html' %}
+{% load static %}
+
+{% block title %}TastyBits - Restaurant Management Simplified{% endblock %}
+
+{% block content %}
+<!-- Top Bar with Login -->
+<div class="top-bar d-none d-lg-block">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="top-info">
+                    <span class="me-4"><i class="fas fa-phone me-1"></i> +91 8799 878 583</span>
+                    <span><i class="fas fa-envelope me-1"></i> business2saad@gmail.com</span>
+                </div>
+            </div>
+            <div class="col-md-6 text-end">
+                <div class="top-actions">
+                    <a href="{% url 'owner_login' %}" class="btn btn-sm btn-outline-light me-2">
+                        <i class="fas fa-user me-1"></i> Login
+                    </a>
+                    <div class="social-links d-inline-block">
+                        <a href="#" class="text-light me-2"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-light me-2"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-light"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Enhanced Hero Section -->
+<section class="hero-section">
+    <div class="hero-background">
+        <div class="hero-pattern"></div>
+        <div class="hero-overlay"></div>
+    </div>
+    <div class="container position-relative" style="z-index: 3">
+        <div class="row align-items-center min-vh-100 py-5">
+            <div class="col-lg-6 pe-lg-5">
+                <div class="hero-badge mb-3" data-aos="fade-up">
+                    <span class="badge bg-gradient-primary px-3 py-2">
+                        <i class="fas fa-star me-1"></i> #1 Restaurant Management Solution
+                    </span>
+                </div>
+                <h1 class="hero-title mb-4" data-aos="fade-up" data-aos-delay="100">
+                    Transform Your Restaurant with 
+                    <span class="text-gradient">Smart Management</span>
+                </h1>
+                <p class="hero-subtitle mb-5" data-aos="fade-up" data-aos-delay="200">
+                    Streamline operations, boost efficiency, and deliver exceptional customer experiences with our comprehensive restaurant management platform trusted by 2,500+ restaurants worldwide.
+                </p>
+                <div class="hero-actions d-flex flex-wrap gap-3" data-aos="fade-up" data-aos-delay="300">
+                    <a href="#pricing" class="btn btn-primary btn-lg px-4 py-3">
+                        <i class="fas fa-rocket me-2"></i> Start Free Trial
+                    </a>
+                    <a href="#demo" class="btn btn-outline-light btn-lg px-4 py-3">
+                        <i class="fas fa-play-circle me-2"></i> Watch Demo
+                    </a>
+                </div>
+                <div class="hero-trust mt-4" data-aos="fade-up" data-aos-delay="400">
+                    <div class="d-flex align-items-center flex-wrap">
+                        <div class="trust-rating me-4 mb-2">
+                            <div class="stars text-warning mb-1">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <small class="text-light">4.9/5 from 1,200+ reviews</small>
+                        </div>
+                        <div class="trust-text text-light-50 mb-2">
+                            <small>Trusted by restaurants in 50+ cities</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center" data-aos="fade-left" data-aos-delay="400">
+                <div class="hero-image-container position-relative">
+                    <div class="floating-card card-1" data-aos="fade-up" data-aos-delay="600">
+                        <div class="card bg-white shadow-lg border-0 p-3">
+                            <div class="d-flex align-items-center">
+                                <div class="icon-circle bg-success me-3">
+                                    <i class="fas fa-chart-line text-white"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0">Revenue Growth</h6>
+                                    <span class="text-success">+30% This Month</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="floating-card card-2" data-aos="fade-up" data-aos-delay="800">
+                        <div class="card bg-white shadow-lg border-0 p-3">
+                            <div class="d-flex align-items-center">
+                                <div class="icon-circle bg-primary me-3">
+                                    <i class="fas fa-users text-white"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0">Happy Customers</h6>
+                                    <span class="text-primary">98% Satisfaction</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hero-dashboard bg-white shadow-xl rounded-3 p-4">
+                        <div class="dashboard-header mb-3">
+                            <h5 class="text-dark">Restaurant Dashboard</h5>
+                            <span class="badge bg-success">Live</span>
+                        </div>
+                        <div class="dashboard-stats">
+                            <div class="row g-3">
+                                <div class="col-6">
+                                    <div class="stat-box text-center p-2 bg-light rounded">
+                                        <h6 class="text-primary mb-0">₹45,200</h6>
+                                        <small>Today's Sales</small>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="stat-box text-center p-2 bg-light rounded">
+                                        <h6 class="text-success mb-0">127</h6>
+                                        <small>Orders</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Logo Carousel Section
+<section class="logo-section py-4 bg-light">
+    <div class="container">
+        <div class="text-center mb-4">
+            <p class="text-muted mb-0">Trusted by leading restaurants across India</p>
+        </div>
+        <div class="logo-carousel">
+            <div class="d-flex justify-content-center align-items-center flex-wrap gap-5">
+                <div class="logo-item" data-aos="fade-up">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='40' viewBox='0 0 120 40'%3E%3Crect fill='%23e0e0e0' width='120' height='40' rx='4'/%3E%3Ctext x='60' y='25' text-anchor='middle' fill='%23666' font-size='12'%3ERestaurant Logo%3C/text%3E%3C/svg%3E" alt="Client Logo" class="opacity-60">
+                </div>
+                <div class="logo-item" data-aos="fade-up" data-aos-delay="100">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='40' viewBox='0 0 120 40'%3E%3Crect fill='%23e0e0e0' width='120' height='40' rx='4'/%3E%3Ctext x='60' y='25' text-anchor='middle' fill='%23666' font-size='12'%3ECafe Brand%3C/text%3E%3C/svg%3E" alt="Client Logo" class="opacity-60">
+                </div>
+                <div class="logo-item" data-aos="fade-up" data-aos-delay="200">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='40' viewBox='0 0 120 40'%3E%3Crect fill='%23e0e0e0' width='120' height='40' rx='4'/%3E%3Ctext x='60' y='25' text-anchor='middle' fill='%23666' font-size='12'%3EFood Chain%3C/text%3E%3C/svg%3E" alt="Client Logo" class="opacity-60">
+                </div>
+                <div class="logo-item" data-aos="fade-up" data-aos-delay="300">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='40' viewBox='0 0 120 40'%3E%3Crect fill='%23e0e0e0' width='120' height='40' rx='4'/%3E%3Ctext x='60' y='25' text-anchor='middle' fill='%23666' font-size='12'%3EDining Hub%3C/text%3E%3C/svg%3E" alt="Client Logo" class="opacity-60">
+                </div>
+            </div>
+        </div>
+    </div>
+</section> -->
+
+<!-- Enhanced Stats Section -->
+<section class="stats-section py-5 position-relative">
+    <div class="stats-bg"></div>
+    <div class="container position-relative">
+        <div class="row g-4">
+            <div class="col-6 col-lg-3" data-aos="fade-up">
+                <div class="stat-card text-center p-4 bg-white rounded-4 shadow-sm h-100">
+                    <div class="stat-icon mb-3">
+                        <i class="fas fa-store text-primary fs-2"></i>
+                    </div>
+                    <h3 class="stat-number mb-2" data-count="2500">2,500+</h3>
+                    <p class="text-muted mb-0">Active Restaurants</p>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3" data-aos="fade-up" data-aos-delay="100">
+                <div class="stat-card text-center p-4 bg-white rounded-4 shadow-sm h-100">
+                    <div class="stat-icon mb-3">
+                        <i class="fas fa-heart text-danger fs-2"></i>
+                    </div>
+                    <h3 class="stat-number mb-2" data-count="98">98%</h3>
+                    <p class="text-muted mb-0">Customer Satisfaction</p>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3" data-aos="fade-up" data-aos-delay="200">
+                <div class="stat-card text-center p-4 bg-white rounded-4 shadow-sm h-100">
+                    <div class="stat-icon mb-3">
+                        <i class="fas fa-trending-up text-success fs-2"></i>
+                    </div>
+                    <h3 class="stat-number mb-2" data-count="30">30%</h3>
+                    <p class="text-muted mb-0">Average Revenue Boost</p>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3" data-aos="fade-up" data-aos-delay="300">
+                <div class="stat-card text-center p-4 bg-white rounded-4 shadow-sm h-100">
+                    <div class="stat-icon mb-3">
+                        <i class="fas fa-headset text-info fs-2"></i>
+                    </div>
+                    <h3 class="stat-number mb-2">24/7</h3>
+                    <p class="text-muted mb-0">Expert Support</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Enhanced Features Section -->
+<section class="features-section py-5 bg-light-gradient" id="features">
+    <div class="container">
+        <div class="text-center mb-5">
+            <div class="section-badge mb-3" data-aos="fade-up">
+                <span class="badge bg-primary-soft text-primary px-3 py-2">
+                    <i class="fas fa-magic me-1"></i> Powerful Features
+                </span>
+            </div>
+            <h2 class="section-title mb-3" data-aos="fade-up" data-aos-delay="100">
+                Everything You Need to <span class="text-gradient">Succeed</span>
+            </h2>
+            <p class="lead text-muted mx-auto" style="max-width: 600px;" data-aos="fade-up" data-aos-delay="200">
+                Comprehensive tools designed to streamline operations, boost efficiency, and enhance customer satisfaction
+            </p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-4" data-aos="fade-up">
+                <div class="feature-card-modern h-100">
+                    <div class="feature-icon-modern mb-4">
+                        <i class="fas fa-cash-register"></i>
+                    </div>
+                    <h3 class="feature-title mb-3">Smart POS System</h3>
+                    <p class="feature-description mb-4">Lightning-fast point of sale system with offline capability, multiple payment options, and real-time inventory sync.</p>
+                    <ul class="feature-list mb-4">
+                        <li><i class="fas fa-check text-success me-2"></i> Multi-device compatibility</li>
+                        <li><i class="fas fa-check text-success me-2"></i> Offline functionality</li>
+                        <li><i class="fas fa-check text-success me-2"></i> Payment integration</li>
+                    </ul>
+                    <a href="#" class="feature-link">Explore POS <i class="fas fa-arrow-right ms-1"></i></a>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="feature-card-modern h-100">
+                    <div class="feature-icon-modern mb-4">
+                        <i class="fas fa-boxes"></i>
+                    </div>
+                    <h3 class="feature-title mb-3">Inventory Intelligence</h3>
+                    <p class="feature-description mb-4">AI-powered inventory management with predictive analytics, automated alerts, and waste reduction insights.</p>
+                    <ul class="feature-list mb-4">
+                        <li><i class="fas fa-check text-success me-2"></i> Real-time tracking</li>
+                        <li><i class="fas fa-check text-success me-2"></i> Smart alerts</li>
+                        <li><i class="fas fa-check text-success me-2"></i> Cost optimization</li>
+                    </ul>
+                    <a href="#" class="feature-link">Learn More <i class="fas fa-arrow-right ms-1"></i></a>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="feature-card-modern h-100">
+                    <div class="feature-icon-modern mb-4">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3 class="feature-title mb-3">Team Management</h3>
+                    <p class="feature-description mb-4">Comprehensive staff scheduling, performance tracking, and payroll management with advanced analytics.</p>
+                    <ul class="feature-list mb-4">
+                        <li><i class="fas fa-check text-success me-2"></i> Smart scheduling</li>
+                        <li><i class="fas fa-check text-success me-2"></i> Performance metrics</li>
+                        <li><i class="fas fa-check text-success me-2"></i> Payroll integration</li>
+                    </ul>
+                    <a href="#" class="feature-link">Discover More <i class="fas fa-arrow-right ms-1"></i></a>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="feature-card-modern h-100">
+                    <div class="feature-icon-modern mb-4">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3 class="feature-title mb-3">Mobile Experience</h3>
+                    <p class="feature-description mb-4">Custom branded mobile app for customers with ordering, loyalty programs, and seamless payment processing.</p>
+                    <ul class="feature-list mb-4">
+                        <li><i class="fas fa-check text-success me-2"></i> Native mobile apps</li>
+                        <li><i class="fas fa-check text-success me-2"></i> Push notifications</li>
+                        <li><i class="fas fa-check text-success me-2"></i> Loyalty integration</li>
+                    </ul>
+                    <a href="#" class="feature-link">View Demo <i class="fas fa-arrow-right ms-1"></i></a>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="feature-card-modern h-100">
+                    <div class="feature-icon-modern mb-4">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3 class="feature-title mb-3">Business Intelligence</h3>
+                    <p class="feature-description mb-4">Advanced analytics dashboard with predictive insights, custom reports, and performance benchmarking.</p>
+                    <ul class="feature-list mb-4">
+                        <li><i class="fas fa-check text-success me-2"></i> Real-time analytics</li>
+                        <li><i class="fas fa-check text-success me-2"></i> Custom dashboards</li>
+                        <li><i class="fas fa-check text-success me-2"></i> Predictive insights</li>
+                    </ul>
+                    <a href="#" class="feature-link">See Analytics <i class="fas fa-arrow-right ms-1"></i></a>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="feature-card-modern h-100">
+                    <div class="feature-icon-modern mb-4">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h3 class="feature-title mb-3">Customer Loyalty</h3>
+                    <p class="feature-description mb-4">Sophisticated loyalty program with personalized rewards, automated marketing, and customer segmentation.</p>
+                    <ul class="feature-list mb-4">
+                        <li><i class="fas fa-check text-success me-2"></i> Point-based rewards</li>
+                        <li><i class="fas fa-check text-success me-2"></i> Automated campaigns</li>
+                        <li><i class="fas fa-check text-success me-2"></i> Customer insights</li>
+                    </ul>
+                    <a href="#" class="feature-link">Build Loyalty <i class="fas fa-arrow-right ms-1"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Enhanced About Section -->
+<section class="about-section py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-5 mb-lg-0" data-aos="fade-right">
+                <div class="about-image-container position-relative">
+                    <div class="about-image bg-gradient-primary rounded-4 p-5 text-center">
+                        <i class="fas fa-cloud fs-1 text-white mb-3"></i>
+                        <h4 class="text-white mb-3">Cloud-First Architecture</h4>
+                        <p class="text-white-75">Secure, scalable, and always accessible from anywhere in the world</p>
+                    </div>
+                    <div class="floating-benefit-1">
+                        <div class="benefit-mini-card bg-white shadow-lg p-3 rounded-3">
+                            <i class="fas fa-shield-alt text-success fs-4 mb-2"></i>
+                            <h6 class="mb-0">99.9% Uptime</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 ps-lg-5" data-aos="fade-left">
+                <div class="section-badge mb-3">
+                    <span class="badge bg-success-soft text-success px-3 py-2">
+                        <i class="fas fa-award me-1"></i> Why Choose TastyBits
+                    </span>
+                </div>
+                <h2 class="mb-4 text-white">Built for Modern Restaurants by <span class="text-gradient">Industry Experts</span></h2>
+                <p class="lead mb-4 text-light">We understand the unique challenges facing restaurants today. Our platform combines cutting-edge technology with deep industry knowledge to deliver solutions that actually work.</p>
+                
+                <div class="benefit-list">
+                    <div class="benefit-item d-flex mb-4">
+                        <div class="benefit-icon me-3">
+                            <i class="fas fa-rocket text-primary"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-2 text-white">Quick Setup & Migration</h5>
+                            <p class="text-light mb-0">Get up and running in less than 24 hours with our expert onboarding team and seamless data migration.</p>
+                        </div>
+                    </div>
+                    <div class="benefit-item d-flex mb-4">
+                        <div class="benefit-icon me-3">
+                            <i class="fas fa-sync-alt text-success"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-2 text-white">Real-Time Synchronization</h5>
+                            <p class="text-light mb-0">All your data syncs instantly across devices, locations, and integrations for unified operations.</p>
+                        </div>
+                    </div>
+                    <div class="benefit-item d-flex">
+                        <div class="benefit-icon me-3">
+                            <i class="fas fa-phone text-info"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-2 text-white">24/7 Human Support</h5>
+                            <p class="text-light mb-0">Talk to real restaurant experts anytime with our industry-leading support team based in India.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Enhanced Pricing Section -->
+<section class="pricing-section py-5 bg-light-gradient" id="pricing">
+    <div class="container">
+        <div class="text-center mb-5">
+            <div class="section-badge mb-3" data-aos="fade-up">
+                <span class="badge bg-warning-soft text-warning px-3 py-2">
+                    <i class="fas fa-tags me-1"></i> Transparent Pricing
+                </span>
+            </div>
+            <h2 class="section-title mb-3" data-aos="fade-up" data-aos-delay="100">
+                Choose Your <span class="text-gradient">Growth Plan</span>
+            </h2>
+            <p class="lead text-muted mx-auto mb-4" style="max-width: 600px;" data-aos="fade-up" data-aos-delay="200">
+                Flexible pricing that scales with your business. No hidden fees, no setup costs, cancel anytime.
+            </p>
+            
+            <div class="pricing-switch-container" data-aos="fade-up" data-aos-delay="300">
+                <span class="pricing-label monthly-label active">Monthly</span>
+                <label class="switch mx-3">
+                    <input type="checkbox" id="pricingToggle">
+                    <span class="slider round"></span>
+                </label>
+                <span class="pricing-label yearly-label">Yearly</span>
+                <span class="yearly-discount badge bg-success ms-2">Save up to 20%</span>
+            </div>
+        </div>
+        
+        <div class="row g-4 justify-content-center">
+            <div class="col-lg-4 col-md-6" data-aos="fade-up">
+                <div class="pricing-card-modern h-100">
+                    <div class="pricing-header text-center p-4">
+                        <h3 class="pricing-tier mb-3">Starter</h3>
+                        <div class="price-display">
+                            <div class="price-main">
+                                <span class="currency">₹</span>
+                                <span class="amount monthly">599</span>
+                                <span class="amount yearly" style="display: none;">5,999</span>
+                            </div>
+                            <div class="price-period">
+                                <span class="period-text">/month</span>
+                            </div>
+                        </div>
+                        <div class="yearly-savings text-success mt-2" style="display: none;">
+                            <small><i class="fas fa-piggy-bank me-1"></i> Save ₹1,189 annually</small>
+                        </div>
+                        <p class="pricing-subtitle mt-3 text-muted">Perfect for small restaurants and cafes</p>
+                    </div>
+                    <div class="pricing-features py-3 px-4">
+                        <ul class="feature-list-modern">
+                            <li class="d-flex align-items-center">
+                                <span class="bullet me-2">•</span>
+                                <span class="feature-text">Complete POS System</span>
+                            </li>
+                            <li class="d-flex align-items-center">
+                                <span class="bullet me-2">•</span>
+                                <span class="feature-text">Menu Management</span>
+                            </li>
+                            <li class="d-flex align-items-center">
+                                <span class="bullet me-2">•</span>
+                                <span class="feature-text">Order Processing</span>
+                            </li>
+                            <li class="d-flex align-items-center">
+                                <span class="bullet me-2">•</span>
+                                <span class="feature-text">Basic Reports</span>
+                            </li>
+                            <li class="d-flex align-items-center">
+                                <span class="bullet me-2">•</span>
+                                <span class="feature-text">Email Support</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="pricing-footer p-4">
+                        <a href="{% url 'register' %}" class="btn btn-outline-primary w-100 btn-lg">Start Free Trial</a>
+                        <p class="text-center mt-3 mb-0"><small class="text-muted">14-day free trial • No credit card required</small></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                <div class="pricing-card-modern featured h-100">
+                    <div class="popular-badge">
+                        <i class="fas fa-crown me-1"></i> Most Popular
+                    </div>
+                    <div class="pricing-header text-center p-4">
+                        <h3 class="pricing-tier mb-3">Professional</h3>
+                        <div class="price-display">
+                            <div class="price-main">
+                                <span class="currency">₹</span>
+                                <span class="amount monthly">999</span>
+                                <span class="amount yearly" style="display: none;">9,999</span>
+                            </div>
+                            <div class="price-period">
+                                <span class="period-text">/month</span>
+                            </div>
+                        </div>
+                        <div class="yearly-savings text-success mt-2" style="display: none;">
+                            <small><i class="fas fa-piggy-bank me-1"></i> Save ₹1,989 annually</small>
+                        </div>
+                        <p class="pricing-subtitle mt-3 text-muted">Ideal for growing restaurants with multiple features</p>
+                    </div>
+                    <div class="pricing-features py-3 px-4">
+                        <ul class="feature-list-modern">
+                            <li class="d-flex align-items-center">
+                                <span class="bullet me-2">•</span>
+                                <span class="feature-text">Everything in Starter</span>
+                            </li>
+                            <li class="d-flex align-items-center">
+                                <span class="bullet me-2">•</span>
+                                <span class="feature-text">Advanced Inventory Management</span>
+                            </li>
+                            <li class="d-flex align-items-center">
+                                <span class="bullet me-2">•</span>
+                                <span class="feature-text">Staff Management & Scheduling</span>
+                            </li>
+                            <li class="d-flex align-items-center">
+                                <span class="bullet me-2">•</span>
+                                <span class="feature-text">Customer Analytics</span>
+                            </li>
+                            <li class="d-flex align-items-center">
+                                <span class="bullet me-2">•</span>
+                                <span class="feature-text">Integration Support</span>
+                            </li>
+                            <li class="d-flex align-items-center">
+                                <span class="bullet me-2">•</span>
+                                <span class="feature-text">Priority Phone Support</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="pricing-footer p-4">
+                        <a href="{% url 'register' %}" class="btn btn-primary w-100 btn-lg">Start Free Trial</a>
+                        <p class="text-center mt-3 mb-0"><small class="text-muted">14-day free trial • No credit card required</small></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="pricing-card-modern h-100">
+                    <div class="pricing-header text-center p-4">
+                        <h3 class="pricing-tier mb-3">Enterprise</h3>
+                        <div class="price-display">
+                            <div class="price-main">
+                                <span class="currency">₹</span>
+                                <span class="amount monthly">1,499</span>
+                                <span class="amount yearly" style="display: none;">14,999</span>
+                            </div>
+                            <div class="price-period">
+                                <span class="period-text">/month</span>
+                            </div>
+                        </div>
+                        <div class="yearly-savings text-success mt-2" style="display: none;">
+                            <small><i class="fas fa-piggy-bank me-1"></i> Save ₹2,989 annually</small>
+                        </div>
+                        <p class="pricing-subtitle mt-3 text-muted">Complete solution for restaurant chains and franchises</p>
+                    </div>
+                    <div class="pricing-features py-3 px-4">
+                        <ul class="feature-list-modern">
+                            <li class="d-flex align-items-center">
+                                <span class="bullet me-2">•</span>
+                                <span class="feature-text">Everything in Professional</span>
+                            </li>
+                            <li class="d-flex align-items-center">
+                                <span class="bullet me-2">•</span>
+                                <span class="feature-text">Multi-location Management</span>
+                            </li>
+                            <li class="d-flex align-items-center">
+                                <span class="bullet me-2">•</span>
+                                <span class="feature-text">Advanced Analytics & BI</span>
+                            </li>
+                            <li class="d-flex align-items-center">
+                                <span class="bullet me-2">•</span>
+                                <span class="feature-text">Custom Branded Website</span>
+                            </li>
+                            <li class="d-flex align-items-center">
+                                <span class="bullet me-2">•</span>
+                                <span class="feature-text">API Access</span>
+                            </li>
+                            <li class="d-flex align-items-center">
+                                <span class="bullet me-2">•</span>
+                                <span class="feature-text">Dedicated Account Manager</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="pricing-footer p-4">
+                        <a href="#contact" class="btn btn-outline-primary w-100 btn-lg">Contact Sales</a>
+                        <p class="text-center mt-3 mb-0"><small class="text-muted">Custom pricing for enterprise needs</small></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="pricing-guarantee text-center mt-5" data-aos="fade-up">
+            <div class="guarantee-card bg-white rounded-4 shadow-sm p-4 d-inline-block">
+                <i class="fas fa-shield-check text-success fs-2 mb-3"></i>
+                <h5 class="mb-2">30-Day Money Back Guarantee</h5>
+                <p class="text-muted mb-0">Try TastyBits risk-free. If you're not completely satisfied, get a full refund within 30 days.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Enhanced CTA Section -->
+<section class="cta-section py-5 position-relative overflow-hidden">
+    <div class="cta-pattern"></div>
+    <div class="container position-relative">
+        <div class="row justify-content-center text-center">
+            <div class="col-lg-8">
+                <div class="cta-badge mb-4" data-aos="fade-up">
+                    <span class="badge bg-white text-primary px-4 py-2 fs-6">
+                        <i class="fas fa-rocket me-2"></i> Ready to Get Started?
+                    </span>
+                </div>
+                <h2 class="cta-title mb-4" data-aos="fade-up" data-aos-delay="100">
+                    Join 2,500+ Successful Restaurants Using TastyBits
+                </h2>
+                <p class="cta-subtitle mb-5" data-aos="fade-up" data-aos-delay="200">
+                    Transform your restaurant operations today with our comprehensive management platform. Start your free trial and see the difference in just 24 hours.
+                </p>
+                <div class="cta-actions" data-aos="fade-up" data-aos-delay="300">
+                    <a href="{% url 'register' %}" class="btn btn-light btn-lg px-5 py-3 me-3 mb-3">
+                        <i class="fas fa-play me-2"></i> Start Free Trial
+                    </a>
+                    <a href="#contact" class="btn btn-outline-light btn-lg px-5 py-3 mb-3">
+                        <i class="fas fa-calendar me-2"></i> Schedule Demo
+                    </a>
+                </div>
+                <div class="cta-trust mt-4" data-aos="fade-up" data-aos-delay="400">
+                    <div class="d-flex justify-content-center align-items-center flex-wrap gap-4">
+                        <div class="trust-item">
+                            <span class="bullet-white me-2">•</span>
+                            <span class="text-white">No setup fees</span>
+                        </div>
+                        <div class="trust-item">
+                            <span class="bullet-white me-2">•</span>
+                            <span class="text-white">14-day free trial</span>
+                        </div>
+                        <div class="trust-item">
+                            <span class="bullet-white me-2">•</span>
+                            <span class="text-white">Cancel anytime</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Enhanced Contact Section -->
+<section class="contact-section py-5" id="contact">
+    <div class="container">
+        <div class="text-center mb-5">
+            <div class="section-badge mb-3" data-aos="fade-up">
+                <span class="badge bg-primary-soft text-primary px-3 py-2">
+                    <i class="fas fa-headset me-1"></i> Get In Touch
+                </span>
+            </div>
+            <h2 class="section-title mb-3 text-light" data-aos="fade-up" data-aos-delay="100">We're Here to Help You Succeed</h2>
+            <p class="lead text-light" data-aos="fade-up" data-aos-delay="200">Have questions? Need a demo? Our restaurant experts are ready to assist you.</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="row g-4">
+                    <div class="col-md-6" data-aos="fade-up">
+                        <div class="contact-card-modern h-100">
+                            <div class="contact-icon mb-3">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <h5 class="mb-3 text-dark">Visit Our Office</h5>
+                            <p class="text-dark mb-3">Kranti Chowk, Aurangabad<br>Maharashtra 431005</p>
+                            <a href="#" class="btn btn-outline-primary btn-sm">Get Directions</a>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6" data-aos="fade-up" data-aos-delay="100">
+                        <div class="contact-card-modern h-100">
+                            <div class="contact-icon mb-3">
+                                <i class="fas fa-phone-alt"></i>
+                            </div>
+                            <h5 class="mb-3">Call Us</h5>
+                            <p class="text-muted mb-3">+91 8799 878 583<br>Mon-Sat: 9:00 AM - 8:00 PM</p>
+                            <a href="tel:+918799878583" class="btn btn-primary btn-sm">
+                                <i class="fas fa-phone me-1"></i> Call Now
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6" data-aos="fade-up" data-aos-delay="200">
+                        <div class="contact-card-modern h-100">
+                            <div class="contact-icon mb-3">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <h5 class="mb-3">Email Support</h5>
+                            <p class="text-muted mb-3">business2saad@gmail.com<br>Response within 2 hours</p>
+                            <a href="mailto:business2saad@gmail.com" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-envelope me-1"></i> Send Email
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6" data-aos="fade-up" data-aos-delay="300">
+                        <div class="contact-card-modern whatsapp-card h-100">
+                            <div class="contact-icon mb-3">
+                                <i class="fab fa-whatsapp"></i>
+                            </div>
+                            <h5 class="mb-3">WhatsApp Support</h5>
+                            <p class="text-muted mb-3">Quick responses & instant help<br>Available 24/7</p>
+                            <a href="https://wa.me/918799878583" target="_blank" class="btn btn-success btn-sm">
+                                <i class="fab fa-whatsapp me-1"></i> Chat Now
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4" data-aos="fade-up" data-aos-delay="400">
+                <div class="quick-contact-form text-lightbg-light rounded-4 p-4">
+                    <h5 class="mb-4 text-light">Quick Contact</h5>
+                    <form>
+                        <div class="mb-3">
+                            <input type="text" class="form-control" placeholder="Your Name" required>
+                        </div>
+                        <div class="mb-3">
+                            <input type="email" class="form-control" placeholder="Email Address" required>
+                        </div>
+                        <div class="mb-3">
+                            <input type="tel" class="form-control" placeholder="Phone Number" required>
+                        </div>
+                        <div class="mb-3">
+                            <select class="form-select">
+                                <option value="">Select Restaurant Type</option>
+                                <option value="quick-service">Quick Service</option>
+                                <option value="casual-dining">Casual Dining</option>
+                                <option value="fine-dining">Fine Dining</option>
+                                <option value="cafe">Cafe/Bakery</option>
+                                <option value="food-truck">Food Truck</option>
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <textarea class="form-control" rows="3" placeholder="How can we help you?"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-paper-plane me-2"></i> Send Message
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Enhanced Map Section -->
+<section class="map-section position-relative">
+    
+    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d482.7922280611736!2d75.32527747277985!3d19.86597590070651!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bdb986e29bdf813%3A0xfe9f37ce9c858a80!2sKranti%20Chowk%2C%20Chhatrapati%20Sambhaji%20Nagar%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1744103478341!5m2!1sen!2sin" 
+            width="100%" 
+            height="500" 
+            style="border:0;" 
+            allowfullscreen="" 
+            loading="lazy" 
+            referrerpolicy="no-referrer-when-downgrade"></iframe>
+</section>
+
+{% endblock %}
+{% block extra_css %}
+<style>
+/* Pricing Features */
+.feature-list-modern {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.feature-list-modern li {
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.feature-list-modern li:last-child {
+    margin-bottom: 0;
+}
+
+.feature-list-modern .feature-text {
+    color: var(--text-color);
+    font-weight: 400;
+    line-height: 1.4;
+}
+
+.feature-list-modern .bullet {
+    color: var(--primary-color);
+    font-size: 1.2rem;
+    line-height: 1;
+}
+
+.pricing-card-modern {
+    border: 1px solid rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.pricing-card-modern:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.pricing-header {
+    padding-bottom: 1rem !important;
+}
+
+.pricing-features {
+    border-top: 1px solid rgba(0,0,0,0.05);
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+:root {
+    --primary-color: #007bff;
+    --secondary-color: #6c757d;
+    --accent-color: #25d366;
+    --success-color: #28a745;
+    --danger-color: #dc3545;
+    --warning-color: #ffc107;
+    --info-color: #17a2b8;
+    --light-color: #f8f9fa;
+    --dark-color: #212529;
+    --text-color: #212529; /* Darker text for better contrast */
+    --text-muted: #495057; /* Darker muted text */
+    --z-index-base: 1;
+    --z-index-pattern: 1;
+    --z-index-overlay: 2;
+    --z-index-content: 3;
+    --z-index-cards: 4;
+    --feature-text-size: 1rem;
+    --feature-icon-size: 1.1rem;
+    --feature-spacing: 1rem;
+}
+
+/* Hero Section */
+.hero-section {
+    position: relative;
+    overflow: hidden;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.hero-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: var(--z-index-base);
+}
+
+.hero-pattern {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    z-index: var(--z-index-pattern);
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.1);
+    z-index: var(--z-index-overlay);
+}
+
+.hero-section .container {
+    position: relative;
+    z-index: var(--z-index-content);
+}
+
+.hero-image-container {
+    position: relative;
+    z-index: var(--z-index-content);
+}
+
+.floating-card {
+    position: absolute;
+    z-index: var(--z-index-cards);
+    animation: float 6s ease-in-out infinite;
+}
+
+.hero-dashboard {
+    position: relative;
+    z-index: var(--z-index-content);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Top Bar Styles */
+.top-bar {
+    background: linear-gradient(135deg, var(--primary-color), #0056b3);
+    padding: 10px 0;
+    font-size: 14px;
+}
+
+.top-info span {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.social-links a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.social-links a:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+/* Enhanced Hero Styles */
+.hero-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    position: relative;
+    z-index: 1; /* Base z-index */
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.1);
+    z-index: 1;
+}
+
+.hero-pattern {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    z-index: 1;
+}
+
+.hero-badge .badge {
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 25px;
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    line-height: 1.1;
+    color: white;
+    z-index: 3;
+    position: relative;
+}
+
+.text-gradient {
+    background: linear-gradient(135deg, #ffd700, #ff6b6b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.hero-subtitle {
+    font-size: 1.25rem;
+    color: rgba(255, 255, 255, 0.95); /* Better contrast */
+    line-height: 1.6;
+    z-index: 3;
+    position: relative;
+}
+
+.hero-image-container {
+    position: relative;
+    z-index: 2;
+}
+
+/* Fixed Floating Cards with Better Z-index Management */
+.floating-card {
+    position: absolute;
+    z-index: 10;
+    pointer-events: none; /* Prevent overlapping interference */
+    animation: float 6s ease-in-out infinite;
+}
+
+.card-1 {
+    top: 20%;
+    left: -10%;
+    animation-delay: -2s;
+    z-index: 10;
+}
+
+.card-2 {
+    top: 60%;
+    right: -15%;
+    animation-delay: -4s;
+    z-index: 11;
+}
+
+.hero-dashboard {
+    max-width: 350px;
+    margin: 0 auto;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 12;
+    position: relative;
+}
+
+.icon-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Smoother, Performance-Optimized Animation */
+@keyframes float {
+    0%, 100% { 
+        transform: translateY(0px) translateZ(0); 
+        opacity: 0.9;
+    }
+    50% { 
+        transform: translateY(-20px) translateZ(0); 
+        opacity: 1;
+    }
+}
+
+/* Logo Section */
+.logo-section {
+    background: rgba(248, 249, 250, 0.9);
+    backdrop-filter: blur(10px);
+    z-index: 5;
+    position: relative;
+}
+
+.logo-item img {
+    max-height: 40px;
+    filter: grayscale(100%);
+    transition: all 0.3s ease;
+    opacity: 0.7; /* Better visibility */
+}
+
+.logo-item:hover img {
+    filter: grayscale(0%);
+    transform: scale(1.05); /* Reduced scale to prevent overlap */
+    opacity: 1;
+}
+
+/* Enhanced Stats Section */
+.stats-section {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    z-index: 3;
+    position: relative;
+}
+
+.stats-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23007bff' fill-opacity='0.02'%3E%3Cpath d='M20 20c0 4.4-3.6 8-8 8s-8-3.6-8-8 3.6-8 8-8 8 3.6 8 8zm0-20c0 4.4-3.6 8-8 8s-8-3.6-8-8 3.6-8 8-8 8 3.6 8 8z'/%3E%3C/g%3E%3C/svg%3E");
+    z-index: 1;
+}
+
+.stat-card {
+    border: 1px solid rgba(0, 123, 255, 0.1);
+    transition: all 0.3s ease;
+    z-index: 2;
+    position: relative;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px); /* Reduced movement */
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1) !important;
+    z-index: 3;
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--primary-color);
+}
+
+/* Enhanced Features Section with Better Text Contrast */
+.bg-light-gradient {
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+}
+
+.section-badge .badge {
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 25px;
+}
+
+.bg-primary-soft {
+    background-color: rgba(0, 123, 255, 0.1);
+}
+
+.bg-success-soft {
+    background-color: rgba(40, 167, 69, 0.1);
+}
+
+.bg-warning-soft {
+    background-color: rgba(255, 193, 7, 0.1);
+}
+
+.feature-card-modern {
+    background: white;
+    border-radius: 20px;
+    padding: 2rem;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    z-index: 2;
+    position: relative;
+}
+
+.feature-card-modern:hover {
+    transform: translateY(-5px); /* Reduced movement */
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+    border-color: var(--primary-color);
+    z-index: 3;
+}
+
+.feature-icon-modern {
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, var(--primary-color), #0056b3);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    color: white;
+}
+
+.feature-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-color); /* Improved contrast */
+}
+
+.feature-description {
+    color: var(--text-muted); /* Improved contrast */
+    line-height: 1.6;
+}
+
+.feature-list li {
+    margin-bottom: 0.5rem;
+    color: var(--text-color); /* Improved contrast */
+}
+
+.feature-link {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.feature-link:hover {
+    color: #0056b3;
+    transform: translateX(3px); /* Reduced movement */
+}
+
+/* About Section Enhancements with Fixed Overlapping */
+.about-image-container {
+    position: relative;
+    z-index: 2;
+}
+
+.floating-benefit-1,
+.floating-benefit-2 {
+    position: absolute;
+    z-index: 10;
+    pointer-events: none; /* Prevent interference */
+    animation: float 8s ease-in-out infinite; /* Slower animation */
+}
+
+.floating-benefit-1 {
+    top: -20px;
+    right: -30px;
+    animation-delay: -2s;
+}
+
+.floating-benefit-2 {
+    bottom: -20px;
+    left: -30px;
+    animation-delay: -4s;
+}
+
+.benefit-mini-card {
+    text-align: center;
+    min-width: 120px;
+    backdrop-filter: blur(10px);
+}
+
+.benefit-item {
+    align-items: flex-start;
+}
+
+.benefit-icon {
+    width: 50px;
+    height: 50px;
+    background: rgba(0, 123, 255, 0.1);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+/* Enhanced Pricing Section with Better Text */
+.pricing-card-modern {
+    background: white;
+    border-radius: 24px;
+    border: 2px solid #f1f3f5; /* Better border visibility */
+    transition: all 0.3s ease;
+    overflow: hidden;
+    position: relative;
+    z-index: 2;
+}
+
+.pricing-card-modern:hover {
+    transform: translateY(-5px); /* Reduced movement */
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    border-color: var(--primary-color);
+    z-index: 3;
+}
+
+.pricing-card-modern.featured {
+    border-color: var(--primary-color);
+    transform: scale(1.02); /* Reduced scale */
+    z-index: 4;
+}
+
+.popular-badge {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #ff6b6b, #ffd700);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    z-index: 5;
+}
+
+.price-display {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    margin: 1rem 0;
+}
+
+.currency {
+    font-size: 1.5rem;
+    color: var(--text-muted); /* Improved contrast */
+    margin-right: 5px;
+}
+
+.price-main .amount {
+    font-size: 3rem;
+    font-weight: 800;
+    color: var(--primary-color);
+}
+
+.price-period {
+    font-size: 1.1rem;
+    color: var(--text-muted); /* Improved contrast */
+    margin-left: 5px;
+}
+
+.pricing-subtitle {
+    color: var(--text-muted) !important; /* Force better contrast */
+}
+
+.feature-list-modern {
+    list-style: none;
+    padding: 0;
+}
+
+.feature-list-modern li {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f1f3f5;
+    color: var(--text-color); /* Better contrast */
+}
+
+.feature-list-modern li:last-child {
+    border-bottom: none;
+}
+
+.guarantee-card {
+    max-width: 400px;
+}
+
+/* Enhanced CTA Section */
+.cta-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    z-index: 2;
+    position: relative;
+}
+
+.cta-pattern {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M0 0h80v80H0V0zm20 20v40h40V20H20zm20 35a15 15 0 1 1 0-30 15 15 0 0 1 0 30z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    z-index: 1;
+}
+
+.trust-item {
+    display: flex;
+    align-items: center;
+    font-size: 1rem;
+}
+
+.bullet-white {
+    font-size: 1.5rem;
+    color: white;
+    opacity: 0.9;
+    line-height: 1;
+}
+
+.trust-item .text-white {
+    font-weight: 500;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.cta-title {
+    font-size: 3rem;
+    font-weight: 800;
+    color: white;
+    z-index: 3;
+    position: relative;
+}
+
+.cta-subtitle {
+    font-size: 1.25rem;
+    color: rgba(255, 255, 255, 0.95); /* Better contrast */
+    z-index: 3;
+    position: relative;
+}
+
+.text-white-75 {
+    color: rgba(255, 255, 255, 0.9); /* Improved contrast */
+}
+
+/* Enhanced Contact Section with Better Text */
+.contact-card-modern {
+    background: white;
+    border-radius: 20px;
+    padding: 2rem;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    z-index: 2;
+    position: relative;
+}
+
+.contact-card-modern .text-dark {
+    color: #212529 !important;
+    font-weight: 500;
+}
+
+.contact-card-modern .contact-icon {
+    width: 60px;
+    height: 60px;
+    background: rgba(0, 123, 255, 0.1);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.contact-card-modern:hover {
+    transform: translateY(-3px); /* Reduced movement */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    z-index: 3;
+}
+
+.contact-card-modern h5 {
+    color: var(--text-color); /* Better contrast */
+}
+
+.contact-card-modern p {
+    color: var(--text-muted); /* Better contrast */
+}
+
+.whatsapp-card {
+    background: linear-gradient(135deg, #25d366, #20ba5a);
+}
+
+.whatsapp-card .contact-icon i {
+    color: #ffffff;
+}
+
+.whatsapp-card h5 {
+    color: #ffffff !important;
+    font-weight: 600;
+}
+
+.whatsapp-card p {
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.contact-icon {
+    width: 60px;
+    height: 60px;
+    background: rgba(0, 123, 255, 0.1);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: var(--primary-color);
+}
+
+.whatsapp-card .contact-icon {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.quick-contact-form .form-control,
+.quick-contact-form .form-select {
+    border-radius: 12px;
+    border: 1px solid #dee2e6;
+    padding: 12px 16px;
+    transition: all 0.3s ease;
+    color: var(--text-color); /* Better text color */
+}
+
+.quick-contact-form .form-control:focus,
+.quick-contact-form .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Map Section Enhancement */
+.map-section {
+    position: relative;
+    height: 500px;
+    z-index: 1;
+}
+
+.map-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    padding: 2rem 0;
+}
+
+.map-info {
+    pointer-events: auto;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    z-index: 11;
+    position: relative;
+}
+
+.map-info h4 {
+    color: var(--text-color); /* Better contrast */
+}
+
+.map-info div {
+    color: var(--text-muted); /* Better contrast */
+}
+
+/* Pricing Toggle Enhancement */
+.pricing-switch-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin: 2rem 0;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: var(--primary-color);
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+.pricing-label {
+    font-weight: 600;
+    color: var(--text-muted); /* Better contrast */
+    transition: all 0.3s ease;
+}
+
+.pricing-label.active {
+    color: var(--primary-color);
+}
+
+/* Fixed Mobile Responsiveness for Animations */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.1rem;
+    }
+    
+    .cta-title {
+        font-size: 2rem;
+    }
+    
+    /* Hide floating elements on mobile to prevent overlap */
+    .floating-card,
+    .floating-benefit-1,
+    .floating-benefit-2 {
+        display: none;
+    }
+    
+    .hero-dashboard {
+        margin-top: 2rem;
+        position: static;
+        transform: none;
+    }
+    
+    .pricing-card-modern.featured {
+        transform: none;
+        margin-top: 1rem;
+        scale: 1;
+    }
+    
+    .stat-number {
+        font-size: 2rem;
+    }
+    
+    .feature-title {
+        font-size: 1.25rem;
+    }
+    
+    /* Reduce animation on mobile for better performance */
+    .stat-card:hover,
+    .feature-card-modern:hover,
+    .contact-card-modern:hover {
+        transform: translateY(-2px);
+    }
+    
+    /* Simplify animations on mobile */
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+    }
+}
+
+@media (max-width: 576px) {
+    .hero-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .hero-actions .btn {
+        margin-bottom: 1rem;
+    }
+    
+    .cta-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .trust-item {
+        flex-basis: 100%;
+        text-align: center;
+        margin-bottom: 0.5rem;
+    }
+    
+    /* Disable hover effects on small screens */
+    .stat-card:hover,
+    .feature-card-modern:hover,
+    .contact-card-modern:hover,
+    .pricing-card-modern:hover {
+        transform: none;
+    }
+}
+
+/* Performance Optimization */
+.floating-card,
+.floating-benefit-1,
+.floating-benefit-2 {
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+    transform-style: preserve-3d;
+}
+
+/* Reduced motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+    .floating-card,
+    .floating-benefit-1,
+    .floating-benefit-2 {
+        animation: none;
+    }
+    
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Animation Enhancements with Better Performance */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px) translateZ(0);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) translateZ(0);
+    }
+}
+
+.animate-on-scroll {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+/* Button Enhancements */
+.btn {
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.btn:hover {
+    transform: translateY(-1px); /* Reduced movement */
+    z-index: 2;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-color), #0056b3);
+    border: none;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #0056b3, #004494);
+}
+
+.btn-lg {
+    padding: 12px 24px;
+    font-size: 1.1rem;
+}
+
+/* Text Color Improvements for Better Contrast */
+.text-muted {
+    color: var(--text-muted) !important;
+}
+
+p, .lead {
+    color: var(--text-color);
+}
+
+.section-title {
+    color: var(--text-color);
+}
+
+/* Ensure all headings have good contrast */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--text-color);
+}
+
+/* Better contrast for small text */
+small {
+    color: var(--text-muted);
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Enhanced Pricing Toggle
+document.getElementById('pricingToggle').addEventListener('change', function() {
+    const monthlyPrices = document.querySelectorAll('.amount.monthly');
+    const yearlyPrices = document.querySelectorAll('.amount.yearly');
+    const yearlySavings = document.querySelectorAll('.yearly-savings');
+    const periodTexts = document.querySelectorAll('.period-text');
+    const monthlyLabel = document.querySelector('.monthly-label');
+    const yearlyLabel = document.querySelector('.yearly-label');
+    
+    if (this.checked) {
+        // Show yearly pricing
+        monthlyPrices.forEach(el => el.style.display = 'none');
+        yearlyPrices.forEach(el => el.style.display = 'inline');
+        yearlySavings.forEach(el => el.style.display = 'block');
+        periodTexts.forEach(el => el.textContent = '/year');
+        monthlyLabel.classList.remove('active');
+        yearlyLabel.classList.add('active');
+    } else {
+        // Show monthly pricing
+        monthlyPrices.forEach(el => el.style.display = 'inline');
+        yearlyPrices.forEach(el => el.style.display = 'none');
+        yearlySavings.forEach(el => el.style.display = 'none');
+        periodTexts.forEach(el => el.textContent = '/month');
+        monthlyLabel.classList.add('active');
+        yearlyLabel.classList.remove('active');
+    }
+});
+
+// Counter Animation for Stats
+function animateCounters() {
+    const counters = document.querySelectorAll('.stat-number[data-count]');
+    
+    counters.forEach(counter => {
+        const target = parseInt(counter.getAttribute('data-count'));
+        const duration = 2000; // 2 seconds
+        const increment = target / (duration / 16); // 60fps
+        let current = 0;
+        
+        const updateCounter = () => {
+            current += increment;
+            if (current < target) {
+                counter.textContent = Math.floor(current) + (target >= 1000 ? '+' : '%');
+                requestAnimationFrame(updateCounter);
+            } else {
+                counter.textContent = target + (target >= 1000 ? '+' : '%');
+            }
+        };
+        
+        updateCounter();
+    });
+}
+
+// Trigger counter animation when stats section comes into view
+const statsSection = document.querySelector('.stats-section');
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            animateCounters();
+            observer.unobserve(entry.target);
+        }
+    });
+}, { threshold: 0.5 });
+
+if (statsSection) {
+    observer.observe(statsSection);
+}
+
+// Smooth scrolling for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    });
+});
+
+// Mobile menu enhancements
+function adjustMobileLayout() {
+    const isMobile = window.innerWidth < 768;
+    
+    if (isMobile) {
+        // Adjust pricing cards on mobile
+        document.querySelectorAll('.pricing-card-modern.featured').forEach(card => {
+            card.style.transform = 'none';
+            card.style.marginTop = '1rem';
+        });
+    }
+}
+
+// Initial adjustment and resize listener
+adjustMobileLayout();
+window.addEventListener('resize', adjustMobileLayout);
+
+// Form validation for quick contact
+document.querySelector('.quick-contact-form form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    // Simple validation
+    const name = this.querySelector('input[type="text"]').value;
+    const email = this.querySelector('input[type="email"]').value;
+    const phone = this.querySelector('input[type="tel"]').value;
+    
+    if (name && email && phone) {
+        // Simulate form submission
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Sending...';
+        submitBtn.disabled = true;
+        
+        setTimeout(() => {
+            submitBtn.innerHTML = '<i class="fas fa-check me-2"></i> Message Sent!';
+            submitBtn.classList.remove('btn-primary');
+            submitBtn.classList.add('btn-success');
+            
+            setTimeout(() => {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('btn-success');
+                submitBtn.classList.add('btn-primary');
+                this.reset();
+            }, 3000);
+        }, 2000);
+    }
+});
+
+// Add loading states to CTA buttons
+document.querySelectorAll('.btn[href*="login"]').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+        const originalText = this.innerHTML;
+        this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Loading...';
+        
+        setTimeout(() => {
+            this.innerHTML = originalText;
+        }, 1000);
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Period Report</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --accent-color: #e74c3c;
+            --light-bg: #f8f9fa;
+            --dark-bg: #343a40;
+            --text-dark: #2c3e50;
+            --text-light: #ecf0f1;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --hover-shadow: 0 10px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        body { 
+            background-color: var(--light-bg); 
+            color: var(--text-dark);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .navbar { 
+            background-color: var(--dark-bg); 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            box-shadow: var(--hover-shadow);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+        
+        .btn-outline-primary {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-outline-primary:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .table {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .table th {
+            background-color: rgba(52, 152, 219, 0.1);
+            border-top: none;
+        }
+        
+        .date-filter-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .trend-up {
+            color: var(--success-color);
+        }
+        
+        .trend-down {
+            color: var(--accent-color);
+        }
+        
+        .trend-neutral {
+            color: var(--warning-color);
+        }
+        
+        .summary-dropdown {
+            background-color: white;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .summary-header {
+            padding: 15px 20px;
+            background-color: white;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+        
+        .summary-header:hover {
+            background-color: rgba(52, 152, 219, 0.05);
+        }
+        
+        .summary-content {
+            padding: 20px;
+            background-color: rgba(52, 152, 219, 0.03);
+        }
+        
+        .chevron-icon {
+            transition: transform 0.3s;
+        }
+        
+        [aria-expanded="true"] .chevron-icon {
+            transform: rotate(180deg);
+        }
+        
+        .stat-item {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            transition: transform 0.2s;
+        }
+        
+        .stat-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.05);
+        }
+        
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: white;
+        }
+        
+        .revenue-icon {
+            background-color: var(--primary-color);
+        }
+        
+        .average-icon {
+            background-color: var(--secondary-color);
+        }
+        
+        .days-icon {
+            background-color: var(--success-color);
+        }
+        
+        .peak-icon {
+            background-color: var(--warning-color);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            background-color: rgba(52, 152, 219, 0.05);
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .empty-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            opacity: 0.5;
+            margin-bottom: 15px;
+        }
+        
+        @media (max-width: 768px) {
+            .date-filter-container {
+                padding: 15px;
+            }
+            
+            .date-filter-container .row {
+                flex-direction: column;
+            }
+            
+            .date-filter-container .col-md-4 {
+                margin-bottom: 10px;
+            }
+            
+            .summary-content .row {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="d-flex align-items-center justify-content-between w-100">
+                <div class="d-flex align-items-center">
+                    <a class="btn btn-link text-white me-2" href="{%url 'sales' %}">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                    <span class="navbar-brand text-white mb-0">Custom Period Report</span>
+                </div>
+                <a href="{% url 'owner' %}" class="btn btn-link text-white">
+                    <i class="fas fa-home"></i>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Date Range Selector -->
+        <div class="date-filter-container">
+            <form method="GET" id="dateRangeForm">
+                <div class="row align-items-end">
+                    <div class="col-md-4 mb-3 mb-md-0">
+                        <label for="start_date" class="form-label">Start Date</label>
+                        <input type="date" id="start_date" name="start_date" class="form-control" value="{{ start_date|date:'Y-m-d' }}" required>
+                    </div>
+                    <div class="col-md-4 mb-3 mb-md-0">
+                        <label for="end_date" class="form-label">End Date</label>
+                        <input type="date" id="end_date" name="end_date" class="form-control" value="{{ end_date|date:'Y-m-d' }}" required>
+                    </div>
+                    <div class="col-md-4">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-search me-2"></i>Generate Report
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Summary Dropdown -->
+        {% if transactions %}
+        <div class="summary-dropdown">
+            <div class="summary-header" data-bs-toggle="collapse" data-bs-target="#periodSummary" aria-expanded="false" aria-controls="periodSummary">
+                <span><i class="fas fa-chart-pie me-2"></i>Period Summary</span>
+                <i class="fas fa-chevron-down chevron-icon"></i>
+            </div>
+            <div class="collapse" id="periodSummary">
+                <div class="summary-content">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="stat-item">
+                                <div class="stat-icon revenue-icon">
+                                    <i class="fas fa-dollar-sign"></i>
+                                </div>
+                                <div>
+                                    <div class="text-muted small">Total Revenue</div>
+                                    <div class="fw-bold">₹{{ total_revenue|floatformat:2 }}</div>
+                                </div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-icon average-icon">
+                                    <i class="fas fa-calculator"></i>
+                                </div>
+                                <div>
+                                    <div class="text-muted small">Average Daily Revenue</div>
+                                    <div class="fw-bold">₹{{ avg_daily_revenue|floatformat:2 }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="stat-item">
+                                <div class="stat-icon days-icon">
+                                    <i class="fas fa-calendar-check"></i>
+                                </div>
+                                <div>
+                                    <div class="text-muted small">Days with Sales</div>
+                                    <div class="fw-bold">{{ days_with_sales }} of {{ total_days }}</div>
+                                </div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-icon peak-icon">
+                                    <i class="fas fa-trophy"></i>
+                                </div>
+                                <div>
+                                    <div class="text-muted small">Best Sales Day</div>
+                                    <div class="fw-bold">{{ highest_day_date }} (₹{{ highest_day_revenue|floatformat:2 }})</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transactions Table -->
+        <div class="card">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Total</th>
+                                <th>Trend</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for day in transactions %}
+                            <tr>
+                                <td>{{ day.date }}</td>
+                                <td><strong>₹{{ day.total_revenue|floatformat:2 }}</strong></td>
+                                <td>
+                                    {% if day.trend > 0 %}
+                                    <span class="trend-up"><i class="fas fa-arrow-up"></i> {{ day.trend_percent }}%</span>
+                                    {% elif day.trend < 0 %}
+                                    <span class="trend-down"><i class="fas fa-arrow-down"></i> {{ day.trend_percent }}%</span>
+                                    {% else %}
+                                    <span class="trend-neutral"><i class="fas fa-minus"></i> 0%</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{% url 'dailytransc' %}?date={{ day.org_date }}" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-eye me-1"></i>View
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <!-- Empty State -->
+        {% if start_date and end_date %}
+        <div class="empty-state">
+            <div class="empty-icon">
+                <i class="fas fa-chart-area"></i>
+            </div>
+            <h5>No transactions found for this period</h5>
+            <p class="text-muted">Try selecting a different date range or check back later.</p>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">
+                <i class="fas fa-calendar-alt"></i>
+            </div>
+            <h5>Select a date range to generate your report</h5>
+            <p class="text-muted">Choose your start and end dates above to see transaction data.</p>
+        </div>
+        {% endif %}
+        {% endif %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Form validation - ensure end date is not before start date
+        document.getElementById('dateRangeForm').addEventListener('submit', function(e) {
+            const startDate = new Date(document.getElementById('start_date').value);
+            const endDate = new Date(document.getElementById('end_date').value);
+            
+            if (endDate < startDate) {
+                e.preventDefault();
+                alert('End date cannot be before start date');
+            }
+        });
+        
+        // Initialize with current date values if none provided
+        document.addEventListener('DOMContentLoaded', function() {
+            const startDateInput = document.getElementById('start_date');
+            const endDateInput = document.getElementById('end_date');
+            
+            if (!startDateInput.value) {
+                // Default to 30 days ago
+                const thirtyDaysAgo = new Date();
+                thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+                startDateInput.value = thirtyDaysAgo.toISOString().split('T')[0];
+            }
+            
+            if (!endDateInput.value) {
+                // Default to today
+                const today = new Date();
+                endDateInput.value = today.toISOString().split('T')[0];
+            }
+        });
+    </script>
+</body>
+</html> 

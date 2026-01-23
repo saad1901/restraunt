@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
-from .forms import OwnerRegistrationForm, HotelRegistrationForm
+from app.forms import OwnerRegistrationForm, HotelRegistrationForm
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
@@ -17,7 +17,7 @@ def owner_register(request):
             return redirect('hotel_register')
     else:
         form = OwnerRegistrationForm()
-    return render(request, 'registration/owner_register.html', {'form': form})
+    return render(request, 'Registration/owner_register.html', {'form': form})
 
 
 def hotel_register(request):
@@ -94,8 +94,8 @@ def hotel_register(request):
                 return redirect('owner')
             
     form = HotelRegistrationForm()
-    return render(request, 'registration/hotel_register.html', {'form': form})
+    return render(request, 'Registration/hotel_register.html', {'form': form})
 
 
 def register(request):
-    return render(request, 'RegisterUser/register.html')
+    return render(request, 'auth/register.html')

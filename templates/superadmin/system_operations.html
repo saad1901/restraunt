@@ -1,0 +1,316 @@
+{% extends 'Baseimages/base.html' %}
+{% load static %}
+
+{% block style %}
+<style>
+    .page-header {
+        margin-bottom: 2rem;
+    }
+    
+    .system-card {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+    
+    .system-card-header {
+        padding: 1.25rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        font-weight: 600;
+        font-size: 1.25rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .system-card-body {
+        padding: 1.5rem;
+    }
+    
+    .operation-container {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-bottom: 1.5rem;
+    }
+    
+    .operation-btn {
+        flex: 1;
+        min-width: 180px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: #f8f9fa;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        padding: 1.5rem;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-align: center;
+    }
+    
+    .operation-btn:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        border-color: var(--primary);
+    }
+    
+    .operation-btn i {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: var(--primary);
+    }
+    
+    .operation-btn .title {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+    
+    .operation-btn .description {
+        font-size: 0.85rem;
+        color: var(--gray);
+    }
+    
+    .result-container {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 1.5rem;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+    
+    .result-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+    
+    .result-title {
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+    
+    .result-status {
+        padding: 0.35rem 0.75rem;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+    
+    .result-output {
+        max-height: 300px;
+        overflow-y: auto;
+        background: #212529;
+        color: #f8f9fa;
+        padding: 1rem;
+        border-radius: 5px;
+        font-family: monospace;
+        white-space: pre-wrap;
+    }
+    
+    .result-error {
+        margin-top: 1rem;
+        color: #dc3545;
+        font-family: monospace;
+        white-space: pre-wrap;
+    }
+</style>
+{% endblock %}
+
+{% block myblock %}
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center page-header">
+    <div>
+        <h1 class="h3 mb-0 text-gray-800">System Operations</h1>
+        <p class="text-muted mb-0">Manage server and application operations</p>
+    </div>
+    <a href="{% url 'home' %}" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+    </a>
+</div>
+
+<!-- Display messages -->
+{% if messages %}
+<div class="mb-4">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' or message.tags == 'danger' %}exclamation-circle{% else %}info-circle{% endif %} me-2"></i>
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- System Operations Card -->
+<div class="system-card">
+    <div class="system-card-header">
+        <span><i class="fas fa-cogs me-2"></i>Server Operations</span>
+    </div>
+    <div class="system-card-body">
+        <p class="mb-4">Select an operation to execute on the server. These operations affect the application's codebase and database.</p>
+        
+        <div class="operation-container">
+            <form method="post" action="{% url 'system_operations' %}" class="operation-btn" onsubmit="return confirm('Are you sure you want to pull the latest code changes from Git?');">
+                {% csrf_token %}
+                <input type="hidden" name="operation" value="git_pull">
+                <i class="fab fa-github"></i>
+                <div class="title">Pull Changes</div>
+                <div class="description">Pull latest code from the Git repository</div>
+            </form>
+            
+            <form method="post" action="{% url 'system_operations' %}" class="operation-btn" onsubmit="return confirm('Are you sure you want to make migrations?');">
+                {% csrf_token %}
+                <input type="hidden" name="operation" value="migrations">
+                <i class="fas fa-code-branch"></i>
+                <div class="title">Make Migrations</div>
+                <div class="description">Generate database migration files</div>
+            </form>
+            
+            <form method="post" action="{% url 'system_operations' %}" class="operation-btn" onsubmit="return confirm('Are you sure you want to apply migrations?');">
+                {% csrf_token %}
+                <input type="hidden" name="operation" value="migrate">
+                <i class="fas fa-database"></i>
+                <div class="title">Apply Migrations</div>
+                <div class="description">Apply pending database migrations</div>
+            </form>
+            
+            <form method="post" action="{% url 'system_operations' %}" class="operation-btn" onsubmit="return confirm('Are you sure you want to collect static files?');">
+                {% csrf_token %}
+                <input type="hidden" name="operation" value="collectstatic">
+                <i class="fas fa-file-code"></i>
+                <div class="title">Collect Static</div>
+                <div class="description">Collect static files in one location</div>
+            </form>
+            
+            <form method="post" action="{% url 'system_operations' %}" class="operation-btn" onsubmit="return confirm('Are you sure you want to restart the server? This will temporarily disconnect all users.');">
+                {% csrf_token %}
+                <input type="hidden" name="operation" value="restart_server">
+                <i class="fas fa-power-off"></i>
+                <div class="title">Restart Server</div>
+                <div class="description">Reload the PythonAnywhere web application</div>
+            </form>
+        </div>
+        
+        <!-- Results Section -->
+        {% if results.has_result %}
+        <div class="result-container mt-4">
+            <div class="result-header">
+                <div class="result-title">
+                    {% if results.operation == 'git_pull' %}
+                    <i class="fab fa-github me-2"></i>Git Pull Results
+                    {% elif results.operation == 'migrations' %}
+                    <i class="fas fa-code-branch me-2"></i>Make Migrations Results
+                    {% elif results.operation == 'migrate' %}
+                    <i class="fas fa-database me-2"></i>Apply Migrations Results
+                    {% elif results.operation == 'collectstatic' %}
+                    <i class="fas fa-file-code me-2"></i>Collect Static Results
+                    {% elif results.operation == 'restart_server' %}
+                    <i class="fas fa-power-off me-2"></i>Server Restart Results
+                    {% else %}
+                    <i class="fas fa-terminal me-2"></i>Operation Results
+                    {% endif %}
+                </div>
+                <div class="result-status bg-{{ results.status }}-subtle text-{{ results.status }}">
+                    {% if results.status == 'success' %}
+                    <i class="fas fa-check-circle me-1"></i>Success
+                    {% elif results.status == 'error' %}
+                    <i class="fas fa-exclamation-circle me-1"></i>Error
+                    {% else %}
+                    <i class="fas fa-info-circle me-1"></i>Info
+                    {% endif %}
+                </div>
+            </div>
+            
+            {% if results.output %}
+            <div>
+                <div class="mb-2 fw-bold">Output:</div>
+                <div class="result-output">{{ results.output }}</div>
+            </div>
+            {% endif %}
+            
+            {% if results.error %}
+            <div class="result-error">
+                <div class="mb-2 fw-bold text-danger">Error:</div>
+                <div>{{ results.error }}</div>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Server Info Card -->
+<div class="system-card">
+    <div class="system-card-header">
+        <span><i class="fas fa-info-circle me-2"></i>Server Information</span>
+    </div>
+    <div class="system-card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <h5 class="mb-3">System Information</h5>
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Django Version</th>
+                        <td>{{ system_info.django_version }}</td>
+                    </tr>
+                    <tr>
+                        <th>Python Version</th>
+                        <td>{{ system_info.python_version }}</td>
+                    </tr>
+                    <tr>
+                        <th>Operating System</th>
+                        <td>{{ system_info.os }}</td>
+                    </tr>
+                    <tr>
+                        <th>Server Time</th>
+                        <td>{% now "F j, Y H:i" %}</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <h5 class="mb-3">Application Information</h5>
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Total Users</th>
+                        <td>{{ user_count|default:"N/A" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Total Restaurants</th>
+                        <td>{{ hotel_count|default:"N/A" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Active Restaurants</th>
+                        <td>{{ active_hotel_count|default:"N/A" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Last Deployment</th>
+                        <td>{{ last_deployment|default:"Unknown" }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Make the operation buttons act as form submit buttons
+        const operationBtns = document.querySelectorAll('.operation-btn');
+        operationBtns.forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                if (confirm('Are you sure you want to perform this operation?')) {
+                    this.submit();
+                }
+            });
+        });
+    });
+</script>
+{% endblock %} 

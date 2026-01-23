@@ -1,7 +1,7 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .models import InventoryItem, InventoryTransaction, MenuCategory, Hotel
+from app.models import InventoryItem, InventoryTransaction, MenuCategory
 from django.core.paginator import Paginator
 from decimal import Decimal
 
@@ -71,7 +71,7 @@ def inventory(request):
         'page_obj': items,
     }
     
-    return render(request, 'reports/inventory.html', context)
+    return render(request, 'owner/reports/inventory.html', context)
 
 @login_required
 def add_inventory_item(request):

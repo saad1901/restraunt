@@ -1,0 +1,602 @@
+{% extends 'Baseimages/base.html' %}
+{% load static %}
+
+{% block style %}
+<style>
+    .stats-card {
+        border-radius: 10px;
+        transition: all 0.3s;
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        margin-bottom: 1.5rem;
+    }
+
+    .stats-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .stats-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        font-size: 1.5rem;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .stats-data {
+        flex-grow: 1;
+    }
+
+    .stats-value {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin: 0;
+        line-height: 1.2;
+    }
+
+    .stats-label {
+        font-size: 0.9rem;
+        margin: 0;
+        opacity: 0.8;
+    }
+
+    .chart-container {
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        height: 100%;
+    }
+
+    .chart-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .time-filter {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .time-filter .btn {
+        border-radius: 20px;
+        padding: 0.4rem 1rem;
+        font-size: 0.9rem;
+        background-color: #f8f9fa;
+        color: #495057;
+        border: 1px solid #dee2e6;
+    }
+
+    .time-filter .btn.active {
+        background-color: var(--primary);
+        color: white;
+        border-color: var(--primary);
+    }
+
+    .restaurant-performance {
+        padding: 1rem;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+        background-color: #f8f9fa;
+        border-left: 4px solid var(--primary);
+    }
+
+    .restaurant-name {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .performance-metrics {
+        display: flex;
+        gap: 1.5rem;
+    }
+
+    .metric {
+        text-align: center;
+    }
+
+    .metric-value {
+        font-weight: 700;
+        font-size: 1.2rem;
+        margin-bottom: 0;
+    }
+
+    .metric-label {
+        font-size: 0.8rem;
+        color: #6c757d;
+    }
+
+    .trend-indicator {
+        display: inline-flex;
+        align-items: center;
+        font-size: 0.8rem;
+        padding: 0.2rem 0.5rem;
+        border-radius: 20px;
+        margin-left: 0.5rem;
+    }
+
+    .trend-up {
+        background-color: rgba(40, 167, 69, 0.1);
+        color: #28a745;
+    }
+
+    .trend-down {
+        background-color: rgba(220, 53, 69, 0.1);
+        color: #dc3545;
+    }
+
+    .table-responsive {
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .dashboard-header {
+        margin-bottom: 2rem;
+    }
+
+    .date-range-picker {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        background-color: white;
+        border: 1px solid #dee2e6;
+    }
+
+    .date-range-picker i {
+        color: #6c757d;
+    }
+
+    .date-range-picker span {
+        font-weight: 500;
+    }
+
+    .traffic-source {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .source-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        color: white;
+    }
+
+    .source-google {
+        background-color: #EA4335;
+    }
+
+    .source-direct {
+        background-color: #4285F4;
+    }
+
+    .source-social {
+        background-color: #34A853;
+    }
+
+    .source-referral {
+        background-color: #FBBC05;
+    }
+
+    .source-details {
+        flex-grow: 1;
+    }
+
+    .source-name {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+
+    .source-stat {
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+
+    .source-percentage {
+        font-weight: 700;
+        width: 50px;
+        text-align: right;
+    }
+
+    .map-container {
+        height: 300px;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+</style>
+{% endblock %}
+
+{% block myblock %}
+<!-- Dashboard Header -->
+<div class="dashboard-header d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="h3 mb-0 text-gray-800">Analytics Dashboard</h1>
+        <p class="text-muted mb-0">Comprehensive data insights for your business</p>
+    </div>
+    <div class="date-range-picker">
+        <i class="far fa-calendar-alt"></i>
+        <span>Last 30 days</span>
+        <i class="fas fa-chevron-down ms-2"></i>
+    </div>
+</div>
+
+<!-- Stats Cards -->
+<div class="row">
+    <div class="col-xl-3 col-md-6">
+        <div class="stats-card bg-primary text-white">
+            <div class="stats-icon bg-white text-primary">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="stats-data">
+                <h2 class="stats-value">{{ total_users }}</h2>
+                <p class="stats-label">Total Users</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="stats-card bg-success text-white">
+            <div class="stats-icon bg-white text-success">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="stats-data">
+                <h2 class="stats-value">₹{{ total_revenue }}</h2>
+                <p class="stats-label">Total Revenue</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="stats-card bg-info text-white">
+            <div class="stats-icon bg-white text-info">
+                <i class="fas fa-shopping-cart"></i>
+            </div>
+            <div class="stats-data">
+                <h2 class="stats-value">{{ total_orders }}</h2>
+                <p class="stats-label">Total Orders</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="stats-card bg-warning text-white">
+            <div class="stats-icon bg-white text-warning">
+                <i class="fas fa-star"></i>
+            </div>
+            <div class="stats-data">
+                <h2 class="stats-value">{{ avg_rating }}/5</h2>
+                <p class="stats-label">Avg. Rating</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Section -->
+<div class="row">
+    <!-- Revenue Chart -->
+    <div class="col-xl-8 col-lg-7">
+        <div class="chart-container" style="max-height: 300px; height: 300px; overflow: hidden;">
+            <h5 class="chart-title">Revenue Overview</h5>
+            <div class="time-filter">
+                <button class="btn active">Day</button>
+                <button class="btn">Week</button>
+                <button class="btn">Month</button>
+                <button class="btn">Year</button>
+            </div>
+            <canvas id="revenueChart" style="max-height: 200px;"></canvas>
+        </div>
+    </div>
+
+    <!-- Doughnut Chart -->
+    <div class="col-xl-4 col-lg-5">
+        <div class="chart-container" style="max-height: 300px; height: 300px; overflow: hidden;">
+            <h5 class="chart-title">Order Distribution</h5>
+            <canvas id="orderDistributionChart" style="max-height: 200px;"></canvas>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- User Activity -->
+    <div class="col-xl-6">
+        <div class="chart-container" style="max-height: 300px; height: 300px; overflow: hidden;">
+            <h5 class="chart-title">User Activity</h5>
+            <canvas id="userActivityChart" style="max-height: 200px;"></canvas>
+        </div>
+    </div>
+
+    <!-- Traffic Sources -->
+    <div class="col-xl-6">
+        <div class="chart-container">
+            <h5 class="chart-title">Traffic Sources</h5>
+            <div class="traffic-source">
+                <div class="source-icon source-google">
+                    <i class="fab fa-google"></i>
+                </div>
+                <div class="source-details">
+                    <div class="source-name">Google</div>
+                    <div class="source-stat">12,324 users</div>
+                </div>
+                <div class="source-percentage">45%</div>
+            </div>
+            <div class="traffic-source">
+                <div class="source-icon source-direct">
+                    <i class="fas fa-link"></i>
+                </div>
+                <div class="source-details">
+                    <div class="source-name">Direct</div>
+                    <div class="source-stat">8,523 users</div>
+                </div>
+                <div class="source-percentage">31%</div>
+            </div>
+            <div class="traffic-source">
+                <div class="source-icon source-social">
+                    <i class="fas fa-share-alt"></i>
+                </div>
+                <div class="source-details">
+                    <div class="source-name">Social Media</div>
+                    <div class="source-stat">4,129 users</div>
+                </div>
+                <div class="source-percentage">15%</div>
+            </div>
+            <div class="traffic-source">
+                <div class="source-icon source-referral">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="source-details">
+                    <div class="source-name">Referrals</div>
+                    <div class="source-stat">2,366 users</div>
+                </div>
+                <div class="source-percentage">9%</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Top Performing Restaurants -->
+    <div class="col-lg-7">
+        <div class="chart-container">
+            <h5 class="chart-title">Top Performing Restaurants</h5>
+            {% for restaurant in top_restaurants %}
+            <div class="restaurant-performance">
+                <div class="restaurant-name">{{ restaurant.name }}</div>
+                <div class="performance-metrics">
+                    <div class="metric">
+                        <p class="metric-value">₹{{ restaurant.total_revenue|default:"0" }}</p>
+                        <p class="metric-label">Revenue</p>
+                    </div>
+                    <div class="metric">
+                        <p class="metric-value">{{ restaurant.order_count|default:"0" }}</p>
+                        <p class="metric-label">Orders</p>
+                    </div>
+                    <div class="metric">
+                        <p class="metric-value">{% if restaurant.order_count > 0 %}+{% endif %}{{ restaurant.order_count|default:"0" }}</p>
+                        <p class="metric-label">vs Last Month</p>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="text-center py-4">
+                <p class="text-muted">No restaurant data available</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Geographic Distribution -->
+    <div class="col-lg-5">
+        <div class="chart-container">
+            <h5 class="chart-title">Geographic Distribution</h5>
+            <div id="userMap" class="map-container mb-3"></div>
+            <div class="table-responsive">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>City</th>
+                            <th>Users</th>
+                            <th>Orders</th>
+                            <th>Revenue</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for city in cities %}
+                        <tr>
+                            <td>{{ city.city }}</td>
+                            <td>{{ city.users }}</td>
+                            <td>{{ city.orders }}</td>
+                            <td>₹{{ city.revenue }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Leaflet.js for maps -->
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Revenue Chart
+        const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+        const revenueChart = new Chart(revenueCtx, {
+            type: 'line',
+            data: {
+                labels: {{ months|safe }},
+                datasets: [{
+                    label: 'Revenue',
+                    data: {{ revenue_data|safe }},
+                    backgroundColor: 'rgba(67, 103, 255, 0.1)',
+                    borderColor: 'rgba(67, 103, 255, 1)',
+                    borderWidth: 2,
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                aspectRatio: 2,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        },
+                        ticks: {
+                            precision: 0,
+                            maxTicksLimit: 5
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            maxTicksLimit: 6,
+                            maxRotation: 0,
+                            minRotation: 0
+                        }
+                    }
+                }
+            }
+        });
+
+        // Order Distribution Chart
+        const distributionCtx = document.getElementById('orderDistributionChart').getContext('2d');
+        const distributionChart = new Chart(distributionCtx, {
+            type: 'doughnut',
+            data: {
+                labels: {{ order_distribution.labels|safe }},
+                datasets: [{
+                    data: {{ order_distribution.data|safe }},
+                    backgroundColor: [
+                        'rgba(67, 103, 255, 0.8)',
+                        'rgba(40, 167, 69, 0.8)',
+                        'rgba(255, 193, 7, 0.8)',
+                        'rgba(220, 53, 69, 0.8)'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                aspectRatio: 1.5,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        display: true,
+                        labels: {
+                            boxWidth: 12,
+                            padding: 10
+                        }
+                    }
+                },
+                cutout: '70%'
+            }
+        });
+
+        // User Activity Chart
+        const activityCtx = document.getElementById('userActivityChart').getContext('2d');
+        const activityChart = new Chart(activityCtx, {
+            type: 'bar',
+            data: {
+                labels: {{ days_of_week|safe }},
+                datasets: [{
+                    label: 'New Users',
+                    data: {{ new_users_data|safe }},
+                    backgroundColor: 'rgba(67, 103, 255, 0.8)',
+                    borderRadius: 5
+                }, {
+                    label: 'Active Users',
+                    data: {{ active_users_data|safe }},
+                    backgroundColor: 'rgba(255, 193, 7, 0.8)',
+                    borderRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                aspectRatio: 2,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        align: 'end',
+                        labels: {
+                            boxWidth: 12,
+                            padding: 10
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        },
+                        ticks: {
+                            precision: 0,
+                            maxTicksLimit: 5
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            maxTicksLimit: 7
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Initialize Map
+        const map = L.map('userMap').setView([20.5937, 78.9629], 5);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+        
+        // Add markers for major cities
+        {% for city in cities %}
+        L.marker([
+            {% if city.city == 'Mumbai' %}19.0760, 72.8777{% endif %}
+            {% if city.city == 'Delhi' %}28.7041, 77.1025{% endif %}
+            {% if city.city == 'Bangalore' %}12.9716, 77.5946{% endif %}
+            {% if city.city == 'Hyderabad' %}17.3850, 78.4867{% endif %}
+        ]).addTo(map).bindPopup('{{ city.city }}: {{ city.users }} users');
+        {% endfor %}
+    });
+</script>
+{% endblock %} 

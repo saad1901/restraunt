@@ -1,4 +1,4 @@
-from authn.setupView import owner_register, hotel_register
+from app.setupView import owner_register, hotel_register
 from django.contrib.staticfiles.views import serve
 from userApp import views as userview
 from django.contrib import admin
