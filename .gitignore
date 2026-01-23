@@ -1,0 +1,23 @@
+# Environment & secrets
+.env
+.env.*
+
+# Databases
+*.sqlite3
+*.db
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Django
+**/migrations/
+staticfiles/
+restrauntapp/settings.py
+
+# Virtual environment
+venv/
+
+# Docs / temp
+LINKEDIN_CONTENT.md
+response.json
