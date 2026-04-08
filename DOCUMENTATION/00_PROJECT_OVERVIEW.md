@@ -8,7 +8,7 @@
 **Database:** SQLite3 (with AWS RDS MySQL/PostgreSQL capability)  
 **Deployment:** PythonAnywhere  
 **Live Application:** https://hotelsoftware.pythonanywhere.com/  
-**Last Updated:** August 27, 2025  
+**Last Updated:** Feb 13, 2026  
 
 ---
 
