@@ -44,7 +44,7 @@ class Table(models.Model):
     occupied = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.name
+        return f"{self.name} ({self.id})"
 
 class MenuCategory(models.Model):
     hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE)  # Link category to hotel

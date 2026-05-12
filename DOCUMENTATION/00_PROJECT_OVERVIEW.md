@@ -65,12 +65,12 @@ certifi==2025.8.3
 ### Multi-Role System
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    RESTAURANT APP SYSTEM                     │
+│                    RESTAURANT APP SYSTEM                    │
 └─────────────────────────────────────────────────────────────┘
-                              │
-        ┌─────────┬──────────┬┴──────────┬──────────┬──────────┐
+                               │
+        ┌──────────┬──────────┬┴──────────┬──────────┬──────────┐
         │          │          │           │          │          │
-    SUPERADMIN   AGENT     OWNER       STAFF      USER      OWNER
+     SUPERADMIN   AGENT     OWNER       STAFF      USER      OWNER
        ADMIN     MANAGER   (Manager)   (Waiter)  (Customer)  (Billing)
 ```
 
@@ -410,7 +410,7 @@ BillingPlans
 ## URL Routing Structure
 
 ```
-/ ─────────────────────── owner_login (home)
+┌────────────────────────── owner_login (home)
 ├── owner/ ──────────────── owner module urls
 │   ├── orders/
 │   ├── menu/
@@ -420,7 +420,7 @@ BillingPlans
 │   ├── inventory/
 │   └── billing/
 │
-├── staff/ ──────────────── staff module urls
+├── staff/ ───────────────── staff module urls
 │   └── orders/
 │
 ├── superadmin/ ──────────── superadmin module urls
@@ -430,13 +430,13 @@ BillingPlans
 │   ├── analytics/
 │   └── operations/
 │
-├── agent/ ──────────────── agent module urls
+├── agent/ ───────────────── agent module urls
 │   └── dashboard/
 │
-├── site/ ───────────────── frontsite module urls
+├── site/ ────────────────── frontsite module urls
 │   └── homepage/
 │
-├── auth/ ───────────────── authentication urls
+├── auth/ ────────────────── authentication urls
 │   ├── login/
 │   ├── logout/
 │   └── register/
@@ -612,13 +612,13 @@ BillingPlans
 
 ```
 restrauntapp/
-├── app/ ──────────────── Core restaurant models & views
-├── owner/ ─────────────── Owner dashboard & management
-├── staff/ ─────────────── Staff interface
+├── app/ ────────────────── Core restaurant models & views
+├── owner/ ──────────────── Owner dashboard & management
+├── staff/ ──────────────── Staff interface
 ├── superadmin/ ─────────── Admin operations
-├── authn/ ─────────────── Authentication
+├── authn/ ──────────────── Authentication
 ├── frontsite/ ──────────── Public website
-├── agent/ ─────────────── Agent management
+├── agent/ ──────────────── Agent management
 ├── userApp/ ────────────── Customer app
 ├── templates/ ──────────── HTML templates
 ├── static/ ─────────────── CSS, JS, images

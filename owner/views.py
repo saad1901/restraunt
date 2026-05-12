@@ -608,6 +608,16 @@ def table(request):
     tables_list = list(tables.values('id', 'name'))
     return render(request, 'owner/table.html', {'tables': tables, 'owner': owner})
 
+def table_qr(request):
+    hotel = request.user.staffof
+    tables = Table.objects.filter(hotel=hotel).order_by('name')
+    owner = hotel.owner if hasattr(hotel, 'owner') else None
+    return render(request, 'owner/table_qr.html', {
+        'tables': tables,
+        'hotel': hotel,
+        'owner': owner,
+    })
+
 def category(request):
     # hotel = Hotel.objects.get(id=request.user.staffof.id)
     categories = MenuCategory.objects.filter(hotel=request.user.staffof)

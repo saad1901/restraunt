@@ -40,6 +40,7 @@ urlpatterns = [
     path('settings/table/add/', add_table, name='add_table'),
     path('settings/table/edit/', edit_table, name='edit_table'),
     path('settings/table/delete/<int:table_id>/', delete_table, name='delete_table'),
+    path('settings/table-qr/', table_qr, name='table_qr'),
     path('settings/billing/', owner_billing, name='owner_billing'),
     path('settings/hotel_profile/', hotel_profile, name='hotel_profile'),
     path('payment/', payment, name='payment'),

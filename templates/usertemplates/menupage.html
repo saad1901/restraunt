@@ -18,7 +18,7 @@
             background: #f8fafc;
             color: #334155;
             line-height: 1.6;
-            padding-bottom: 80px; /* Space for total bar */
+            padding-bottom: 90px;
         }
 
         /* Header */
@@ -166,147 +166,16 @@
             color: #d97706;
         }
 
-        /* Right section with price and button */
+        /* Right section with price */
         .item-right {
             display: flex;
             align-items: center;
-            gap: 12px;
         }
 
         .item-price {
             font-size: 1.1rem;
             font-weight: 700;
             color: #6366f1;
-        }
-
-        .quantity-controls {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .add-btn {
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
-            color: white;
-            border: none;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
-        }
-
-        .add-btn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
-        }
-
-        .add-btn:active {
-            transform: scale(0.95);
-        }
-
-        .quantity-display {
-            background: #f1f5f9;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 6px 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            min-width: 80px;
-            justify-content: space-between;
-        }
-
-        .minus-btn, .plus-btn {
-            background: #6366f1;
-            color: white;
-            border: none;
-            width: 24px;
-            height: 24px;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-size: 0.8rem;
-        }
-
-        .minus-btn:hover, .plus-btn:hover {
-            background: #4f46e5;
-            transform: scale(1.1);
-        }
-
-        .quantity-text {
-            font-weight: 600;
-            color: #1e293b;
-            min-width: 16px;
-            text-align: center;
-        }
-
-        /* Total Bar */
-        .total-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(135deg, #1e293b, #334155);
-            color: white;
-            padding: 16px;
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
-            z-index: 200;
-            transform: translateY(100%);
-            transition: transform 0.3s ease;
-        }
-
-        .total-bar.visible {
-            transform: translateY(0);
-        }
-
-        .total-content {
-            max-width: 500px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .total-left {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .total-items {
-            font-size: 0.85rem;
-            opacity: 0.9;
-            margin-bottom: 2px;
-        }
-
-        .total-amount {
-            font-size: 1.3rem;
-            font-weight: 700;
-        }
-
-        .checkout-btn {
-            background: #10b981;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
-        }
-
-        .checkout-btn:hover {
-            background: #059669;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
         }
 
         /* Empty State */
@@ -323,7 +192,7 @@
         }
 
         /* Smooth Animations */
-        .menu-item, .add-btn, .quantity-display {
+        .menu-item {
             animation: fadeInUp 0.3s ease forwards;
         }
 
@@ -336,6 +205,138 @@
                 opacity: 1;
                 transform: translateY(0);
             }
+        }
+
+        /* Bill Button */
+        .bill-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 150;
+            transition: all 0.2s ease;
+        }
+
+        .bill-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 300;
+            align-items: flex-end;
+            justify-content: center;
+        }
+
+        .modal-overlay.open {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            width: 100%;
+            max-width: 500px;
+            border-radius: 20px 20px 0 0;
+            padding: 24px;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .modal-close {
+            background: #f1f5f9;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1rem;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .bill-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 0.95rem;
+        }
+
+        .bill-row:last-of-type {
+            border-bottom: none;
+        }
+
+        .bill-item-name {
+            color: #334155;
+            flex: 1;
+        }
+
+        .bill-item-qty {
+            color: #64748b;
+            margin: 0 12px;
+            font-size: 0.85rem;
+        }
+
+        .bill-item-price {
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .bill-total-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 0 0;
+            margin-top: 8px;
+            border-top: 2px solid #e2e8f0;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #6366f1;
+        }
+
+        .bill-empty {
+            text-align: center;
+            padding: 30px 0;
+            color: #94a3b8;
+            font-size: 0.95rem;
         }
 
         /* Responsive */
@@ -428,20 +429,6 @@
                     </div>
                     <div class="item-right">
                         <div class="item-price">₹{{ item.price }}</div>
-                        <div class="quantity-controls">
-                            <button class="add-btn" onclick="addItem('{{ forloop.parentloop.counter }}_{{ forloop.counter }}', '{{ item.name }}', {{ item.price }})" data-item-id="{{ forloop.parentloop.counter }}_{{ forloop.counter }}">
-                                <i class="fas fa-plus"></i>
-                            </button>
-                            <div class="quantity-display" style="display: none;" data-quantity-id="{{ forloop.parentloop.counter }}_{{ forloop.counter }}">
-                                <button class="minus-btn" onclick="decreaseQuantity('{{ forloop.parentloop.counter }}_{{ forloop.counter }}')">
-                                    <i class="fas fa-minus"></i>
-                                </button>
-                                <span class="quantity-text">0</span>
-                                <button class="plus-btn" onclick="increaseQuantity('{{ forloop.parentloop.counter }}_{{ forloop.counter }}', '{{ item.name }}', {{ item.price }})">
-                                    <i class="fas fa-plus"></i>
-                                </button>
-                            </div>
-                        </div>
                     </div>
                 </div>
                 {% empty %}
@@ -455,103 +442,45 @@
         {% endfor %}
     </div>
 
-    <!-- Total Bar -->
-    <div class="total-bar" id="totalBar">
-        <div class="total-content">
-            <div class="total-left">
-                <div class="total-items" id="totalItems">0 items</div>
-                <div class="total-amount" id="totalAmount">₹0</div>
+    {% if table %}
+    <!-- Bill Button -->
+    <button class="bill-btn" onclick="document.getElementById('billModal').classList.add('open')">
+        <i class="fas fa-receipt"></i> Bill
+    </button>
+
+    <!-- Bill Modal -->
+    <div class="modal-overlay" id="billModal" onclick="if(event.target===this) this.classList.remove('open')">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title"><i class="fas fa-receipt"></i> Current Bill — {{ table.name }}</div>
+                <button class="modal-close" onclick="document.getElementById('billModal').classList.remove('open')">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
-            <button class="checkout-btn" onclick="checkout()">
-                Proceed <i class="fas fa-arrow-right"></i>
-            </button>
+
+            {% if bill_items %}
+                {% for bi in bill_items %}
+                <div class="bill-row">
+                    <span class="bill-item-name">{{ bi.name }}</span>
+                    <span class="bill-item-qty">x{{ bi.quantity }}</span>
+                    <span class="bill-item-price">₹{{ bi.subtotal }}</span>
+                </div>
+                {% endfor %}
+                <div class="bill-total-row">
+                    <span>Total</span>
+                    <span>₹{{ bill_total }}</span>
+                </div>
+            {% else %}
+                <div class="bill-empty">
+                    <i class="fas fa-receipt" style="font-size:2rem; display:block; margin-bottom:8px; opacity:0.4;"></i>
+                    No orders placed yet
+                </div>
+            {% endif %}
         </div>
     </div>
+    {% endif %}
 
     <script>
-        let cart = {};
-        let totalItems = 0;
-        let totalAmount = 0;
-
-        function addItem(itemId, itemName, itemPrice) {
-            if (!cart[itemId]) {
-                cart[itemId] = {
-                    name: itemName,
-                    price: itemPrice,
-                    quantity: 0
-                };
-            }
-            cart[itemId].quantity = 1;
-            updateDisplay(itemId);
-            updateTotal();
-            // Hide add button, show quantity controls
-            const addBtn = document.querySelector(`[data-item-id="${itemId}"]`);
-            const quantityDisplay = document.querySelector(`[data-quantity-id="${itemId}"]`);
-            addBtn.style.display = 'none';
-            quantityDisplay.style.display = 'flex';
-            quantityDisplay.querySelector('.quantity-text').textContent = '1';
-        }
-
-        function increaseQuantity(itemId, itemName, itemPrice) {
-            if (!cart[itemId]) {
-                cart[itemId] = {
-                    name: itemName,
-                    price: itemPrice,
-                    quantity: 0
-                };
-            }
-            cart[itemId].quantity += 1;
-            updateDisplay(itemId);
-            updateTotal();
-        }
-
-        function decreaseQuantity(itemId) {
-            if (cart[itemId] && cart[itemId].quantity > 0) {
-                cart[itemId].quantity -= 1;
-                if (cart[itemId].quantity === 0) {
-                    delete cart[itemId];
-                    // Show add button, hide quantity controls
-                    const addBtn = document.querySelector(`[data-item-id="${itemId}"]`);
-                    const quantityDisplay = document.querySelector(`[data-quantity-id="${itemId}"]`);
-                    addBtn.style.display = 'flex';
-                    quantityDisplay.style.display = 'none';
-                } else {
-                    updateDisplay(itemId);
-                }
-                updateTotal();
-            }
-        }
-
-        function updateDisplay(itemId) {
-            const quantityText = document.querySelector(`[data-quantity-id="${itemId}"] .quantity-text`);
-            if (quantityText && cart[itemId]) {
-                quantityText.textContent = cart[itemId].quantity;
-            }
-        }
-
-        function updateTotal() {
-            totalItems = 0;
-            totalAmount = 0;
-            for (let itemId in cart) {
-                totalItems += cart[itemId].quantity;
-                totalAmount += cart[itemId].quantity * cart[itemId].price;
-            }
-            document.getElementById('totalItems').textContent = `${totalItems} item${totalItems !== 1 ? 's' : ''}`;
-            document.getElementById('totalAmount').textContent = `₹${totalAmount}`;
-            const totalBar = document.getElementById('totalBar');
-            if (totalItems > 0) {
-                totalBar.classList.add('visible');
-            } else {
-                totalBar.classList.remove('visible');
-            }
-        }
-
-        function checkout() {
-            if (totalItems > 0) {
-                alert(`Proceeding to checkout with ${totalItems} items for ₹${totalAmount}`);
-            }
-        }
-
         function toggleVeg() {
             const vegOnly = document.getElementById('vegToggle').checked;
             document.querySelectorAll('.category').forEach(function(category) {
@@ -575,10 +504,6 @@
                 category.style.display = anyVisible ? '' : 'none';
             });
         }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            updateTotal();
-        });
     </script>
 </body>
 </html>
